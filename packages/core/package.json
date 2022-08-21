@@ -1,0 +1,14 @@
+{
+  "name": "@thunder/core",
+  "version": "1.0.0",
+  "description": "core module for thunder",
+  "main": "index.js",
+  "author": "",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "hyperid": "^3.0.1"
+  }
+}

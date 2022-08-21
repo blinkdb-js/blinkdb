@@ -1,0 +1,11 @@
+{
+    "name": "thunder",
+    "workspaces": [
+        "packages/*"
+    ],
+    "devDependencies": {
+        "@swc/core": "^1.2.241",
+        "@swc/jest": "^0.2.22",
+        "@types/jest": "^28.1.7"
+    }
+}
