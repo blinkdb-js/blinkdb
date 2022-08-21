@@ -1,0 +1,16 @@
+{
+  "name": "@thunder/benchmarks",
+  "version": "1.0.0",
+  "description": "benchmarks for thunder",
+  "main": "index.js",
+  "author": "",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "ts-node src/benchmarks/index.ts"
+  },
+  "devDependencies": {
+    "sorted-btree": "^1.8.0",
+    "ts-node": "^10.9.1"
+  }
+}
