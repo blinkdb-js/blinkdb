@@ -3,37 +3,38 @@ import { SyncDB, SyncKey } from "./createDB";
 /**
  * Creates a new table where entities can be inserted/updated/deleted/retrieved.
  * 
- * The default primary key of tables is `id`. If you'd like to change that, supply a
- * `index` property in `options`.
+ * The default primary key of a table is `id`. If you'd like to change that, supply a
+ * `primary` property in `options` (either a string, or an array of strings for composite
+ * primary keys).
  * 
  * @example
  * const db = createDB();
  * const userTable = table<User>(db, "users");
  * const taskTable = table<Task>(db, "tasks", {
- *   index: "uuid"
+ *   primary: "uuid"
  * });
  */
-export function table<T>(db: SyncDB, tableName: string, options?: TableOptions<T>): SyncTable<T> {
+export function table<T>(db: SyncDB, tableName: string, options?: TableOptions): SyncTable<T> {
 
   return {
     [SyncKey]: {
       db,
       tableName,
       options: {
-        index: options?.index ?? ("id" as string),
+        primary: options?.primary ?? ("id" as string),
       },
     },
   };
 }
 
-export interface TableOptions<T> {
-  index?: string|string[];
+export interface TableOptions {
+  primary?: string|string[];
 }
 
 export interface SyncTable<T> {
   [SyncKey]: {
     db: SyncDB;
     tableName: string;
-    options: Required<TableOptions<T>>;
+    options: Required<TableOptions>;
   };
 }

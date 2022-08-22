@@ -13,6 +13,6 @@ it("should create a table without options", () => {
 
 it("should create a table with a different primary key", () => {
   table(db, "user", {
-    index: "uuid"
+    primary: "uuid"
   });
 });
