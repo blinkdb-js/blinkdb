@@ -9,6 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "hyperid": "^3.0.1"
+    "hyperid": "^3.0.1",
+    "sorted-btree": "^1.8.0"
   }
 }
