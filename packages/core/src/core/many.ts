@@ -43,26 +43,38 @@ export async function many<T, P extends keyof T>(
   filter?: Filter<T>
 ): Promise<T[]> {
   if (!filter) {
-    return Array.from(table[SyncKey].storage.primary.values());
+    return table[SyncKey].storage.primary.valuesArray();
   }
 
-  const primaryKeyProperty = table[SyncKey].options.primary;
-  let item: T | undefined;
+  let items: T[] = [];
+
   if (filter.where) {
+    if (Object.keys(filter.where).length === 0) {
+      return items;
+    }
+
+    const primaryKeyProperty = table[SyncKey].options.primary;
     if (primaryKeyProperty in filter.where) {
       const primaryKey = String(filter.where[primaryKeyProperty]);
-      item = table[SyncKey].storage.primary.get(primaryKey);
+      const item = table[SyncKey].storage.primary.get(primaryKey);
+      if (item) {
+        items.push(item);
+      }
+    } else {
+      items = table[SyncKey].storage.primary.valuesArray();
     }
 
-    if (item) {
-      for (const property in filter.where) {
-        if (item[property] !== filter.where[property]) {
-          item = undefined;
-          break;
+    if (items.length > 0) {
+      items = items.filter(item => {
+        for (const property in filter.where) {
+          if (item[property] !== filter.where[property]) {
+            return false;
+          }
         }
-      }
+        return true;
+      });
     }
   }
 
-  return item ? [item] : [];
+  return items;
 }

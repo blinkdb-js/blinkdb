@@ -48,7 +48,7 @@ describe("filter", () => {
     expect(items).toHaveLength(0);
   });
 
-  it("should return items with a given id", async () => {
+  it("should return items by primary id", async () => {
     const items = await many(userTable, {
       where: {
         id: 0
@@ -57,7 +57,7 @@ describe("filter", () => {
     expect(new Set(items)).toStrictEqual(new Set([alice]));
   });
 
-  it("should return items with a given id and age", async () => {
+  it("should return items by primary id and other property", async () => {
     const items = await many(userTable, {
       where: {
         id: 0,
@@ -67,7 +67,7 @@ describe("filter", () => {
     expect(new Set(items)).toStrictEqual(new Set([alice]));
   });
 
-  it("should return items with a given id and (wrong) age", async () => {
+  it("should return items by primary id and other (wrong) property", async () => {
     const items = await many(userTable, {
       where: {
         id: 0,
@@ -75,6 +75,16 @@ describe("filter", () => {
       }
     });
     expect(items).toHaveLength(0);
+  });
+
+  it("should return items by property using full-table-iteration as fallback", async () => {
+    const items = await many(userTable, {
+      where: {
+        age: 5
+      }
+    });
+
+    expect(new Set(items)).toStrictEqual(new Set([alice]));
   });
 
 });
