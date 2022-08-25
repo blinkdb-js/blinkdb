@@ -92,7 +92,7 @@ async function getItemsForWhereFilter<T, P extends keyof T>(
   if (items.length > 0) {
     items = items.filter((item) => {
       for (const property in filter) {
-        if (!matchesItem(item[property], filter[property] as any)) {
+        if (!matchesItem(item[property], filter[property] as Matchers<T[typeof property]>)) {
           return false;
         }
       }
