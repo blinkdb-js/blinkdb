@@ -113,6 +113,46 @@ describe("filter", () => {
         expect(new Set(items)).toStrictEqual(new Set([charlie]));
       });
 
+      it("should match items with a $gte comparison", async () => {
+        const items = await many(userTable, {
+          where: {
+            name: { $gte: "Bob" }
+          }
+        });
+    
+        expect(new Set(items)).toStrictEqual(new Set([bob, charlie]));
+      });
+
+      it("should match items with a $gt comparison", async () => {
+        const items = await many(userTable, {
+          where: {
+            name: { $gt: "Bob" }
+          }
+        });
+    
+        expect(new Set(items)).toStrictEqual(new Set([charlie]));
+      });
+
+      it("should match items with a $lte comparison", async () => {
+        const items = await many(userTable, {
+          where: {
+            name: { $lte: "Bob" }
+          }
+        });
+    
+        expect(new Set(items)).toStrictEqual(new Set([alice, bob]));
+      });
+
+      it("should match items with a $lt comparison", async () => {
+        const items = await many(userTable, {
+          where: {
+            name: { $lt: "Bob" }
+          }
+        });
+    
+        expect(new Set(items)).toStrictEqual(new Set([alice]));
+      });
+
     });
 
     describe("numbers", () => {
@@ -130,7 +170,47 @@ describe("filter", () => {
       it("should match items by equality (with $equals)", async () => {
         const items = await many(userTable, {
           where: {
-            id: { $equals: 0 }
+             id: { $equals: 0 }
+          }
+        });
+    
+        expect(new Set(items)).toStrictEqual(new Set([alice]));
+      });
+
+      it("should match items with a $gte comparison", async () => {
+        const items = await many(userTable, {
+          where: {
+            id: { $gte: 1 }
+          }
+        });
+    
+        expect(new Set(items)).toStrictEqual(new Set([bob, charlie]));
+      });
+
+      it("should match items with a $gt comparison", async () => {
+        const items = await many(userTable, {
+          where: {
+            id: { $gt: 1 }
+          }
+        });
+    
+        expect(new Set(items)).toStrictEqual(new Set([charlie]));
+      });
+
+      it("should match items with a $lte comparison", async () => {
+        const items = await many(userTable, {
+          where: {
+            id: { $lte: 1 }
+          }
+        });
+    
+        expect(new Set(items)).toStrictEqual(new Set([alice, bob]));
+      });
+
+      it("should match items with a $lt comparison", async () => {
+        const items = await many(userTable, {
+          where: {
+            id: { $lt: 1 }
           }
         });
     
