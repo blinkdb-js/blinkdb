@@ -1,4 +1,4 @@
-import { Filter } from "../filter";
+import { Filter, WhereFilter } from "../filter";
 import { SyncKey } from "./createDB";
 import { SyncTable } from "./table";
 
@@ -46,34 +46,49 @@ export async function many<T, P extends keyof T>(
     return table[SyncKey].storage.primary.valuesArray();
   }
 
+  if (filter.where) {
+    return getItemsForWhereFilter(table, filter.where);
+  }
+
+  return [];
+}
+
+/**
+ * Retrieves all items from the table matching a given filter.
+ */
+async function getItemsForWhereFilter<T, P extends keyof T>(
+  table: SyncTable<T, P>,
+  filter: WhereFilter<T>
+) {
+  if (Object.keys(filter).length === 0) {
+    return [];
+  }
+
   let items: T[] = [];
 
-  if (filter.where) {
-    if (Object.keys(filter.where).length === 0) {
-      return items;
+  // Retrieve items from table
+  const primaryKeyProperty = table[SyncKey].options.primary;
+  if (primaryKeyProperty in filter) {
+    const primaryKey = String(filter[primaryKeyProperty]);
+    const item = table[SyncKey].storage.primary.get(primaryKey);
+    if (item) {
+      items.push(item);
     }
+  } else {
+    items = table[SyncKey].storage.primary.valuesArray();
+  }
 
-    const primaryKeyProperty = table[SyncKey].options.primary;
-    if (primaryKeyProperty in filter.where) {
-      const primaryKey = String(filter.where[primaryKeyProperty]);
-      const item = table[SyncKey].storage.primary.get(primaryKey);
-      if (item) {
-        items.push(item);
-      }
-    } else {
-      items = table[SyncKey].storage.primary.valuesArray();
-    }
-
-    if (items.length > 0) {
-      items = items.filter(item => {
-        for (const property in filter.where) {
-          if (item[property] !== filter.where[property]) {
-            return false;
-          }
+  // Filter out items
+  if (items.length > 0) {
+    items = items.filter((item) => {
+      for (const property in filter) {
+        if (item[property] !== filter[property]) {
+          return false;
         }
-        return true;
-      });
-    }
+      }
+      return true;
+      1;
+    });
   }
 
   return items;

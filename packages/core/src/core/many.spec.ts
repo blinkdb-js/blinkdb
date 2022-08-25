@@ -35,10 +35,12 @@ describe("filter", () => {
 
   const alice: User = { id: 0, name: "Alice", age: 5 };
   const bob: User = { id: 1, name: "Bob" };
+  const charlie: User = { id: 2, name: "Charlie", age: 10 };
 
   beforeEach(async () => {
     await create(userTable, alice);
     await create(userTable, bob);
+    await create(userTable, charlie);
   });
 
   it("should return no items with an empty where filter", async () => {
