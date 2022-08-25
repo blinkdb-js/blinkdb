@@ -1,4 +1,12 @@
-import { Filter, WhereFilter } from "../filter";
+import BTree from "sorted-btree";
+import {
+  ComplexEqualsValueMatcher,
+  EqualsValueMatcher,
+  Filter,
+  GenericValueMatchers,
+  ValueMatchers,
+  WhereFilter,
+} from "../filter";
 import { SyncKey } from "./createDB";
 import { SyncTable } from "./table";
 
@@ -59,7 +67,7 @@ export async function many<T, P extends keyof T>(
 async function getItemsForWhereFilter<T, P extends keyof T>(
   table: SyncTable<T, P>,
   filter: WhereFilter<T>
-) {
+): Promise<T[]> {
   if (Object.keys(filter).length === 0) {
     return [];
   }
@@ -69,11 +77,8 @@ async function getItemsForWhereFilter<T, P extends keyof T>(
   // Retrieve items from table
   const primaryKeyProperty = table[SyncKey].options.primary;
   if (primaryKeyProperty in filter) {
-    const primaryKey = String(filter[primaryKeyProperty]);
-    const item = table[SyncKey].storage.primary.get(primaryKey);
-    if (item) {
-      items.push(item);
-    }
+    const matcher = filter[primaryKeyProperty] as ValueMatchers<T[P]>;
+    items = await getItemsForRetrievalForMatcher(table[SyncKey].storage.primary, matcher);
   } else {
     items = table[SyncKey].storage.primary.valuesArray();
   }
@@ -82,14 +87,44 @@ async function getItemsForWhereFilter<T, P extends keyof T>(
   if (items.length > 0) {
     items = items.filter((item) => {
       for (const property in filter) {
-        if (item[property] !== filter[property]) {
+        if (!matchesItem(item[property], filter[property] as any)) {
           return false;
         }
       }
       return true;
-      1;
     });
   }
 
   return items;
+}
+
+/**
+ * Retrieve all items from the database that could possibly match `matcher`.
+ */
+async function getItemsForRetrievalForMatcher<T>(
+  btree: BTree<string, T>,
+  matcher: ValueMatchers<T[keyof T]>
+): Promise<T[]> {
+  if (typeof matcher === "object" && "$equals" in matcher) {
+    const key = String(
+      (matcher as ComplexEqualsValueMatcher<T[keyof T]>).$equals
+    );
+    const item = btree.get(key);
+    return item ? [item] : [];
+  } else {
+    const key = String(matcher);
+    const item = btree.get(key);
+    return item ? [item] : [];
+  }
+}
+
+/**
+ * Returns true if `property` matches the given `matcher`.
+ */
+function matchesItem<T, P extends keyof T>(property: T[P],  matcher: ValueMatchers<T[P]>): boolean {
+  if (typeof matcher === "object" && "$equals" in matcher) {
+    return property === (matcher as ComplexEqualsValueMatcher<T[keyof T]>).$equals;
+  } else {
+    return property === matcher;
+  }
 }

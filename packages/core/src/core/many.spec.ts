@@ -89,4 +89,56 @@ describe("filter", () => {
     expect(new Set(items)).toStrictEqual(new Set([alice]));
   });
 
+  describe("matchers", () => {
+
+    describe("strings", () => {
+
+      it("should match items by equality (simple)", async () => {
+        const items = await many(userTable, {
+          where: {
+            name: "Charlie"
+          }
+        });
+    
+        expect(new Set(items)).toStrictEqual(new Set([charlie]));
+      });
+
+      it("should match items by equality (with $equals)", async () => {
+        const items = await many(userTable, {
+          where: {
+            name: { $equals: "Charlie" }
+          }
+        });
+    
+        expect(new Set(items)).toStrictEqual(new Set([charlie]));
+      });
+
+    });
+
+    describe("numbers", () => {
+
+      it("should match items by equality (simple)", async () => {
+        const items = await many(userTable, {
+          where: {
+            id: 0
+          }
+        });
+    
+        expect(new Set(items)).toStrictEqual(new Set([alice]));
+      });
+
+      it("should match items by equality (with $equals)", async () => {
+        const items = await many(userTable, {
+          where: {
+            id: { $equals: 0 }
+          }
+        });
+    
+        expect(new Set(items)).toStrictEqual(new Set([alice]));
+      });
+
+    });
+
+  });
+
 });
