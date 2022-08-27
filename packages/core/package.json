@@ -2,10 +2,12 @@
   "name": "@thunder/core",
   "version": "1.0.0",
   "description": "core module for thunder",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "module": "src/index.ts",
   "author": "",
   "license": "MIT",
   "scripts": {
+    "build": "tsc --outDir ./dist",
     "test": "jest"
   },
   "dependencies": {
