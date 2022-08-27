@@ -21,6 +21,7 @@ export async function compare(name: string, fns: { [name: string]: () => void|Pr
   }
 
   for(let i = 0; i < (opts?.runs ?? 10000); i++) {
+    opts?.beforeEach?.();
     for(const entry of fnEntries) {
       const [name, fn] = entry;
       const startTime = performance.now();
@@ -45,5 +46,6 @@ export async function compare(name: string, fns: { [name: string]: () => void|Pr
 
 export interface CompareOptions {
   /** How many times tests are run. */
-  runs: number;
+  runs?: number;
+  beforeEach?: () => void;
 }
