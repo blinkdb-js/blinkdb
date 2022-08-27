@@ -1,10 +1,12 @@
 import {
+  ContainsMatcher,
   GteMatcher,
   GtMatcher,
   LteMatcher,
   LtMatcher,
   Matchers,
 } from "../types";
+import equal from 'fast-deep-equal';
 
 /**
  * @returns whether `property` matches `matcher`.
@@ -23,6 +25,8 @@ export function matchesMatcher<T, P extends keyof T>(
     return matchesLteMatcher(property, matcher as LteMatcher<T[P]>);
   } else if (typeof matcher === "object" && "$lt" in matcher) {
     return matchesLtMatcher(property, matcher as LtMatcher<T[P]>);
+  } else if (typeof matcher === "object" && "$contains" in matcher && Array.isArray(property)) {
+    return matchesContainsMatcher(property, matcher as ContainsMatcher<T[P]>);
   } else {
     return matchesEqMatcher(property, matcher as T[P]);
   }
@@ -32,7 +36,14 @@ function matchesEqMatcher<T, P extends keyof T>(
   property: T[P],
   matcher: T[P]
 ): boolean {
-  return property === matcher;
+  if(Array.isArray(property)) {
+    property.sort();
+  }
+  if(Array.isArray(matcher)) {
+    matcher.sort();
+  }
+
+  return equal(property, matcher);
 }
 
 function matchesGteMatcher<T, P extends keyof T>(
@@ -61,4 +72,11 @@ function matchesLtMatcher<T, P extends keyof T>(
   matcher: LtMatcher<T[P]>
 ): boolean {
   return property < matcher.$lt;
+}
+
+function matchesContainsMatcher<T>(
+  property: Array<T>,
+  matcher: ContainsMatcher<T>
+): boolean {
+  return property.includes(matcher.$contains);
 }

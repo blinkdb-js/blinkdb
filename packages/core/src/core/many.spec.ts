@@ -7,6 +7,7 @@ interface User {
   id: number;
   name: string;
   age?: number;
+  someIds?: number[];
 }
 
 let db: SyncDB;
@@ -33,9 +34,9 @@ it("should return all items if called without a filter", async () => {
 
 describe("filter", () => {
 
-  const alice: User = { id: 0, name: "Alice", age: 5 };
-  const bob: User = { id: 1, name: "Bob" };
-  const charlie: User = { id: 2, name: "Charlie", age: 10 };
+  const alice: User = { id: 0, name: "Alice", age: 5, someIds: [1, 2] };
+  const bob: User = { id: 1, name: "Bob", someIds: [3, 1] };
+  const charlie: User = { id: 2, name: "Charlie", age: 10, someIds: [4, 2] };
 
   beforeEach(async () => {
     await create(userTable, alice);
@@ -215,6 +216,50 @@ describe("filter", () => {
         });
     
         expect(new Set(items)).toStrictEqual(new Set([alice]));
+      });
+
+    });
+
+    describe("arrays", () => {
+
+      it("should match items by equality (simple)", async () => {
+        const items = await many(userTable, {
+          where: {
+            someIds: [4, 2]
+          }
+        });
+    
+        expect(new Set(items)).toStrictEqual(new Set([charlie]));
+      });
+
+      it("should match items by equality (with $equals)", async () => {
+        const items = await many(userTable, {
+          where: {
+            someIds: { $equals: [4, 2] }
+          }
+        });
+    
+        expect(new Set(items)).toStrictEqual(new Set([charlie]));
+      });
+
+      it("should match items by equality regardless of array item order", async () => {
+        const items = await many(userTable, {
+          where: {
+            someIds: { $equals: [2, 4] }
+          }
+        });
+
+        expect(new Set(items)).toStrictEqual(new Set([charlie]));
+      });
+
+      it("should match items with $contains", async () => {
+        const items = await many(userTable, {
+          where: {
+            someIds: { $contains: 2 }
+          }
+        });
+
+        expect(new Set(items)).toStrictEqual(new Set([alice, charlie]));
       });
 
     });

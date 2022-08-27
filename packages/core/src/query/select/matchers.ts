@@ -30,6 +30,8 @@ export async function selectMatcherItems<T>(
     return selectLteMatcherItems(btree, matcher as LteMatcher<unknown>);
   } else if (typeof matcher === "object" && "$lt" in matcher) {
     return selectLtMatcherItems(btree, matcher as LtMatcher<unknown>);
+  } else if (typeof matcher === "object" && "$contains" in matcher) {
+    return null;
   } else if (typeof matcher !== "object") {
     return selectEqMatcherItems(btree, matcher as T[keyof T]);
   }
