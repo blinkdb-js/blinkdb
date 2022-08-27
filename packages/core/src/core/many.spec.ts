@@ -154,6 +154,16 @@ describe("filter", () => {
         expect(new Set(items)).toStrictEqual(new Set([alice]));
       });
 
+      it("should match items with a $in comparison", async () => {
+        const items = await many(userTable, {
+          where: {
+            name: { $in: ["Alice", "Charlie"] }
+          }
+        });
+
+        expect(new Set(items)).toStrictEqual(new Set([alice, charlie]));
+      });
+
     });
 
     describe("numbers", () => {
@@ -216,6 +226,16 @@ describe("filter", () => {
         });
     
         expect(new Set(items)).toStrictEqual(new Set([alice]));
+      });
+
+      it("should match items with a $in comparison", async () => {
+        const items = await many(userTable, {
+          where: {
+            id: { $in: [1, 0] }
+          }
+        });
+
+        expect(new Set(items)).toStrictEqual(new Set([alice, bob]));
       });
 
     });

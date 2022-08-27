@@ -2,6 +2,7 @@ import {
   ContainsMatcher,
   GteMatcher,
   GtMatcher,
+  InMatcher,
   LteMatcher,
   LtMatcher,
   Matchers,
@@ -27,6 +28,8 @@ export function matchesMatcher<T, P extends keyof T>(
     return matchesLtMatcher(property, matcher as LtMatcher<T[P]>);
   } else if (typeof matcher === "object" && "$contains" in matcher && Array.isArray(property)) {
     return matchesContainsMatcher(property, matcher as ContainsMatcher<T[P]>);
+  } else if (typeof matcher === "object" && "$in" in matcher) {
+    return matchesInMatcher(property, matcher as InMatcher<T[P]>);
   } else {
     return matchesEqMatcher(property, matcher as T[P]);
   }
@@ -79,4 +82,11 @@ function matchesContainsMatcher<T>(
   matcher: ContainsMatcher<T>
 ): boolean {
   return property.includes(matcher.$contains);
+}
+
+function matchesInMatcher<T>(
+  property: T,
+  matcher: InMatcher<T>
+): boolean {
+  return matcher.$in.includes(property);
 }

@@ -21,9 +21,10 @@ export type Matchers<T> = T extends string
   ? ArrayMatchers<R>
   : GenericMatchers<T>;
 
-export type GenericMatchers<T> = EqMatcher<T>;
+export type GenericMatchers<T> = EqMatcher<T> | InMatcher<T>;
 
 export type EqMatcher<T> = T | { $equals: T };
+export type InMatcher<T> = { $in: T[] };
 
 export type StringMatchers<T extends string> =
   | GtMatcher<T>

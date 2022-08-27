@@ -1,4 +1,4 @@
-import BTree from "sorted-btree";
+import BTree, { defaultComparator } from "sorted-btree";
 import {
   GteMatcher,
   GtMatcher,
@@ -6,6 +6,7 @@ import {
   LtMatcher,
   Matchers,
   EqMatcher,
+  InMatcher,
 } from "../types";
 
 /**
@@ -32,6 +33,8 @@ export async function selectMatcherItems<T>(
     return selectLtMatcherItems(btree, matcher as LtMatcher<unknown>);
   } else if (typeof matcher === "object" && "$contains" in matcher) {
     return null;
+  } else if (typeof matcher === "object" && "$in" in matcher) {
+    return selectInMatcherItems(btree, matcher as InMatcher<T[keyof T]>);
   } else if (typeof matcher !== "object") {
     return selectEqMatcherItems(btree, matcher as T[keyof T]);
   }
@@ -105,4 +108,44 @@ async function selectLtMatcherItems<T>(
   } else {
     return [];
   }
+}
+
+async function selectInMatcherItems<T, P extends keyof T>(
+  btree: BTree<string, T>,
+  matcher: InMatcher<T[P]>
+): Promise<T[]> {
+  if (matcher.$in.length === 0) {
+    return [];
+  }
+  if (matcher.$in.length === 1) {
+    const key = String(matcher.$in[0]);
+    const item = btree.get(key);
+    return item ? [item] : []
+  }
+
+  let matcherItems: T[P][];
+  if (
+    typeof matcher.$in[0] === "number" ||
+    typeof matcher.$in[0] === "string" ||
+    matcher.$in[0] instanceof Date
+  ) {
+    matcherItems = (matcher.$in as unknown as (string | number | Date)[]).sort(
+      defaultComparator
+    ) as unknown as T[P][];
+  } else {
+    matcherItems = matcher.$in.sort();
+  }
+
+  const stringifiedMatcherItems = matcherItems.map(i => String(i));
+  const minKey = stringifiedMatcherItems[0];
+  const maxKey = stringifiedMatcherItems[matcherItems.length - 1];
+  const items: T[] = [];
+
+  btree.forRange(minKey, maxKey, true, (key, val) => {
+    if (key === minKey || key == maxKey || stringifiedMatcherItems.includes(key)) {
+      items.push(val);
+    }
+  });
+
+  return items;
 }
