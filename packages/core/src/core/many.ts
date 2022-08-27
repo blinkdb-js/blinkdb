@@ -1,5 +1,5 @@
-import { filterWhereItems } from "../query/filter";
-import { selectWhereFilterItems } from "../query/select";
+import { filterItems } from "../query/filter";
+import { selectItems } from "../query/select";
 import { Filter } from "../query/types";
 import { SyncKey } from "./createDB";
 import { SyncTable } from "./table";
@@ -52,17 +52,10 @@ export async function many<T, P extends keyof T>(
 
   if (filter.where) {
     // Select items from the db
-    let possibleItems = await selectWhereFilterItems(table, filter.where);
-    if(possibleItems) {
-      // In case the where filter returned all items, success!
-      items = possibleItems;
-    } else {
-      // In case null is returned, a full table scan is required
-      items = table[SyncKey].storage.primary.valuesArray();
-    }
+    items = await selectItems(table, filter.where);
 
     // Filter items
-    items = filterWhereItems(items, filter.where);
+    items = filterItems(table, items, filter.where);
   }
 
   return items;

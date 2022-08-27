@@ -15,5 +15,25 @@
  * This is implemented in this `query/filter` module.
  */
 
-export * from './matchers';
-export * from './where';
+import { SyncTable } from "../../core";
+import { Filter } from "../types";
+import { filterAndItems } from "./and";
+import { filterOrItems } from "./or";
+import { filterWhereItems } from "./where";
+
+/**
+ * @returns all items from `items` that match the given `filter`.
+ */
+ export function filterItems<T, P extends keyof T>(
+  table: SyncTable<T, P>,
+  items: T[],
+  where: NonNullable<Filter<T>["where"]>
+): T[] {
+  if ("$and" in where) {
+    return filterAndItems(table, items, where);
+  } else if ("$or" in where) {
+    return filterOrItems(table, items, where);
+  } else {
+    return filterWhereItems(items, where);
+  }
+}

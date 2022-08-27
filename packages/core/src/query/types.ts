@@ -1,6 +1,13 @@
 export type Filter<T> = {
-  where?: Where<T>;
+  where?: Where<T> | Or<T> | And<T>;
 };
+
+export type And<T> = {
+  $and: (Where<T> | Or<T>)[];
+}
+export type Or<T> = {
+  $or: (Where<T> | And<T>)[];
+}
 
 export type Where<T> = {
   [K in keyof T]?: Matchers<T[K]>;

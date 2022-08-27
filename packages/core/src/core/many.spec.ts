@@ -219,6 +219,109 @@ describe("filter", () => {
 
     });
 
+    describe("AND", () => {
+
+      it("should match no items with an empty AND filter", async () => {
+        const items = await many(userTable, {
+          where: {
+            $and: []
+          }
+        });
+
+        expect(items).toHaveLength(0);
+      });
+
+      it("should match items with an AND filter", async () => {
+        const items = await many(userTable, {
+          where: {
+            $and: [
+              { id: 0 },
+              { age: 5 }
+            ]
+          }
+        });
+
+        expect(new Set(items)).toStrictEqual(new Set([alice]));
+      });
+
+      it("should match items with an AND filter using full-table-iteration", async () => {
+        const items = await many(userTable, {
+          where: {
+            $and: [
+              { age: 5 }
+            ]
+          }
+        });
+
+        expect(new Set(items)).toStrictEqual(new Set([alice]));
+      });
+
+      it("should match no items with an incorrect AND filter", async () => {
+        const items = await many(userTable, {
+          where: {
+            $and: [
+              { id: 0 },
+              { age: 7 }
+            ]
+          }
+        });
+
+        expect(items).toStrictEqual([]);
+      });
+
+    });
+
+    describe("OR", () => {
+
+      it("should match no items with an empty OR filter", async () => {
+        const items = await many(userTable, {
+          where: {
+            $or: []
+          }
+        });
+
+        expect(items).toHaveLength(0);
+      });
+
+      it("should match items with an OR filter", async () => {
+        const items = await many(userTable, {
+          where: {
+            $or: [
+              { id: 1 },
+              { age: 5 }
+            ]
+          }
+        });
+
+        expect(new Set(items)).toStrictEqual(new Set([alice, bob]));
+      });
+
+      it("should match items with an AND filter using full-table-iteration", async () => {
+        const items = await many(userTable, {
+          where: {
+            $or: [
+              { age: 5 }
+            ]
+          }
+        });
+
+        expect(new Set(items)).toStrictEqual(new Set([alice]));
+      });
+
+      it("should match no items with an incorrect OR filter", async () => {
+        const items = await many(userTable, {
+          where: {
+            $or: [
+              { id: 10 }
+            ]
+          }
+        });
+
+        expect(items).toStrictEqual([]);
+      });
+
+    });
+
   });
 
 });

@@ -15,5 +15,37 @@
  * This is implemented in the `query/filter` module.
  */
 
-export * from './matchers';
-export * from './where';
+import { SyncKey, SyncTable } from '../../core';
+import { Filter } from '../types';
+import { selectAndFilterItems } from './and';
+import { selectOrFilterItems } from './or';
+import { selectWhereFilterItems } from './where';
+
+/**
+ * Select all items for `filter`.
+ *
+ * @returns the selected items from the database, or `null` in case a full table scan is required.
+ */
+ export async function selectItems<T, P extends keyof T>(
+  table: SyncTable<T, P>,
+  where: NonNullable<Filter<T>["where"]>
+): Promise<T[]> {
+
+  let possibleItems: T[] | null;
+
+  if ("$and" in where) {
+    possibleItems = await selectAndFilterItems(table, where);
+  } else if ("$or" in where) {
+    possibleItems = await selectOrFilterItems(table, where);
+  } else {
+    possibleItems = await selectWhereFilterItems(table, where);
+  }
+
+  if(possibleItems) {
+    // In case the where filter returned all items, success!
+    return possibleItems;
+  } else {
+    // In case null is returned, a full table scan is required
+    return table[SyncKey].storage.primary.valuesArray();
+  }
+}
