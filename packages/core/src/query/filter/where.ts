@@ -1,4 +1,4 @@
-import { Matchers, WhereFilter } from "../types";
+import { Matchers, Where } from "../types";
 import { matchesMatcher } from "./matchers";
 
 /**
@@ -6,7 +6,7 @@ import { matchesMatcher } from "./matchers";
  */
 export function filterWhereItems<T>(
   items: T[],
-  filter: WhereFilter<T>
+  filter: Where<T>
 ): T[] {
   if (items.length === 0) {
     return [];

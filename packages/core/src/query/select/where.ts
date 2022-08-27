@@ -1,5 +1,5 @@
 import { SyncKey, SyncTable } from "../../core";
-import { Matchers, WhereFilter } from "../types";
+import { Matchers, Where } from "../types";
 import { selectMatcherItems } from "./matchers";
 
 /**
@@ -9,7 +9,7 @@ import { selectMatcherItems } from "./matchers";
  */
 export async function selectWhereFilterItems<T, P extends keyof T>(
   table: SyncTable<T, P>,
-  filter: WhereFilter<T>
+  filter: Where<T>
 ): Promise<T[]|null> {
   // No matchers in filter? We can return early
   if (Object.keys(filter).length === 0) {

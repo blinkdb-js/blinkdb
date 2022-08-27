@@ -1,12 +1,11 @@
 import BTree from "sorted-btree";
 import {
-  ComplexEqualsMatcher,
   GteMatcher,
   GtMatcher,
   LteMatcher,
   LtMatcher,
   Matchers,
-  SimpleEqualsMatcher,
+  EqMatcher,
 } from "../types";
 
 /**
@@ -17,11 +16,11 @@ import {
 export async function selectMatcherItems<T>(
   btree: BTree<string, T>,
   matcher: Matchers<T[keyof T]>
-): Promise<T[]|null> {
+): Promise<T[] | null> {
   if (typeof matcher === "object" && "$equals" in matcher) {
-    return selectComplexEqMatcherItems(
+    return selectEqMatcherItems(
       btree,
-      matcher as ComplexEqualsMatcher<T[keyof T]>
+      (matcher as { $equals: T[keyof T] }).$equals
     );
   } else if (typeof matcher === "object" && "$gte" in matcher) {
     return selectGteMatcherItems(btree, matcher as GteMatcher<unknown>);
@@ -32,27 +31,15 @@ export async function selectMatcherItems<T>(
   } else if (typeof matcher === "object" && "$lt" in matcher) {
     return selectLtMatcherItems(btree, matcher as LtMatcher<unknown>);
   } else if (typeof matcher !== "object") {
-    return selectSimpleEqMatcherItems(
-      btree,
-      matcher as SimpleEqualsMatcher<T[keyof T]>
-    );
+    return selectEqMatcherItems(btree, matcher as T[keyof T]);
   }
 
   return null;
 }
 
-async function selectComplexEqMatcherItems<T>(
+async function selectEqMatcherItems<T>(
   btree: BTree<string, T>,
-  matcher: ComplexEqualsMatcher<T[keyof T]>
-): Promise<T[]> {
-  const key = String(matcher.$equals);
-  const item = btree.get(key);
-  return item ? [item] : [];
-}
-
-async function selectSimpleEqMatcherItems<T>(
-  btree: BTree<string, T>,
-  matcher: SimpleEqualsMatcher<T[keyof T]>
+  matcher: T[keyof T]
 ): Promise<T[]> {
   const key = String(matcher);
   const item = btree.get(key);
