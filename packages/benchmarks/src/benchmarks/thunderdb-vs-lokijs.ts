@@ -1,5 +1,5 @@
 import loki from "lokijs";
-import { clear, create, createDB, many, table } from "@thunder/core";
+import { clear, create, createDB, many, table, one } from "@thunder/core";
 import { randFirstName } from "@ngneat/falso";
 import { compare } from "../framework";
 
@@ -61,7 +61,7 @@ interface User {
       const x = lokiUserTable.get(2);
     },
     thunderdb: async () => {
-      const x = await many(thunderUserTable, { where: { id: "2" } });
+      const x = await one(thunderUserTable, { where: { id: "2" } });
     },
   });
 
@@ -70,7 +70,7 @@ interface User {
       const x = lokiUserTable.find({ id: "2" });
     },
     thunderdb: async () => {
-      const x = await many(thunderUserTable, { where: { id: "2" } });
+      const x = await one(thunderUserTable, { where: { id: "2" } });
     },
   });
 
