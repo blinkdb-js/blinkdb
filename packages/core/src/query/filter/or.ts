@@ -1,5 +1,5 @@
-import { SyncKey, SyncTable } from "../../core";
-import { Or } from "../types";
+import { SyncTable } from "../../core";
+import { And, Or, Where } from "../types";
 import { filterAndItems } from "./and";
 import { filterWhereItems } from "./where";
 
@@ -12,20 +12,29 @@ export function filterOrItems<T, P extends keyof T>(
     return [];
   }
 
-  let itemsMap: Map<string, T> = new Map();
+  if (filter.$or.length === 1) {
+    const childFilter = filter.$or[0];
+    return "$and" in childFilter
+      ? filterAndItems(table, items, childFilter)
+      : filterWhereItems(items, childFilter);
+  }
 
-  for (let childFilter of filter.$or) {
-    let childFilterItems =
-      "$and" in childFilter
-        ? filterAndItems(table, items, childFilter)
-        : filterWhereItems(items, childFilter);
+  const returnItems: T[] = [];
 
-    for (let childItem of childFilterItems) {
-      const primaryKeyProperty = table[SyncKey].options.primary;
-      const primaryKey = String(childItem[primaryKeyProperty]);
-      itemsMap.set(primaryKey, childItem);
+  for (let item of items) {
+    const itemInFilter = (childFilter: Where<T> | And<T>) => {
+      const resultItems =
+        "$and" in childFilter
+          ? filterAndItems(table, [item], childFilter)
+          : filterWhereItems([item], childFilter);
+      return resultItems.length > 0;
+    };
+    if (filter.$or.some(itemInFilter)) {
+      returnItems.push(item);
+    } else {
+      continue;
     }
   }
 
-  return Array.from(itemsMap.values());
+  return returnItems;
 }
