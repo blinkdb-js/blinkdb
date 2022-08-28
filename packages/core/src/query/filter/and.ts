@@ -16,9 +16,24 @@ export function filterAndItems<T, P extends keyof T>(
     return [];
   }
 
-  let itemsMap: Map<string, T> = new Map();
+  if (filter.$and.length === 1) {
+    const childFilter = filter.$and[0];
+    return "$or" in childFilter
+      ? filterOrItems(table, items, childFilter)
+      : filterWhereItems(items, childFilter);
+  }
 
-  for (let childFilter of filter.$and) {
+  const primaryKeyProperty = table[SyncKey].options.primary;
+
+  // Fill array with items of first filter
+  const firstChildFilter = filter.$and[0];
+  const filterItems =
+    "$or" in firstChildFilter
+      ? filterOrItems(table, items, firstChildFilter)
+      : filterWhereItems(items, firstChildFilter);
+
+  // Iterate over all items from the other filters and delete from map
+  for (let childFilter of filter.$and.slice(1)) {
     let childFilterItems =
       "$or" in childFilter
         ? filterOrItems(table, items, childFilter)
@@ -28,24 +43,18 @@ export function filterAndItems<T, P extends keyof T>(
       return [];
     }
 
-    const childItemsMap: Map<string, T> = new Map();
+    let itemsMap: Map<string, T> = new Map(childFilterItems.map(item => {
+      const primaryKey = String(item[primaryKeyProperty]);
+      return [primaryKey, item];
+    }));
 
-    for (let childItem of childFilterItems) {
-      const primaryKeyProperty = table[SyncKey].options.primary;
-      const primaryKey = String(childItem[primaryKeyProperty]);
-      childItemsMap.set(primaryKey, childItem);
-    }
-
-    if (itemsMap.size === 0) {
-      itemsMap = childItemsMap;
-    } else {
-      for (let key of Array.from(itemsMap.keys())) {
-        if (!childItemsMap.has(key)) {
-          itemsMap.delete(key);
-        }
+    for (let [index, item] of Array.from(filterItems.entries())) {
+      const primaryKey = String(item[primaryKeyProperty]);
+      if(!itemsMap.has(primaryKey)) {
+        filterItems.splice(index, 1);
       }
     }
   }
 
-  return Array.from(itemsMap.values());
+  return filterItems;
 }

@@ -12,14 +12,33 @@ export async function selectAndFilterItems<T, P extends keyof T>(
   table: SyncTable<T, P>,
   filter: And<T>
 ): Promise<T[] | null> {
-  if(filter.$and.length === 0) {
+  if (filter.$and.length === 0) {
     return [];
   }
 
-  let itemsMap: Map<string, T> = new Map();
+  if (filter.$and.length === 1) {
+    const childFilter = filter.$and[0];
+    return "$or" in childFilter
+      ? await selectOrFilterItems(table, childFilter)
+      : await selectWhereFilterItems(table, childFilter);
+  }
+
+  const primaryKeyProperty = table[SyncKey].options.primary;
   let childFiltersWithFullTableScan = 0;
 
-  for (let childFilter of filter.$and) {
+  // Fill array with items of first filter
+  const firstChildFilter = filter.$and[0];
+  let filterItems =
+    "$or" in firstChildFilter
+      ? await selectOrFilterItems(table, firstChildFilter)
+      : await selectWhereFilterItems(table, firstChildFilter);
+
+  if (!filterItems) {
+    childFiltersWithFullTableScan++;
+  }
+
+  // Iterate over all items from the other filters and delete from map
+  for (let childFilter of filter.$and.slice(1)) {
     let childFilterItems =
       "$or" in childFilter
         ? await selectOrFilterItems(table, childFilter)
@@ -34,28 +53,25 @@ export async function selectAndFilterItems<T, P extends keyof T>(
       return [];
     }
 
-    const childItemsMap: Map<string, T> = new Map();
-
-    for (let childItem of childFilterItems) {
-      const primaryKeyProperty = table[SyncKey].options.primary;
-      const primaryKey = String(childItem[primaryKeyProperty]);
-      childItemsMap.set(primaryKey, childItem);
+    if(!filterItems) {
+      filterItems = childFilterItems;
+      continue;
     }
 
-    if (itemsMap.size === 0) {
-      itemsMap = childItemsMap;
-    } else {
-      for (let key of Array.from(itemsMap.keys())) {
-        if (!childItemsMap.has(key)) {
-          itemsMap.delete(key);
-        }
+    let itemsMap: Map<string, T> = new Map(
+      childFilterItems.map((item) => {
+        const primaryKey = String(item[primaryKeyProperty]);
+        return [primaryKey, item];
+      })
+    );
+
+    for (let [index, item] of Array.from(filterItems.entries())) {
+      const primaryKey = String(item[primaryKeyProperty]);
+      if (!itemsMap.has(primaryKey)) {
+        filterItems.splice(index, 1);
       }
     }
   }
 
-  if (filter.$and.length === childFiltersWithFullTableScan) {
-    return null;
-  } else {
-    return Array.from(itemsMap.values());
-  }
+  return filterItems;
 }
