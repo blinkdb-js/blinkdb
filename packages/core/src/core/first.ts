@@ -29,7 +29,6 @@ export async function first<T, P extends keyof T>(table: SyncTable<T, P>, filter
   if(!filter) {
     const btree = table[SyncKey].storage.primary;
     const minKey = btree.minKey();
-    console.log('MINKEY', minKey);
     return minKey ? btree.get(minKey) ?? null : null;
   }
 
