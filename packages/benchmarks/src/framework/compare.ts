@@ -37,7 +37,7 @@ export async function compare(name: string, fns: { [name: string]: () => void|Pr
   for(const name of fnKeys) {
     const paddedName = name.padEnd(lenOfLongestFnName);
     const timesForName = times.get(name)!;
-    const avg = timesForName.reduce((a,b) => (a+b)) / timesForName.length;
+    const avg = timesForName[timesForName.length / 2];
     const high = timesForName.reduce((a, b) => a > b ? a : b);
     const low = timesForName.reduce((a, b) => a > b ? b : a);
     console.log(`  ${paddedName}   took ${avg.toFixed(5)}ms, high ${high.toFixed(5)}ms, low ${low.toFixed(5)}ms`);
