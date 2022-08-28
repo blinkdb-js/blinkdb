@@ -4,5 +4,5 @@
     "outDir": "dist",
     "declaration": true
   },
-  "exclude": ["**/*.spec.ts"]
+  "exclude": ["**/*.spec.ts", "dist/"]
 }
