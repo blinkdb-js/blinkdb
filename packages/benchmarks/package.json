@@ -7,6 +7,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "start-prof": "node -r ts-node/register --prof src/benchmarks/index.ts",
     "start": "ts-node src/benchmarks/index.ts"
   },
   "devDependencies": {
