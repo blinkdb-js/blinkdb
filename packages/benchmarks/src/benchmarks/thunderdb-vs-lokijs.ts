@@ -11,7 +11,9 @@ interface User {
 
 (async () => {
   // ThunderDB setup
-  const thunderdb = createDB();
+  const thunderdb = createDB({
+    clone: false
+  });
   const thunderUserTable = table<User>(thunderdb, "users")();
 
   // LokiJS setup
