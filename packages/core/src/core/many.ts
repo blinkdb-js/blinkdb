@@ -1,6 +1,7 @@
 import { filterItems } from "../query/filter";
 import { selectItems } from "../query/select";
 import { Filter } from "../query/types";
+import { clone } from "./clone";
 import { SyncKey } from "./createDB";
 import { SyncTable } from "./table";
 
@@ -58,5 +59,5 @@ export async function many<T, P extends keyof T>(
     items = filterItems(table, items, filter.where);
   }
 
-  return items;
+  return table[SyncKey].db[SyncKey].options.clone ? clone(items) : items;
 }

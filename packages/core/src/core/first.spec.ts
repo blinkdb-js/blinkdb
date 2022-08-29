@@ -26,6 +26,18 @@ it("should return the item if it finds a match", async () => {
   await create(userTable, user);
   const item = await first(userTable, { where: { id: 0 } });
 
+  expect(item).toStrictEqual(user);
+});
+
+it("should return the exact item if db.clone is set to false", async () => {
+  db = createDB({
+    clone: false
+  });
+  userTable = table<User>(db, "users")();
+  const user = { id: 0 };
+  await create(userTable, user);
+  const item = await first(userTable, { where: { id: 0 } });
+
   expect(item).toBe(user);
 });
 
@@ -36,7 +48,7 @@ it("should return the first item if there's more than more match", async () => {
   await create(userTable, user2);
   const item = await first(userTable, { where: { id: { $gte: 0 } } });
 
-  expect(item).toBe(user1);
+  expect(item).toStrictEqual(user1);
 });
 
 it("should return null if no item was found", async () => {

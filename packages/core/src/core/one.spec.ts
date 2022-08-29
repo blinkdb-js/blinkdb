@@ -30,3 +30,15 @@ it("should throw if more than one item has been found", async () => {
 it("should return the item if found", async () => {
   expect(await one(userTable, { where: { id: 2 } })).toStrictEqual({ id: 2 });
 });
+
+it("should return the exact item if db.clone is set to false", async () => {
+  db = createDB({
+    clone: false
+  });
+  userTable = table<User>(db, "users")();
+  const user = { id: 0 };
+  await create(userTable, user);
+  const item = await one(userTable, { where: { id: 0 } });
+
+  expect(item).toBe(user);
+});

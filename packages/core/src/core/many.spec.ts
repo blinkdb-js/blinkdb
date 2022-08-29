@@ -14,8 +14,8 @@ let db: SyncDB;
 let userTable: SyncTable<User, "id">;
 
 beforeEach(() => {
-    db = createDB();
-    userTable = table<User>(db, "users")();
+  db = createDB();
+  userTable = table<User>(db, "users")();
 });
 
 it("should return no items if there are no items in the database", async () => {
@@ -33,7 +33,6 @@ it("should return all items if called without a filter", async () => {
 });
 
 describe("filter", () => {
-
   const alice: User = { id: 0, name: "Alice", age: 5, someIds: [1, 2] };
   const bob: User = { id: 1, name: "Bob", someIds: [3, 1] };
   const charlie: User = { id: 2, name: "Charlie", age: 10, someIds: [4, 2] };
@@ -46,7 +45,7 @@ describe("filter", () => {
 
   it("should return no items with an empty where filter", async () => {
     const items = await many(userTable, {
-      where: {}
+      where: {},
     });
     expect(items).toHaveLength(0);
   });
@@ -54,18 +53,34 @@ describe("filter", () => {
   it("should return items by primary id", async () => {
     const items = await many(userTable, {
       where: {
-        id: 0
-      }
+        id: 0,
+      },
     });
     expect(new Set(items)).toStrictEqual(new Set([alice]));
+  });
+
+  it("should return the exact items if db.clone is set to false", async () => {
+    db = createDB({
+      clone: false
+    });
+    userTable = table<User>(db, "users")();
+    const user = { id: 0 };
+    await create(userTable, user);
+    const items = await many(userTable, {
+      where: {
+        id: 0,
+      },
+    });
+  
+    expect(items[0]).toBe(user);
   });
 
   it("should return items by primary id and other property", async () => {
     const items = await many(userTable, {
       where: {
         id: 0,
-        age: 5
-      }
+        age: 5,
+      },
     });
     expect(new Set(items)).toStrictEqual(new Set([alice]));
   });
@@ -74,8 +89,8 @@ describe("filter", () => {
     const items = await many(userTable, {
       where: {
         id: 0,
-        age: 4
-      }
+        age: 4,
+      },
     });
     expect(items).toHaveLength(0);
   });
@@ -83,190 +98,184 @@ describe("filter", () => {
   it("should return items by property using full-table-iteration as fallback", async () => {
     const items = await many(userTable, {
       where: {
-        age: 5
-      }
+        age: 5,
+      },
     });
 
     expect(new Set(items)).toStrictEqual(new Set([alice]));
   });
 
   describe("matchers", () => {
-
     describe("strings", () => {
-
       it("should match items by equality (simple)", async () => {
         const items = await many(userTable, {
           where: {
-            name: "Charlie"
-          }
+            name: "Charlie",
+          },
         });
-    
+
         expect(new Set(items)).toStrictEqual(new Set([charlie]));
       });
 
       it("should match items by equality (with $equals)", async () => {
         const items = await many(userTable, {
           where: {
-            name: { $equals: "Charlie" }
-          }
+            name: { $equals: "Charlie" },
+          },
         });
-    
+
         expect(new Set(items)).toStrictEqual(new Set([charlie]));
       });
 
       it("should match items with a $gte comparison", async () => {
         const items = await many(userTable, {
           where: {
-            name: { $gte: "Bob" }
-          }
+            name: { $gte: "Bob" },
+          },
         });
-    
+
         expect(new Set(items)).toStrictEqual(new Set([bob, charlie]));
       });
 
       it("should match items with a $gt comparison", async () => {
         const items = await many(userTable, {
           where: {
-            name: { $gt: "Bob" }
-          }
+            name: { $gt: "Bob" },
+          },
         });
-    
+
         expect(new Set(items)).toStrictEqual(new Set([charlie]));
       });
 
       it("should match items with a $lte comparison", async () => {
         const items = await many(userTable, {
           where: {
-            name: { $lte: "Bob" }
-          }
+            name: { $lte: "Bob" },
+          },
         });
-    
+
         expect(new Set(items)).toStrictEqual(new Set([alice, bob]));
       });
 
       it("should match items with a $lt comparison", async () => {
         const items = await many(userTable, {
           where: {
-            name: { $lt: "Bob" }
-          }
+            name: { $lt: "Bob" },
+          },
         });
-    
+
         expect(new Set(items)).toStrictEqual(new Set([alice]));
       });
 
       it("should match items with a $in comparison", async () => {
         const items = await many(userTable, {
           where: {
-            name: { $in: ["Alice", "Charlie"] }
-          }
+            name: { $in: ["Alice", "Charlie"] },
+          },
         });
 
         expect(new Set(items)).toStrictEqual(new Set([alice, charlie]));
       });
-
     });
 
     describe("numbers", () => {
-
       it("should match items by equality (simple)", async () => {
         const items = await many(userTable, {
           where: {
-            id: 0
-          }
+            id: 0,
+          },
         });
-    
+
         expect(new Set(items)).toStrictEqual(new Set([alice]));
       });
 
       it("should match items by equality (with $equals)", async () => {
         const items = await many(userTable, {
           where: {
-             id: { $equals: 0 }
-          }
+            id: { $equals: 0 },
+          },
         });
-    
+
         expect(new Set(items)).toStrictEqual(new Set([alice]));
       });
 
       it("should match items with a $gte comparison", async () => {
         const items = await many(userTable, {
           where: {
-            id: { $gte: 1 }
-          }
+            id: { $gte: 1 },
+          },
         });
-    
+
         expect(new Set(items)).toStrictEqual(new Set([bob, charlie]));
       });
 
       it("should match items with a $gt comparison", async () => {
         const items = await many(userTable, {
           where: {
-            id: { $gt: 1 }
-          }
+            id: { $gt: 1 },
+          },
         });
-    
+
         expect(new Set(items)).toStrictEqual(new Set([charlie]));
       });
 
       it("should match items with a $lte comparison", async () => {
         const items = await many(userTable, {
           where: {
-            id: { $lte: 1 }
-          }
+            id: { $lte: 1 },
+          },
         });
-    
+
         expect(new Set(items)).toStrictEqual(new Set([alice, bob]));
       });
 
       it("should match items with a $lt comparison", async () => {
         const items = await many(userTable, {
           where: {
-            id: { $lt: 1 }
-          }
+            id: { $lt: 1 },
+          },
         });
-    
+
         expect(new Set(items)).toStrictEqual(new Set([alice]));
       });
 
       it("should match items with a $in comparison", async () => {
         const items = await many(userTable, {
           where: {
-            id: { $in: [1, 0] }
-          }
+            id: { $in: [1, 0] },
+          },
         });
 
         expect(new Set(items)).toStrictEqual(new Set([alice, bob]));
       });
-
     });
 
     describe("arrays", () => {
-
       it("should match items by equality (simple)", async () => {
         const items = await many(userTable, {
           where: {
-            someIds: [4, 2]
-          }
+            someIds: [4, 2],
+          },
         });
-    
+
         expect(new Set(items)).toStrictEqual(new Set([charlie]));
       });
 
       it("should match items by equality (with $equals)", async () => {
         const items = await many(userTable, {
           where: {
-            someIds: { $equals: [4, 2] }
-          }
+            someIds: { $equals: [4, 2] },
+          },
         });
-    
+
         expect(new Set(items)).toStrictEqual(new Set([charlie]));
       });
 
       it("should match items by equality regardless of array item order", async () => {
         const items = await many(userTable, {
           where: {
-            someIds: { $equals: [2, 4] }
-          }
+            someIds: { $equals: [2, 4] },
+          },
         });
 
         expect(new Set(items)).toStrictEqual(new Set([charlie]));
@@ -275,22 +284,20 @@ describe("filter", () => {
       it("should match items with $contains", async () => {
         const items = await many(userTable, {
           where: {
-            someIds: { $contains: 2 }
-          }
+            someIds: { $contains: 2 },
+          },
         });
 
         expect(new Set(items)).toStrictEqual(new Set([alice, charlie]));
       });
-
     });
 
     describe("AND", () => {
-
       it("should match no items with an empty AND filter", async () => {
         const items = await many(userTable, {
           where: {
-            $and: []
-          }
+            $and: [],
+          },
         });
 
         expect(items).toHaveLength(0);
@@ -299,11 +306,8 @@ describe("filter", () => {
       it("should match items with an AND filter", async () => {
         const items = await many(userTable, {
           where: {
-            $and: [
-              { id: 0 },
-              { age: 5 }
-            ]
-          }
+            $and: [{ id: 0 }, { age: 5 }],
+          },
         });
 
         expect(new Set(items)).toStrictEqual(new Set([alice]));
@@ -312,10 +316,8 @@ describe("filter", () => {
       it("should match items with an AND filter using full-table-iteration", async () => {
         const items = await many(userTable, {
           where: {
-            $and: [
-              { age: 5 }
-            ]
-          }
+            $and: [{ age: 5 }],
+          },
         });
 
         expect(new Set(items)).toStrictEqual(new Set([alice]));
@@ -324,25 +326,20 @@ describe("filter", () => {
       it("should match no items with an incorrect AND filter", async () => {
         const items = await many(userTable, {
           where: {
-            $and: [
-              { id: 0 },
-              { age: 7 }
-            ]
-          }
+            $and: [{ id: 0 }, { age: 7 }],
+          },
         });
 
         expect(items).toStrictEqual([]);
       });
-
     });
 
     describe("OR", () => {
-
       it("should match no items with an empty OR filter", async () => {
         const items = await many(userTable, {
           where: {
-            $or: []
-          }
+            $or: [],
+          },
         });
 
         expect(items).toHaveLength(0);
@@ -351,11 +348,8 @@ describe("filter", () => {
       it("should match items with an OR filter", async () => {
         const items = await many(userTable, {
           where: {
-            $or: [
-              { id: 1 },
-              { age: 5 }
-            ]
-          }
+            $or: [{ id: 1 }, { age: 5 }],
+          },
         });
 
         expect(new Set(items)).toStrictEqual(new Set([alice, bob]));
@@ -364,10 +358,8 @@ describe("filter", () => {
       it("should match items with an AND filter using full-table-iteration", async () => {
         const items = await many(userTable, {
           where: {
-            $or: [
-              { age: 5 }
-            ]
-          }
+            $or: [{ age: 5 }],
+          },
         });
 
         expect(new Set(items)).toStrictEqual(new Set([alice]));
@@ -376,17 +368,12 @@ describe("filter", () => {
       it("should match no items with an incorrect OR filter", async () => {
         const items = await many(userTable, {
           where: {
-            $or: [
-              { id: 10 }
-            ]
-          }
+            $or: [{ id: 10 }],
+          },
         });
 
         expect(items).toStrictEqual([]);
       });
-
     });
-
   });
-
 });

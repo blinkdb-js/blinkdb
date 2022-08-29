@@ -1,4 +1,5 @@
 import { Filter } from "../query/types";
+import { clone } from "./clone";
 import { SyncKey } from "./createDB";
 import { many } from "./many";
 import { SyncTable } from "./table";
@@ -21,6 +22,7 @@ export async function one<T, P extends keyof T>(table: SyncTable<T, P>, filter: 
   } else if (res.length > 1) {
     throw new Error("More than one item found for the given query.");
   }
-  return res[0];
+
+  return table[SyncKey].db[SyncKey].options.clone ? clone(res[0]) : res[0];
 }
 
