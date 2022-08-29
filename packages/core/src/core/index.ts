@@ -4,6 +4,7 @@ export * from "./createDB";
 export * from "./first";
 export * from "./many";
 export * from "./one";
+export * from "./remove";
 export * from "./table";
 export * from "./update";
 export * from "./uuid";
