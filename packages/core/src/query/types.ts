@@ -35,6 +35,7 @@ export type StringMatchers<T extends string> =
   | GteMatcher<T>
   | LtMatcher<T>
   | LteMatcher<T>
+  | BetweenMatcher<T>
   | GenericMatchers<T>;
 
 export type NumberMatchers<T extends number> =
@@ -42,12 +43,14 @@ export type NumberMatchers<T extends number> =
   | GteMatcher<T>
   | LtMatcher<T>
   | LteMatcher<T>
+  | BetweenMatcher<T>
   | GenericMatchers<T>;
 
 export type GtMatcher<T> = { $gt: T };
 export type GteMatcher<T> = { $gte: T };
 export type LtMatcher<T> = { $lt: T };
 export type LteMatcher<T> = { $lte: T };
+export type BetweenMatcher<T> = { $between: [T, T] };
 
 export type ArrayMatchers<T> = ContainsMatcher<T> | GenericMatchers<T[]>;
 
@@ -59,8 +62,10 @@ export type SubWhere<T> = {
   [K in keyof T]: Matchers<T[K]>;
 };
 
-export type DateMatchers<T> = | GtMatcher<T>
-| GteMatcher<T>
-| LtMatcher<T>
-| LteMatcher<T>
-| GenericMatchers<T>;
+export type DateMatchers<T> =
+  | GtMatcher<T>
+  | GteMatcher<T>
+  | LtMatcher<T>
+  | LteMatcher<T>
+  | BetweenMatcher<T>
+  | GenericMatchers<T>;

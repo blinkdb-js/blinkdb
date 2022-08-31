@@ -202,6 +202,16 @@ describe("filter", () => {
 
         expect(new Set(items)).toStrictEqual(new Set([alice, charlie]));
       });
+
+      it.only("should match items with a $between expression", async () => {
+        const items = await many(userTable, {
+          where: {
+            name: { $between: ["Charlie", "Zebra"] },
+          },
+        });
+
+        expect(new Set(items)).toStrictEqual(new Set([charlie]));
+      });
     });
 
     describe("numbers", () => {
@@ -269,6 +279,16 @@ describe("filter", () => {
         const items = await many(userTable, {
           where: {
             id: { $in: [1, 0] },
+          },
+        });
+
+        expect(new Set(items)).toStrictEqual(new Set([alice, bob]));
+      });
+
+      it.only("should match items with a $between expression", async () => {
+        const items = await many(userTable, {
+          where: {
+            id: { $between: [-1000, 1] },
           },
         });
 
@@ -434,7 +454,7 @@ describe("filter", () => {
       it("should match items by equality (simple)", async () => {
         const items = await many(userTable, {
           where: {
-            date: new Date("2000-01-03T00:00:00")
+            date: new Date("2000-01-03T00:00:00"),
           },
         });
 
@@ -445,8 +465,8 @@ describe("filter", () => {
         const items = await many(userTable, {
           where: {
             date: {
-              $equals: new Date("2000-01-02T00:00:00")
-            }
+              $equals: new Date("2000-01-02T00:00:00"),
+            },
           },
         });
 
@@ -457,8 +477,8 @@ describe("filter", () => {
         const items = await many(userTable, {
           where: {
             date: {
-              $gte: new Date("2000-01-02T00:00:00")
-            }
+              $gte: new Date("2000-01-02T00:00:00"),
+            },
           },
         });
 
@@ -469,8 +489,8 @@ describe("filter", () => {
         const items = await many(userTable, {
           where: {
             date: {
-              $gt: new Date("2000-01-02T00:00:00")
-            }
+              $gt: new Date("2000-01-02T00:00:00"),
+            },
           },
         });
 
@@ -481,8 +501,8 @@ describe("filter", () => {
         const items = await many(userTable, {
           where: {
             date: {
-              $lte: new Date("2000-01-02T00:00:00")
-            }
+              $lte: new Date("2000-01-02T00:00:00"),
+            },
           },
         });
 
@@ -493,8 +513,8 @@ describe("filter", () => {
         const items = await many(userTable, {
           where: {
             date: {
-              $lt: new Date("2000-01-02T00:00:00")
-            }
+              $lt: new Date("2000-01-02T00:00:00"),
+            },
           },
         });
 
@@ -505,12 +525,30 @@ describe("filter", () => {
         const items = await many(userTable, {
           where: {
             date: {
-              $in: [new Date("2000-01-03T00:00:00"), new Date("2000-01-01T00:00:00")]
-            }
+              $in: [
+                new Date("2000-01-03T00:00:00"),
+                new Date("2000-01-01T00:00:00"),
+              ],
+            },
           },
         });
 
         expect(new Set(items)).toStrictEqual(new Set([alice, charlie]));
+      });
+
+      it("should match items with a $between expression", async () => {
+        const items = await many(userTable, {
+          where: {
+            date: {
+              $between: [
+                new Date("2000-01-02T00:00:00"),
+                new Date("2000-01-12T00:00:00"),
+              ],
+            },
+          },
+        });
+
+        expect(new Set(items)).toStrictEqual(new Set([bob, charlie]));
       });
     });
 

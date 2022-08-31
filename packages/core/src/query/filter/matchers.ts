@@ -1,4 +1,5 @@
 import {
+  BetweenMatcher,
   ContainsMatcher,
   GteMatcher,
   GtMatcher,
@@ -35,6 +36,8 @@ export function matchesMatcher<T, P extends keyof T>(
     return matchesContainsMatcher(property, matcher as ContainsMatcher<T[P]>);
   } else if (typeof matcher === "object" && "$in" in matcher) {
     return matchesInMatcher(property, matcher as InMatcher<T[P]>);
+  } else if (typeof matcher === "object" && "$between" in matcher) {
+    return matchesBetweenMatcher(property, matcher as BetweenMatcher<T[P]>);
   } else if (matcher instanceof Date && property instanceof Date) {
     return matchesEqMatcher(property, matcher as Date);
   } else if (typeof matcher === "object") {
@@ -44,10 +47,7 @@ export function matchesMatcher<T, P extends keyof T>(
   }
 }
 
-function matchesEqMatcher<T>(
-  property: T,
-  matcher: T
-): boolean {
+function matchesEqMatcher<T>(property: T, matcher: T): boolean {
   if (property instanceof Date && matcher instanceof Date) {
     return equal(property.getTime(), matcher.getTime());
   }
@@ -98,8 +98,10 @@ function matchesContainsMatcher<T>(
 }
 
 function matchesInMatcher<T>(property: T, matcher: InMatcher<T>): boolean {
-  if(property instanceof Date) {
-    return (matcher.$in as unknown as Date[]).map(x => x.getTime()).includes(property.getTime());
+  if (property instanceof Date) {
+    return (matcher.$in as unknown as Date[])
+      .map((x) => x.getTime())
+      .includes(property.getTime());
   }
   return matcher.$in.includes(property);
 }
@@ -110,4 +112,11 @@ function matchesSubWhereMatcher<T>(property: T, matcher: SubWhere<T>): boolean {
     matches = matches && matchesMatcher(property[propKey], matcher[propKey]);
   }
   return matches;
+}
+
+function matchesBetweenMatcher<T>(
+  property: T,
+  matcher: BetweenMatcher<T>
+): boolean {
+  return property >= matcher.$between[0] && property <= matcher.$between[1];
 }

@@ -5,8 +5,8 @@ import {
   LteMatcher,
   LtMatcher,
   Matchers,
-  EqMatcher,
   InMatcher,
+  BetweenMatcher,
 } from "../types";
 
 /**
@@ -35,9 +35,16 @@ export async function selectMatcherItems<T>(
     return null;
   } else if (typeof matcher === "object" && "$in" in matcher) {
     return selectInMatcherItems(btree, matcher as InMatcher<T[keyof T]>);
+  } else if (typeof matcher === "object" && "$between" in matcher) {
+    return selectBetweenMatcherItems(
+      btree,
+      matcher as BetweenMatcher<T[keyof T]>
+    );
   } else if (typeof matcher !== "object") {
     return selectEqMatcherItems(btree, matcher as T[keyof T]);
   }
+
+  console.error("H");
 
   return null;
 }
@@ -120,7 +127,7 @@ async function selectInMatcherItems<T, P extends keyof T>(
   if (matcher.$in.length === 1) {
     const key = String(matcher.$in[0]);
     const item = btree.get(key);
-    return item ? [item] : []
+    return item ? [item] : [];
   }
 
   let matcherItems: T[P][];
@@ -136,15 +143,34 @@ async function selectInMatcherItems<T, P extends keyof T>(
     matcherItems = matcher.$in.sort();
   }
 
-  const stringifiedMatcherItems = matcherItems.map(i => String(i));
+  const stringifiedMatcherItems = matcherItems.map((i) => String(i));
   const minKey = stringifiedMatcherItems[0];
   const maxKey = stringifiedMatcherItems[matcherItems.length - 1];
   const items: T[] = [];
 
   btree.forRange(minKey, maxKey, true, (key, val) => {
-    if (key === minKey || key == maxKey || stringifiedMatcherItems.includes(key)) {
+    if (
+      key === minKey ||
+      key == maxKey ||
+      stringifiedMatcherItems.includes(key)
+    ) {
       items.push(val);
     }
+  });
+
+  return items;
+}
+
+async function selectBetweenMatcherItems<T, P extends keyof T>(
+  btree: BTree<string, T>,
+  matcher: BetweenMatcher<T[P]>
+): Promise<T[]> {
+  const minKey = String(matcher.$between[0]);
+  const maxKey = String(matcher.$between[1]);
+  const items: T[] = [];
+
+  btree.forRange(minKey, maxKey, true, (_, val) => {
+    items.push(val);
   });
 
   return items;
