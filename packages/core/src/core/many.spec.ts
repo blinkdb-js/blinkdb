@@ -8,6 +8,11 @@ interface User {
   name: string;
   age?: number;
   someIds?: number[];
+  some?: {
+    nested: {
+      object: number;
+    };
+  };
 }
 
 let db: SyncDB;
@@ -33,9 +38,26 @@ it("should return all items if called without a filter", async () => {
 });
 
 describe("filter", () => {
-  const alice: User = { id: 0, name: "Alice", age: 5, someIds: [1, 2] };
-  const bob: User = { id: 1, name: "Bob", someIds: [3, 1] };
-  const charlie: User = { id: 2, name: "Charlie", age: 10, someIds: [4, 2] };
+  const alice: User = {
+    id: 0,
+    name: "Alice",
+    age: 5,
+    someIds: [1, 2],
+    some: { nested: { object: 0 } },
+  };
+  const bob: User = {
+    id: 1,
+    name: "Bob",
+    someIds: [3, 1],
+    some: { nested: { object: 5 } },
+  };
+  const charlie: User = {
+    id: 2,
+    name: "Charlie",
+    age: 10,
+    someIds: [4, 2],
+    some: { nested: { object: 10 } },
+  };
 
   beforeEach(async () => {
     await create(userTable, alice);
@@ -61,7 +83,7 @@ describe("filter", () => {
 
   it("should return the exact items if db.clone is set to false", async () => {
     db = createDB({
-      clone: false
+      clone: false,
     });
     userTable = table<User>(db, "users")();
     const user = { id: 0 };
@@ -71,7 +93,7 @@ describe("filter", () => {
         id: 0,
       },
     });
-  
+
     expect(items[0]).toBe(user);
   });
 
@@ -285,6 +307,118 @@ describe("filter", () => {
         const items = await many(userTable, {
           where: {
             someIds: { $contains: 2 },
+          },
+        });
+
+        expect(new Set(items)).toStrictEqual(new Set([alice, charlie]));
+      });
+    });
+
+    describe("objects", () => {
+      it("should match items by equality (simple)", async () => {
+        const items = await many(userTable, {
+          where: {
+            some: {
+              nested: {
+                object: 5,
+              },
+            },
+          },
+        });
+
+        expect(new Set(items)).toStrictEqual(new Set([bob]));
+      });
+
+      it("should match items by equality (with $equals)", async () => {
+        const items = await many(userTable, {
+          where: {
+            some: {
+              nested: {
+                object: {
+                  $equals: 0,
+                },
+              },
+            },
+          },
+        });
+
+        expect(new Set(items)).toStrictEqual(new Set([alice]));
+      });
+
+      it("should match items with a $gte comparison", async () => {
+        const items = await many(userTable, {
+          where: {
+            some: {
+              nested: {
+                object: {
+                  $gte: 0,
+                },
+              },
+            },
+          },
+        });
+
+        expect(new Set(items)).toStrictEqual(new Set([alice, bob, charlie]));
+      });
+
+      it("should match items with a $gt comparison", async () => {
+        const items = await many(userTable, {
+          where: {
+            some: {
+              nested: {
+                object: {
+                  $gt: 0,
+                },
+              },
+            },
+          },
+        });
+
+        expect(new Set(items)).toStrictEqual(new Set([bob, charlie]));
+      });
+
+      it("should match items with a $lte comparison", async () => {
+        const items = await many(userTable, {
+          where: {
+            some: {
+              nested: {
+                object: {
+                  $lte: 5,
+                },
+              },
+            },
+          },
+        });
+
+        expect(new Set(items)).toStrictEqual(new Set([alice, bob]));
+      });
+
+      it("should match items with a $lt comparison", async () => {
+        const items = await many(userTable, {
+          where: {
+            some: {
+              nested: {
+                object: {
+                  $lt: 5,
+                },
+              },
+            },
+          },
+        });
+
+        expect(new Set(items)).toStrictEqual(new Set([alice]));
+      });
+
+      it("should match items with an $in comparison", async () => {
+        const items = await many(userTable, {
+          where: {
+            some: {
+              nested: {
+                object: {
+                  $in: [0, 10],
+                },
+              },
+            },
           },
         });
 

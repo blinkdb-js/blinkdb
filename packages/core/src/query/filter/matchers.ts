@@ -6,8 +6,9 @@ import {
   LteMatcher,
   LtMatcher,
   Matchers,
+  SubWhere,
 } from "../types";
-import equal from 'fast-deep-equal';
+import equal from "fast-deep-equal";
 
 /**
  * @returns whether `property` matches `matcher`.
@@ -26,10 +27,16 @@ export function matchesMatcher<T, P extends keyof T>(
     return matchesLteMatcher(property, matcher as LteMatcher<T[P]>);
   } else if (typeof matcher === "object" && "$lt" in matcher) {
     return matchesLtMatcher(property, matcher as LtMatcher<T[P]>);
-  } else if (typeof matcher === "object" && "$contains" in matcher && Array.isArray(property)) {
+  } else if (
+    typeof matcher === "object" &&
+    "$contains" in matcher &&
+    Array.isArray(property)
+  ) {
     return matchesContainsMatcher(property, matcher as ContainsMatcher<T[P]>);
   } else if (typeof matcher === "object" && "$in" in matcher) {
     return matchesInMatcher(property, matcher as InMatcher<T[P]>);
+  } else if (typeof matcher === "object") {
+    return matchesSubWhereMatcher(property, matcher as SubWhere<T[P]>);
   } else {
     return matchesEqMatcher(property, matcher as T[P]);
   }
@@ -39,10 +46,10 @@ function matchesEqMatcher<T, P extends keyof T>(
   property: T[P],
   matcher: T[P]
 ): boolean {
-  if(Array.isArray(property)) {
+  if (Array.isArray(property)) {
     property.sort();
   }
-  if(Array.isArray(matcher)) {
+  if (Array.isArray(matcher)) {
     matcher.sort();
   }
 
@@ -84,9 +91,14 @@ function matchesContainsMatcher<T>(
   return property.includes(matcher.$contains);
 }
 
-function matchesInMatcher<T>(
-  property: T,
-  matcher: InMatcher<T>
-): boolean {
+function matchesInMatcher<T>(property: T, matcher: InMatcher<T>): boolean {
   return matcher.$in.includes(property);
+}
+
+function matchesSubWhereMatcher<T>(property: T, matcher: SubWhere<T>): boolean {
+  let matches = true;
+  for (const propKey in matcher) {
+    matches = matches && matchesMatcher(property[propKey], matcher[propKey]);
+  }
+  return matches;
 }

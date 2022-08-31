@@ -19,6 +19,8 @@ export type Matchers<T> = T extends string
   ? NumberMatchers<T>
   : T extends (infer R)[]
   ? ArrayMatchers<R>
+  : T extends {}
+  ? ObjectMatchers<T>
   : GenericMatchers<T>;
 
 export type GenericMatchers<T> = EqMatcher<T> | InMatcher<T>;
@@ -48,3 +50,9 @@ export type LteMatcher<T> = { $lte: T };
 export type ArrayMatchers<T> = ContainsMatcher<T> | GenericMatchers<T[]>;
 
 export type ContainsMatcher<T> = { $contains: T };
+
+export type ObjectMatchers<T> = SubWhere<T> | GenericMatchers<T>;
+
+export type SubWhere<T> = {
+  [K in keyof T]: Matchers<T[K]>;
+};
