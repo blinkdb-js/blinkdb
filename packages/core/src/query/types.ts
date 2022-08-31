@@ -19,6 +19,8 @@ export type Matchers<T> = T extends string
   ? NumberMatchers<T>
   : T extends (infer R)[]
   ? ArrayMatchers<R>
+  : T extends Date
+  ? DateMatchers<T>
   : T extends {}
   ? ObjectMatchers<T>
   : GenericMatchers<T>;
@@ -56,3 +58,9 @@ export type ObjectMatchers<T> = SubWhere<T> | GenericMatchers<T>;
 export type SubWhere<T> = {
   [K in keyof T]: Matchers<T[K]>;
 };
+
+export type DateMatchers<T> = | GtMatcher<T>
+| GteMatcher<T>
+| LtMatcher<T>
+| LteMatcher<T>
+| GenericMatchers<T>;

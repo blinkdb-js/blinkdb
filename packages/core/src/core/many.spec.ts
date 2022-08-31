@@ -13,6 +13,7 @@ interface User {
       object: number;
     };
   };
+  date?: Date;
 }
 
 let db: SyncDB;
@@ -44,12 +45,14 @@ describe("filter", () => {
     age: 5,
     someIds: [1, 2],
     some: { nested: { object: 0 } },
+    date: new Date("2000-01-01T00:00:00"),
   };
   const bob: User = {
     id: 1,
     name: "Bob",
     someIds: [3, 1],
     some: { nested: { object: 5 } },
+    date: new Date("2000-01-02T00:00:00"),
   };
   const charlie: User = {
     id: 2,
@@ -57,6 +60,7 @@ describe("filter", () => {
     age: 10,
     someIds: [4, 2],
     some: { nested: { object: 10 } },
+    date: new Date("2000-01-03T00:00:00"),
   };
 
   beforeEach(async () => {
@@ -419,6 +423,90 @@ describe("filter", () => {
                 },
               },
             },
+          },
+        });
+
+        expect(new Set(items)).toStrictEqual(new Set([alice, charlie]));
+      });
+    });
+
+    describe("dates", () => {
+      it("should match items by equality (simple)", async () => {
+        const items = await many(userTable, {
+          where: {
+            date: new Date("2000-01-03T00:00:00")
+          },
+        });
+
+        expect(new Set(items)).toStrictEqual(new Set([charlie]));
+      });
+
+      it("should match items by equality (with $equals)", async () => {
+        const items = await many(userTable, {
+          where: {
+            date: {
+              $equals: new Date("2000-01-02T00:00:00")
+            }
+          },
+        });
+
+        expect(new Set(items)).toStrictEqual(new Set([bob]));
+      });
+
+      it("should match items with a $gte comparison", async () => {
+        const items = await many(userTable, {
+          where: {
+            date: {
+              $gte: new Date("2000-01-02T00:00:00")
+            }
+          },
+        });
+
+        expect(new Set(items)).toStrictEqual(new Set([bob, charlie]));
+      });
+
+      it("should match items with a $gt comparison", async () => {
+        const items = await many(userTable, {
+          where: {
+            date: {
+              $gt: new Date("2000-01-02T00:00:00")
+            }
+          },
+        });
+
+        expect(new Set(items)).toStrictEqual(new Set([charlie]));
+      });
+
+      it("should match items with a $lte comparison", async () => {
+        const items = await many(userTable, {
+          where: {
+            date: {
+              $lte: new Date("2000-01-02T00:00:00")
+            }
+          },
+        });
+
+        expect(new Set(items)).toStrictEqual(new Set([alice, bob]));
+      });
+
+      it("should match items with a $lt comparison", async () => {
+        const items = await many(userTable, {
+          where: {
+            date: {
+              $lt: new Date("2000-01-02T00:00:00")
+            }
+          },
+        });
+
+        expect(new Set(items)).toStrictEqual(new Set([alice]));
+      });
+
+      it("should match items with an $in comparison", async () => {
+        const items = await many(userTable, {
+          where: {
+            date: {
+              $in: [new Date("2000-01-03T00:00:00"), new Date("2000-01-01T00:00:00")]
+            }
           },
         });
 

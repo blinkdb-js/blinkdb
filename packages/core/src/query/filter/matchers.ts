@@ -35,6 +35,8 @@ export function matchesMatcher<T, P extends keyof T>(
     return matchesContainsMatcher(property, matcher as ContainsMatcher<T[P]>);
   } else if (typeof matcher === "object" && "$in" in matcher) {
     return matchesInMatcher(property, matcher as InMatcher<T[P]>);
+  } else if (matcher instanceof Date && property instanceof Date) {
+    return matchesEqMatcher(property, matcher as Date);
   } else if (typeof matcher === "object") {
     return matchesSubWhereMatcher(property, matcher as SubWhere<T[P]>);
   } else {
@@ -42,10 +44,14 @@ export function matchesMatcher<T, P extends keyof T>(
   }
 }
 
-function matchesEqMatcher<T, P extends keyof T>(
-  property: T[P],
-  matcher: T[P]
+function matchesEqMatcher<T>(
+  property: T,
+  matcher: T
 ): boolean {
+  if (property instanceof Date && matcher instanceof Date) {
+    return equal(property.getTime(), matcher.getTime());
+  }
+
   if (Array.isArray(property)) {
     property.sort();
   }
@@ -92,6 +98,9 @@ function matchesContainsMatcher<T>(
 }
 
 function matchesInMatcher<T>(property: T, matcher: InMatcher<T>): boolean {
+  if(property instanceof Date) {
+    return (matcher.$in as unknown as Date[]).map(x => x.getTime()).includes(property.getTime());
+  }
   return matcher.$in.includes(property);
 }
 
