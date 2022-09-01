@@ -31,7 +31,7 @@ it("should return the item if it finds a match", async () => {
 
 it("should return the exact item if db.clone is set to false", async () => {
   db = createDB({
-    clone: false
+    clone: false,
   });
   userTable = table<User>(db, "users")();
   const user = { id: 0 };

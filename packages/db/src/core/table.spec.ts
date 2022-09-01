@@ -14,7 +14,7 @@ interface User2 {
 let db: SyncDB;
 
 beforeEach(() => {
-    db = createDB();
+  db = createDB();
 });
 
 it("should create a table without options", () => {
@@ -22,13 +22,22 @@ it("should create a table without options", () => {
 });
 
 it("should create a table with a different primary key", () => {
-  table<User1>(db, "user")({
-    primary: "name"
+  table<User1>(
+    db,
+    "user"
+  )({
+    primary: "name",
   });
-  table<User2>(db, "user")({
-    primary: "uuid"
+  table<User2>(
+    db,
+    "user"
+  )({
+    primary: "uuid",
   });
-  table<User2>(db, "user")({
-    primary: "age"
+  table<User2>(
+    db,
+    "user"
+  )({
+    primary: "age",
   });
 });

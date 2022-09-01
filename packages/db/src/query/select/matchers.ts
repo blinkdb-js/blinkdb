@@ -19,10 +19,7 @@ export async function selectMatcherItems<T>(
   matcher: Matchers<T[keyof T]>
 ): Promise<T[] | null> {
   if (typeof matcher === "object" && "$equals" in matcher) {
-    return selectEqMatcherItems(
-      btree,
-      (matcher as { $equals: T[keyof T] }).$equals
-    );
+    return selectEqMatcherItems(btree, (matcher as { $equals: T[keyof T] }).$equals);
   } else if (typeof matcher === "object" && "$gte" in matcher) {
     return selectGteMatcherItems(btree, matcher as GteMatcher<unknown>);
   } else if (typeof matcher === "object" && "$gt" in matcher) {
@@ -36,10 +33,7 @@ export async function selectMatcherItems<T>(
   } else if (typeof matcher === "object" && "$in" in matcher) {
     return selectInMatcherItems(btree, matcher as InMatcher<T[keyof T]>);
   } else if (typeof matcher === "object" && "$between" in matcher) {
-    return selectBetweenMatcherItems(
-      btree,
-      matcher as BetweenMatcher<T[keyof T]>
-    );
+    return selectBetweenMatcherItems(btree, matcher as BetweenMatcher<T[keyof T]>);
   } else if (typeof matcher !== "object") {
     return selectEqMatcherItems(btree, matcher as T[keyof T]);
   }
@@ -149,11 +143,7 @@ async function selectInMatcherItems<T, P extends keyof T>(
   const items: T[] = [];
 
   btree.forRange(minKey, maxKey, true, (key, val) => {
-    if (
-      key === minKey ||
-      key == maxKey ||
-      stringifiedMatcherItems.includes(key)
-    ) {
+    if (key === minKey || key == maxKey || stringifiedMatcherItems.includes(key)) {
       items.push(val);
     }
   });

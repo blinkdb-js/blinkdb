@@ -2,9 +2,9 @@ export const SyncKey = Symbol("Sync");
 
 /**
  * Creates a new database.
- * 
+ *
  * Using the `db` object, you can create new tables in which to save your entities.
- * 
+ *
  * @example
  * const db = createDB();
  * const userTable = table<User>(db, "users");
@@ -15,7 +15,7 @@ export function createDB(options?: Partial<DBOptions>): SyncDB {
     [SyncKey]: {
       options: {
         clone: true,
-        ...options
+        ...options,
       },
     },
   };
@@ -24,10 +24,10 @@ export function createDB(options?: Partial<DBOptions>): SyncDB {
 export interface DBOptions {
   /**
    * Toggles whether entities are cloned before being returned from functions like `many()`, `first()` or `one()`.
-   * 
+   *
    * If enabled, adds a performance cost, but prevents the user from modifying
    * the returned entities directly, which would bring the database into an inconsistent state.
-   * 
+   *
    * @default true
    */
   clone: boolean;

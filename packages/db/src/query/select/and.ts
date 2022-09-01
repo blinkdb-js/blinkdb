@@ -49,11 +49,11 @@ export async function selectAndFilterItems<T, P extends keyof T>(
       continue;
     }
 
-    if(childFilterItems.length === 0) {
+    if (childFilterItems.length === 0) {
       return [];
     }
 
-    if(!filterItems) {
+    if (!filterItems) {
       filterItems = childFilterItems;
       continue;
     }

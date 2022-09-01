@@ -30,7 +30,7 @@ import { SyncDB, SyncKey } from "./createDB";
  * const db = createDB();
  * const userTable = table<User>(db, "users")();
  */
-export function table<T extends { id: string|number }>(
+export function table<T extends { id: string | number }>(
   db: SyncDB,
   tableName: string
 ): <P extends keyof T = "id">(options?: TableOptions<P>) => SyncTable<T, P>;
@@ -70,9 +70,7 @@ export function table<T>(
 ): <P extends keyof T>(options: TableOptions<P>) => SyncTable<T, P>;
 
 export function table<T>(db: SyncDB, tableName: string) {
-  return <P extends keyof T>(
-    options: TableOptions<P>
-  ): SyncTable<T, P | "id"> => {
+  return <P extends keyof T>(options: TableOptions<P>): SyncTable<T, P | "id"> => {
     return {
       [SyncKey]: {
         db,

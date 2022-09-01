@@ -24,7 +24,9 @@ it("should throw if no items have been found", async () => {
 });
 
 it("should throw if more than one item has been found", async () => {
-  expect(one(userTable, { where: { id: { $gt: 0 } } })).rejects.toThrow(/More than one item found/);
+  expect(one(userTable, { where: { id: { $gt: 0 } } })).rejects.toThrow(
+    /More than one item found/
+  );
 });
 
 it("should return the item if found", async () => {
@@ -33,7 +35,7 @@ it("should return the item if found", async () => {
 
 it("should return the exact item if db.clone is set to false", async () => {
   db = createDB({
-    clone: false
+    clone: false,
   });
   userTable = table<User>(db, "users")();
   const user = { id: 0 };

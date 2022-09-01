@@ -3,9 +3,9 @@ import { SyncTable } from "./table";
 
 /**
  * Saves updates of the given `entity` in `table`.
- * 
+ *
  * @throws if the entity has not been inserted into the table before, e.g. if the primary key of the entity was not found.
- * 
+ *
  * @example
  * const db = createDB();
  * const userTable = table<User>(db, "users")();
@@ -13,17 +13,20 @@ import { SyncTable } from "./table";
  * // Increase the age of Alice
  * await update(userTable, { id: userId, age: 16 });
  */
-export async function update<T, P extends keyof T>(table: SyncTable<T, P>, diff: Diff<T, P>): Promise<void> {
+export async function update<T, P extends keyof T>(
+  table: SyncTable<T, P>,
+  diff: Diff<T, P>
+): Promise<void> {
   const primaryKeyProperty = table[SyncKey].options.primary;
   const primaryKey = String(diff[primaryKeyProperty]);
   const item = table[SyncKey].storage.primary.get(primaryKey);
 
-  if(!item) {
+  if (!item) {
     throw new Error(`Item with primary key "${primaryKey}" not found.`);
   }
 
-  for(let key in diff) {
-    if(key === primaryKeyProperty) {
+  for (let key in diff) {
+    if (key === primaryKeyProperty) {
       continue;
     }
     item[key as keyof T] = diff[key as keyof Diff<T, P>] as any;
@@ -31,4 +34,3 @@ export async function update<T, P extends keyof T>(table: SyncTable<T, P>, diff:
 }
 
 export type Diff<T, P extends keyof T> = Partial<Omit<T, P>> & Required<Pick<T, P>>;
-

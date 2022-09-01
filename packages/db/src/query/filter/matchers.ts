@@ -114,9 +114,6 @@ function matchesSubWhereMatcher<T>(property: T, matcher: SubWhere<T>): boolean {
   return matches;
 }
 
-function matchesBetweenMatcher<T>(
-  property: T,
-  matcher: BetweenMatcher<T>
-): boolean {
+function matchesBetweenMatcher<T>(property: T, matcher: BetweenMatcher<T>): boolean {
   return property >= matcher.$between[0] && property <= matcher.$between[1];
 }

@@ -12,8 +12,8 @@ let db: SyncDB;
 let userTable: SyncTable<User, "id">;
 
 beforeEach(() => {
-    db = createDB();
-    userTable = table<User>(db, "users")();
+  db = createDB();
+  userTable = table<User>(db, "users")();
 });
 
 it("should return a string representation of the primary key of the inserted item", async () => {

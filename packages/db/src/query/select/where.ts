@@ -10,7 +10,7 @@ import { selectMatcherItems } from "./matchers";
 export async function selectWhereFilterItems<T, P extends keyof T>(
   table: SyncTable<T, P>,
   filter: Where<T>
-): Promise<T[]|null> {
+): Promise<T[] | null> {
   // No matchers in filter? We can return early
   if (Object.keys(filter).length === 0) {
     return [];

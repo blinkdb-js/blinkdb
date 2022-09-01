@@ -13,9 +13,7 @@ import { SyncTable } from "./table";
  * const userTable = table<User>(db, "users")();
  * const allUsers = many(userTable);
  */
-export async function many<T, P extends keyof T>(
-  table: SyncTable<T, P>
-): Promise<T[]>;
+export async function many<T, P extends keyof T>(table: SyncTable<T, P>): Promise<T[]>;
 
 /**
  * Retrieve all entities from `table` that match the given `filter`.

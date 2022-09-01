@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
-     "target": "es5",
-     "module": "commonjs",
-     "strict": true,
-     "allowSyntheticDefaultImports": true,
-     "esModuleInterop": true,
-     "skipLibCheck": true
+    "target": "es5",
+    "module": "commonjs",
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
   }
 }

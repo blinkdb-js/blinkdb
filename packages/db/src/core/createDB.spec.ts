@@ -10,20 +10,18 @@ test("should create a db without options", () => {
 
 test("should create a db with options", () => {
   createDB({
-    clone: false
+    clone: false,
   });
 });
 
 describe("options", () => {
-  
   describe("clone", () => {
-
     it("should clone by default", async () => {
       interface User {
         id: string;
         name: string;
       }
-    
+
       const user: User = { id: uuid(), name: "Alex" };
       const db = createDB();
       const userTable = table(db, "users")();
@@ -39,10 +37,10 @@ describe("options", () => {
         id: string;
         name: string;
       }
-    
+
       const user: User = { id: uuid(), name: "Alex" };
       const db = createDB({
-        clone: false
+        clone: false,
       });
       const userTable = table(db, "users")();
       const id = await create(userTable, user);
@@ -51,7 +49,5 @@ describe("options", () => {
       expect(retrievedUser).toBe(user);
       expect(retrievedUser).toStrictEqual(user);
     });
-
   });
-
 });

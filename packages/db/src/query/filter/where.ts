@@ -4,10 +4,7 @@ import { matchesMatcher } from "./matchers";
 /**
  * @returns all items from `items` that match the given `filter`.
  */
-export function filterWhereItems<T>(
-  items: T[],
-  filter: Where<T>
-): T[] {
+export function filterWhereItems<T>(items: T[], filter: Where<T>): T[] {
   if (items.length === 0) {
     return [];
   }
@@ -15,10 +12,7 @@ export function filterWhereItems<T>(
   return items.filter((item) => {
     for (const property in filter) {
       if (
-        !matchesMatcher(
-          item[property],
-          filter[property] as Matchers<T[typeof property]>
-        )
+        !matchesMatcher(item[property], filter[property] as Matchers<T[typeof property]>)
       ) {
         return false;
       }

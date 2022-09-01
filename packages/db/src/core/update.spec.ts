@@ -34,7 +34,7 @@ it("should update the entity if the primary key is found", async () => {
   expect(charlie).toStrictEqual({
     id: 2,
     name: "Charlie the II.",
-    age: 49
+    age: 49,
   });
 });
 
@@ -44,6 +44,6 @@ it("should update multiple properties", async () => {
   expect(alice).toStrictEqual({
     id: 0,
     name: "Alice the II.",
-    age: 25
+    age: 25,
   });
 });
