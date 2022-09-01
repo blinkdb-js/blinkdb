@@ -1,5 +1,5 @@
 import loki from "lokijs";
-import { clear, create, createDB, many, table, one } from "@thunder/core";
+import { clear, create, createDB, many, table, one } from "@thunder/db";
 import { randFirstName } from "@ngneat/falso";
 import { compare } from "../framework";
 

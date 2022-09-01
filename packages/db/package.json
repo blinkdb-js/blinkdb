@@ -1,7 +1,7 @@
 {
-  "name": "@thunder/core",
+  "name": "@thunder/db",
   "version": "1.0.0",
-  "description": "core module for thunder",
+  "description": "A lightning fast, in-memory database for client-side JS",
   "main": "dist/index.js",
   "module": "src/index.ts",
   "author": "",

@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@ngneat/falso": "^6.1.0",
-    "@thunder/core": "^1.0.0",
+    "@thunder/db": "^1.0.0",
     "clone": "^2.1.2",
     "lokijs": "^1.5.12"
   }
