@@ -4,7 +4,7 @@ import { randFirstName } from "@ngneat/falso";
 import { compare } from "../framework";
 
 interface User {
-  id: string;
+  id: number;
   name: string;
   age?: number;
 }
@@ -26,7 +26,7 @@ interface User {
   let users: User[] = [];
   for (let i = 0; i < 10000; i++) {
     users.push({
-      id: String(i),
+      id: i,
       name: randFirstName(),
       age: Math.random() > 0.2 ? Math.random() * 40 : undefined,
     });
@@ -63,59 +63,59 @@ interface User {
       const x = lokiUserTable.get(2);
     },
     thunderdb: async () => {
-      const x = await one(thunderUserTable, { where: { id: "2" } });
+      const x = await one(thunderUserTable, { where: { id: 2 } });
     },
   });
 
   await compare("getting one item (find)", {
     lokijs: async () => {
-      const x = lokiUserTable.find({ id: "2" });
+      const x = lokiUserTable.find({ id: 2 });
     },
     thunderdb: async () => {
-      const x = await one(thunderUserTable, { where: { id: "2" } });
+      const x = await one(thunderUserTable, { where: { id: 2 } });
     },
   });
 
   await compare("filter with $gt", {
     lokijs: async () => {
-      const x = lokiUserTable.find({ id: { $gt: "8000" } });
+      const x = lokiUserTable.find({ id: { $gt: 8000 } });
     },
     thunderdb: async () => {
       const x = await many(thunderUserTable, {
-        where: { id: { $gt: "8000" } },
+        where: { id: { $gt: 8000 } },
       });
     },
   });
 
   await compare("filter with $gte", {
     lokijs: async () => {
-      const x = lokiUserTable.find({ id: { $gte: "8000" } });
+      const x = lokiUserTable.find({ id: { $gte: 8000 } });
     },
     thunderdb: async () => {
       const x = await many(thunderUserTable, {
-        where: { id: { $gte: "8000" } },
+        where: { id: { $gte: 8000 } },
       });
     },
   });
 
   await compare("filter with $lte", {
     lokijs: async () => {
-      const x = lokiUserTable.find({ id: { $lte: "2000" } });
+      const x = lokiUserTable.find({ id: { $lte: 2000 } });
     },
     thunderdb: async () => {
       const x = await many(thunderUserTable, {
-        where: { id: { $lte: "2000" } },
+        where: { id: { $lte: 2000 } },
       });
     },
   });
 
   await compare("filter with $lt", {
     lokijs: async () => {
-      const x = lokiUserTable.find({ id: { $lt: "2000" } });
+      const x = lokiUserTable.find({ id: { $lt: 2000 } });
     },
     thunderdb: async () => {
       const x = await many(thunderUserTable, {
-        where: { id: { $lt: "2000" } },
+        where: { id: { $lt: 2000 } },
       });
     },
   });
@@ -123,12 +123,12 @@ interface User {
   await compare("complicated filter", {
     lokijs: async () => {
       const x = lokiUserTable.find({
-        $and: [{ id: { $gt: "1000" } }, { age: { $gt: 5 } }],
+        $and: [{ id: { $gt: 1000 } }, { age: { $gt: 5 } }],
       });
     },
     thunderdb: async () => {
       const x = await many(thunderUserTable, {
-        where: { $and: [{ id: { $gt: "1000" } }, { age: { $gt: 5 } }] },
+        where: { $and: [{ id: { $gt: 1000 } }, { age: { $gt: 5 } }] },
       });
     },
   });
@@ -136,12 +136,12 @@ interface User {
   await compare("AND", {
     lokijs: async () => {
       const x = lokiUserTable.find({
-        $and: [{ id: { $lte: "10" } }, { age: { $lt: 5 } }],
+        $and: [{ id: { $lte: 10 } }, { age: { $lt: 5 } }],
       });
     },
     thunderdb: async () => {
       const x = await many(thunderUserTable, {
-        where: { $and: [{ id: { $lte: "10" } }, { age: { $lt: 5 } }] },
+        where: { $and: [{ id: { $lte: 10 } }, { age: { $lt: 5 } }] },
       });
     },
   });
@@ -149,34 +149,34 @@ interface User {
   await compare("OR", {
     lokijs: async () => {
       const x = lokiUserTable.find({
-        $or: [{ id: "10" }, { id: "50" }],
+        $or: [{ id: 10 }, { id: 50 }],
       });
     },
     thunderdb: async () => {
       const x = await many(thunderUserTable, {
-        where: { $or: [{ id: "10" }, { id: "50" }] },
+        where: { $or: [{ id: 10 }, { id: 50 }] },
       });
     },
   });
 
   await compare("filter with $in", {
     lokijs: async () => {
-      const x = lokiUserTable.find({ id: { $in: ["10", "50", "100"] } });
+      const x = lokiUserTable.find({ id: { $in: [10, 50, 100] } });
     },
     thunderdb: async () => {
       const x = await many(thunderUserTable, {
-        where: { id: { $in: ["10", "50", "100"] } },
+        where: { id: { $in: [10, 50, 100] } },
       });
     },
   });
 
   await compare("filter with $between", {
     lokijs: async () => {
-      const x = lokiUserTable.find({ id: { $between: ["90", "100"] } });
+      const x = lokiUserTable.find({ id: { $between: [90, 100] } });
     },
     thunderdb: async () => {
       const x = await many(thunderUserTable, {
-        where: { id: { $between: ["90", "100"] } },
+        where: { id: { $between: [90, 100] } },
       });
     },
   });
