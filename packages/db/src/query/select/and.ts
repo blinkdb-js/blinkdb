@@ -24,7 +24,6 @@ export async function selectAndFilterItems<T, P extends keyof T>(
   }
 
   const primaryKeyProperty = table[SyncKey].options.primary;
-  let childFiltersWithFullTableScan = 0;
 
   // Fill array with items of first filter
   const firstChildFilter = filter.$and[0];
@@ -32,10 +31,6 @@ export async function selectAndFilterItems<T, P extends keyof T>(
     "$or" in firstChildFilter
       ? await selectOrFilterItems(table, firstChildFilter)
       : await selectWhereFilterItems(table, firstChildFilter);
-
-  if (filterItems === null) {
-    childFiltersWithFullTableScan++;
-  }
 
   // Iterate over all items from the other filters and delete from map
   for (let childFilter of filter.$and.slice(1)) {
@@ -45,7 +40,6 @@ export async function selectAndFilterItems<T, P extends keyof T>(
         : await selectWhereFilterItems(table, childFilter);
 
     if (childFilterItems === null) {
-      childFiltersWithFullTableScan++;
       continue;
     }
 
