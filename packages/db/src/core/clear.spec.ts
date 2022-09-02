@@ -1,8 +1,8 @@
 import { clear } from "./clear";
-import { create } from "./create";
+import { insert } from "./insert";
 import { createDB } from "./createDB";
 import { many } from "./many";
-import { table } from "./table";
+import { createTable } from "./createTable";
 
 interface User {
   id: number;
@@ -10,8 +10,8 @@ interface User {
 
 it("should clear the table", async () => {
   const db = createDB();
-  const userTable = table<User>(db, "users")();
-  await create(userTable, { id: 0 });
+  const userTable = createTable<User>(db, "users")();
+  await insert(userTable, { id: 0 });
   const previousItems = await many(userTable);
   await clear(userTable);
   const nextItems = await many(userTable);

@@ -1,6 +1,6 @@
-import { create } from "./create";
+import { insert } from "./insert";
 import { createDB, SyncDB } from "./createDB";
-import { SyncTable, table } from "./table";
+import { SyncTable, createTable } from "./createTable";
 import { one } from "./one";
 
 interface User {
@@ -12,11 +12,11 @@ let userTable: SyncTable<User, "id">;
 
 beforeEach(async () => {
   db = createDB();
-  userTable = table<User>(db, "users")();
+  userTable = createTable<User>(db, "users")();
 
-  await create(userTable, { id: 0 });
-  await create(userTable, { id: 1 });
-  await create(userTable, { id: 2 });
+  await insert(userTable, { id: 0 });
+  await insert(userTable, { id: 1 });
+  await insert(userTable, { id: 2 });
 });
 
 it("should throw if no items have been found", async () => {
@@ -37,9 +37,9 @@ it("should return the exact item if db.clone is set to false", async () => {
   db = createDB({
     clone: false,
   });
-  userTable = table<User>(db, "users")();
+  userTable = createTable<User>(db, "users")();
   const user = { id: 0 };
-  await create(userTable, user);
+  await insert(userTable, user);
   const item = await one(userTable, { where: { id: 0 } });
 
   expect(item).toBe(user);

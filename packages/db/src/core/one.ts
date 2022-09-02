@@ -2,7 +2,7 @@ import { Filter } from "../query/types";
 import { clone } from "./clone";
 import { SyncKey } from "./createDB";
 import { many } from "./many";
-import { SyncTable } from "./table";
+import { SyncTable } from "./createTable";
 
 /**
  * Retrieves the first entity from `table` matching the given `filter`.
@@ -11,7 +11,7 @@ import { SyncTable } from "./table";
  *
  * @example
  * const db = createDB();
- * const userTable = table<User>(db, "users")();
+ * const userTable = createTable<User>(db, "users")();
  * // Retrieve the user with id 10
  * const userWithId = await one(userTable, { where: { id: 10 } });
  */

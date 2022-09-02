@@ -1,5 +1,5 @@
 import { SyncKey } from "./createDB";
-import { SyncTable } from "./table";
+import { SyncTable } from "./createTable";
 
 /**
  * Inserts a new entity into `table`.
@@ -8,12 +8,12 @@ import { SyncTable } from "./table";
  *
  * @example
  * const db = createDB();
- * const userTable = table<User>(db, "users")();
- * const aliceId = create(userTable, { id: uuid(), name: "Alice", age: 23 });
- * const bobId = create(userTable, { id: uuid(), name: "Bob", age: 45 });
- * const charlieId = create(userTable, { id: uuid(), name: "Charlie", age: 34 });
+ * const userTable = createTable<User>(db, "users")();
+ * const aliceId = insert(userTable, { id: uuid(), name: "Alice", age: 23 });
+ * const bobId = insert(userTable, { id: uuid(), name: "Bob", age: 45 });
+ * const charlieId = insert(userTable, { id: uuid(), name: "Charlie", age: 34 });
  */
-export async function create<T, P extends keyof T>(
+export async function insert<T, P extends keyof T>(
   table: SyncTable<T, P>,
   entity: T
 ): Promise<string> {

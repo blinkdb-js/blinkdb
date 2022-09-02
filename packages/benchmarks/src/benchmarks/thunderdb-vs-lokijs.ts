@@ -1,5 +1,5 @@
 import loki from "lokijs";
-import { clear, create, createDB, many, table, one } from "@thunder/db";
+import { clear, insert, createDB, many, createTable, one } from "@thunder/db";
 import { randFirstName } from "@ngneat/falso";
 import { compare } from "../framework";
 
@@ -14,7 +14,7 @@ interface User {
   const thunderdb = createDB({
     clone: false,
   });
-  const thunderUserTable = table<User>(thunderdb, "users")();
+  const thunderUserTable = createTable<User>(thunderdb, "users")();
 
   // LokiJS setup
   const lokidb = new loki("users.db");
@@ -40,7 +40,7 @@ interface User {
       },
       thunderdb: async () => {
         for (let user of users) {
-          await create(thunderUserTable, user);
+          await insert(thunderUserTable, user);
         }
       },
     },

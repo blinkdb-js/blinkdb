@@ -2,14 +2,14 @@ import { Filter } from "../query/types";
 import { clone } from "./clone";
 import { SyncKey } from "./createDB";
 import { many } from "./many";
-import { SyncTable } from "./table";
+import { SyncTable } from "./createTable";
 
 /**
  * Retrieves the first entity from `table`.
  *
  * @example
  * const db = createDB();
- * const userTable = table<User>(db, "users")();
+ * const userTable = createTable<User>(db, "users")();
  * // Retrieve the first user
  * const firstUser = await first(userTable);
  */
@@ -22,7 +22,7 @@ export async function first<T, P extends keyof T>(
  *
  * @example
  * const db = createDB();
- * const userTable = table<User>(db, "users")();
+ * const userTable = createTable<User>(db, "users")();
  * // Retrieve the first user named 'Alice'
  * const firstUser = await first(userTable, { where: { name: "Alice" } });
  */

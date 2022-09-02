@@ -1,5 +1,5 @@
 import { createDB, SyncDB } from "./createDB";
-import { table } from "./table";
+import { createTable } from "./createTable";
 
 interface User1 {
   id: string;
@@ -18,23 +18,23 @@ beforeEach(() => {
 });
 
 it("should create a table without options", () => {
-  table<User1>(db, "user")();
+  createTable<User1>(db, "user")();
 });
 
 it("should create a table with a different primary key", () => {
-  table<User1>(
+  createTable<User1>(
     db,
     "user"
   )({
     primary: "name",
   });
-  table<User2>(
+  createTable<User2>(
     db,
     "user"
   )({
     primary: "uuid",
   });
-  table<User2>(
+  createTable<User2>(
     db,
     "user"
   )({

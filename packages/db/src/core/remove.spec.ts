@@ -1,6 +1,6 @@
-import { create } from "./create";
+import { insert } from "./insert";
 import { createDB, SyncDB } from "./createDB";
-import { SyncTable, table } from "./table";
+import { SyncTable, createTable } from "./createTable";
 import { remove } from "./remove";
 import { first } from "./first";
 
@@ -15,11 +15,11 @@ let userTable: SyncTable<User, "id">;
 
 beforeEach(async () => {
   db = createDB();
-  userTable = table<User>(db, "users")();
+  userTable = createTable<User>(db, "users")();
 
-  await create(userTable, { id: 0, name: "Alice", age: 16 });
-  await create(userTable, { id: 1, name: "Bob" });
-  await create(userTable, { id: 2, name: "Charlie", age: 49 });
+  await insert(userTable, { id: 0, name: "Alice", age: 16 });
+  await insert(userTable, { id: 1, name: "Bob" });
+  await insert(userTable, { id: 2, name: "Charlie", age: 49 });
 });
 
 it("should return false if the primary key was not found", async () => {

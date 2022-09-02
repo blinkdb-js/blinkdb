@@ -1,7 +1,7 @@
-import { create } from "./create";
+import { insert } from "./insert";
 import { createDB, SyncDB } from "./createDB";
 import { many } from "./many";
-import { SyncTable, table } from "./table";
+import { SyncTable, createTable } from "./createTable";
 
 interface User {
   id: number;
@@ -21,7 +21,7 @@ let userTable: SyncTable<User, "id">;
 
 beforeEach(() => {
   db = createDB();
-  userTable = table<User>(db, "users")();
+  userTable = createTable<User>(db, "users")();
 });
 
 it("should return no items if there are no items in the database", async () => {
@@ -32,8 +32,8 @@ it("should return no items if there are no items in the database", async () => {
 it("should return all items if called without a filter", async () => {
   const alice: User = { id: 0, name: "Alice" };
   const bob: User = { id: 1, name: "Bob" };
-  await create(userTable, alice);
-  await create(userTable, bob);
+  await insert(userTable, alice);
+  await insert(userTable, bob);
   const items = await many(userTable);
   expect(new Set(items)).toStrictEqual(new Set([alice, bob]));
 });
@@ -64,9 +64,9 @@ describe("filter", () => {
   };
 
   beforeEach(async () => {
-    await create(userTable, alice);
-    await create(userTable, bob);
-    await create(userTable, charlie);
+    await insert(userTable, alice);
+    await insert(userTable, bob);
+    await insert(userTable, charlie);
   });
 
   it("should return no items with an empty where filter", async () => {
@@ -89,9 +89,9 @@ describe("filter", () => {
     db = createDB({
       clone: false,
     });
-    userTable = table<User>(db, "users")();
+    userTable = createTable<User>(db, "users")();
     const user = { id: 0 };
-    await create(userTable, user);
+    await insert(userTable, user);
     const items = await many(userTable, {
       where: {
         id: 0,

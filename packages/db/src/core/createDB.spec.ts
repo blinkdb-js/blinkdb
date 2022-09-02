@@ -1,7 +1,7 @@
 import { createDB } from "./createDB";
 import { uuid } from "./uuid";
-import { table } from "./table";
-import { create } from "./create";
+import { createTable } from "./createTable";
+import { insert } from "./insert";
 import { one } from "./one";
 
 test("should create a db without options", () => {
@@ -24,8 +24,8 @@ describe("options", () => {
 
       const user: User = { id: uuid(), name: "Alex" };
       const db = createDB();
-      const userTable = table(db, "users")();
-      const id = await create(userTable, user);
+      const userTable = createTable(db, "users")();
+      const id = await insert(userTable, user);
       const retrievedUser = await one(userTable, { where: { id } });
 
       expect(retrievedUser).not.toBe(user);
@@ -42,8 +42,8 @@ describe("options", () => {
       const db = createDB({
         clone: false,
       });
-      const userTable = table(db, "users")();
-      const id = await create(userTable, user);
+      const userTable = createTable(db, "users")();
+      const id = await insert(userTable, user);
       const retrievedUser = await one(userTable, { where: { id } });
 
       expect(retrievedUser).toBe(user);

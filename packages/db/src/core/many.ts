@@ -3,14 +3,14 @@ import { selectItems } from "../query/select";
 import { Filter } from "../query/types";
 import { clone } from "./clone";
 import { SyncKey } from "./createDB";
-import { SyncTable } from "./table";
+import { SyncTable } from "./createTable";
 
 /**
  * Retrieve all entities from `table`.
  *
  * @example
  * const db = createDB();
- * const userTable = table<User>(db, "users")();
+ * const userTable = createTable<User>(db, "users")();
  * const allUsers = many(userTable);
  */
 export async function many<T, P extends keyof T>(table: SyncTable<T, P>): Promise<T[]>;
@@ -20,7 +20,7 @@ export async function many<T, P extends keyof T>(table: SyncTable<T, P>): Promis
  *
  * @example
  * const db = createDB();
- * const userTable = table<User>(db, "users")();
+ * const userTable = createTable<User>(db, "users")();
  * // All users called 'Alice'
  * const allUsersNamedAlice = many(userTable, {
  *   where: {

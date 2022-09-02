@@ -1,6 +1,6 @@
-import { create } from "./create";
+import { insert } from "./insert";
 import { createDB, SyncDB } from "./createDB";
-import { SyncTable, table } from "./table";
+import { SyncTable, createTable } from "./createTable";
 
 interface User {
   id: number;
@@ -13,10 +13,10 @@ let userTable: SyncTable<User, "id">;
 
 beforeEach(() => {
   db = createDB();
-  userTable = table<User>(db, "users")();
+  userTable = createTable<User>(db, "users")();
 });
 
 it("should return a string representation of the primary key of the inserted item", async () => {
-  const aliceId = await create(userTable, { id: 0, name: "Alice", age: 32 });
+  const aliceId = await insert(userTable, { id: 0, name: "Alice", age: 32 });
   expect(aliceId).toBe("0");
 });

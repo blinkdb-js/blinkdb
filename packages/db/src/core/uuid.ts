@@ -7,8 +7,8 @@ const instance = hyperid();
  *
  * @example
  * const db = createDB();
- * const userTable = table<User>(db, "users");
- * const alexId = create(userTable, { id: uuid(), name: "Alex", age: 23 });
+ * const userTable = createTable<User>(db, "users");
+ * const alexId = insert(userTable, { id: uuid(), name: "Alex", age: 23 });
  */
 export function uuid() {
   return instance();

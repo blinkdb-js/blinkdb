@@ -7,8 +7,8 @@ export const SyncKey = Symbol("Sync");
  *
  * @example
  * const db = createDB();
- * const userTable = table<User>(db, "users");
- * const taskTable = table<Task>(db, "tasks");
+ * const userTable = createTable<User>(db, "users");
+ * const taskTable = createTable<Task>(db, "tasks");
  */
 export function createDB(options?: Partial<DBOptions>): SyncDB {
   return {

@@ -1,5 +1,5 @@
 import { SyncKey } from "./createDB";
-import { SyncTable } from "./table";
+import { SyncTable } from "./createTable";
 
 /**
  * Saves updates of the given `entity` in `table`.
@@ -8,8 +8,8 @@ import { SyncTable } from "./table";
  *
  * @example
  * const db = createDB();
- * const userTable = table<User>(db, "users")();
- * const userId = await create(userTable, { id: uuid(), name: 'Alice', age: 15 });
+ * const userTable = createTable<User>(db, "users")();
+ * const userId = await insert(userTable, { id: uuid(), name: 'Alice', age: 15 });
  * // Increase the age of Alice
  * await update(userTable, { id: userId, age: 16 });
  */

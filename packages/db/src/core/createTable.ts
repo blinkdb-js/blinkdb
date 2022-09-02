@@ -14,7 +14,7 @@ import { SyncDB, SyncKey } from "./createDB";
  * }
  *
  * const db = createDB();
- * const userTable = table<User>(db, "users")({
+ * const userTable = createTable<User>(db, "users")({
  *   primary: "uuid" // whatever you want your primary key to be
  * });
  * ```
@@ -28,9 +28,9 @@ import { SyncDB, SyncKey } from "./createDB";
  * }
  *
  * const db = createDB();
- * const userTable = table<User>(db, "users")();
+ * const userTable = createTable<User>(db, "users")();
  */
-export function table<T extends { id: string | number }>(
+export function createTable<T extends { id: string | number }>(
   db: SyncDB,
   tableName: string
 ): <P extends keyof T = "id">(options?: TableOptions<P>) => SyncTable<T, P>;
@@ -48,7 +48,7 @@ export function table<T extends { id: string | number }>(
  * }
  *
  * const db = createDB();
- * const userTable = table<User>(db, "users")({
+ * const userTable = createTable<User>(db, "users")({
  *   primary: "uuid" // whatever you want your primary key to be
  * });
  * ```
@@ -62,14 +62,14 @@ export function table<T extends { id: string | number }>(
  * }
  *
  * const db = createDB();
- * const userTable = table<User>(db, "users")();
+ * const userTable = createTable<User>(db, "users")();
  */
-export function table<T>(
+export function createTable<T>(
   db: SyncDB,
   tableName: string
 ): <P extends keyof T>(options: TableOptions<P>) => SyncTable<T, P>;
 
-export function table<T>(db: SyncDB, tableName: string) {
+export function createTable<T>(db: SyncDB, tableName: string) {
   return <P extends keyof T>(options: TableOptions<P>): SyncTable<T, P | "id"> => {
     return {
       [SyncKey]: {
