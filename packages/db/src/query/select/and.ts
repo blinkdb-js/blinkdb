@@ -33,7 +33,7 @@ export async function selectAndFilterItems<T, P extends keyof T>(
       ? await selectOrFilterItems(table, firstChildFilter)
       : await selectWhereFilterItems(table, firstChildFilter);
 
-  if (!filterItems) {
+  if (filterItems === null) {
     childFiltersWithFullTableScan++;
   }
 
@@ -44,7 +44,7 @@ export async function selectAndFilterItems<T, P extends keyof T>(
         ? await selectOrFilterItems(table, childFilter)
         : await selectWhereFilterItems(table, childFilter);
 
-    if (!childFilterItems) {
+    if (childFilterItems === null) {
       childFiltersWithFullTableScan++;
       continue;
     }
@@ -53,7 +53,7 @@ export async function selectAndFilterItems<T, P extends keyof T>(
       return [];
     }
 
-    if (!filterItems) {
+    if (filterItems === null) {
       filterItems = childFilterItems;
       continue;
     }

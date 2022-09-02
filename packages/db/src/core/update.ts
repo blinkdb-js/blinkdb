@@ -21,7 +21,7 @@ export async function update<T, P extends keyof T>(
   const primaryKey = diff[primaryKeyProperty] as unknown as T[P];
   const item = table[SyncKey].storage.primary.get(primaryKey);
 
-  if (!item) {
+  if (item === undefined || item === null) {
     throw new Error(`Item with primary key "${primaryKey}" not found.`);
   }
 

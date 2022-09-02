@@ -24,7 +24,7 @@ export async function selectOrFilterItems<T, P extends keyof T>(
         ? await selectAndFilterItems(table, childFilter)
         : await selectWhereFilterItems(table, childFilter);
 
-    if (!childFilterItems) {
+    if (childFilterItems === null) {
       return null;
     }
 

@@ -43,7 +43,7 @@ export async function many<T, P extends keyof T>(
   table: SyncTable<T, P>,
   filter?: Filter<T>
 ): Promise<T[]> {
-  if (!filter) {
+  if (filter === undefined) {
     return table[SyncKey].storage.primary.valuesArray();
   }
 
