@@ -18,6 +18,8 @@ export function matchesMatcher<T, P extends keyof T>(
   property: T[P],
   matcher: Matchers<T[P]>
 ): boolean {
+  if(matcher === null) return false;
+
   if (typeof matcher === "object" && "$equals" in matcher) {
     return matchesEqMatcher(property, (matcher as { $equals: T[P] }).$equals);
   } else if (typeof matcher === "object" && "$gte" in matcher) {

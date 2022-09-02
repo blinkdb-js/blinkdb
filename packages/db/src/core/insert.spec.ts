@@ -3,7 +3,7 @@ import { createDB, SyncDB } from "./createDB";
 import { SyncTable, createTable } from "./createTable";
 
 interface User {
-  id: number;
+  id?: number;
   name: string;
   age?: number;
 }
@@ -13,10 +13,12 @@ let userTable: SyncTable<User, "id">;
 
 beforeEach(() => {
   db = createDB();
-  userTable = createTable<User>(db, "users")();
+  userTable = createTable<User>(db, "users")({
+    primary: "id"
+  });
 });
 
-it("should return a string representation of the primary key of the inserted item", async () => {
+it("should return the primary key of the inserted item", async () => {
   const aliceId = await insert(userTable, { id: 0, name: "Alice", age: 32 });
-  expect(aliceId).toBe("0");
+  expect(aliceId).toBe(0);
 });

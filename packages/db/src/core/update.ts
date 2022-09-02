@@ -18,7 +18,7 @@ export async function update<T, P extends keyof T>(
   diff: Diff<T, P>
 ): Promise<void> {
   const primaryKeyProperty = table[SyncKey].options.primary;
-  const primaryKey = String(diff[primaryKeyProperty]);
+  const primaryKey = diff[primaryKeyProperty] as unknown as T[P];
   const item = table[SyncKey].storage.primary.get(primaryKey);
 
   if (!item) {

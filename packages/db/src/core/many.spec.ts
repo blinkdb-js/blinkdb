@@ -90,7 +90,7 @@ describe("filter", () => {
       clone: false,
     });
     userTable = createTable<User>(db, "users")();
-    const user = { id: 0 };
+    const user: User = { id: 0, name: "Alice" };
     await insert(userTable, user);
     const items = await many(userTable, {
       where: {
@@ -203,7 +203,7 @@ describe("filter", () => {
         expect(new Set(items)).toStrictEqual(new Set([alice, charlie]));
       });
 
-      it.only("should match items with a $between expression", async () => {
+      it("should match items with a $between expression", async () => {
         const items = await many(userTable, {
           where: {
             name: { $between: ["Charlie", "Zebra"] },
@@ -285,7 +285,7 @@ describe("filter", () => {
         expect(new Set(items)).toStrictEqual(new Set([alice, bob]));
       });
 
-      it.only("should match items with a $between expression", async () => {
+      it("should match items with a $between expression", async () => {
         const items = await many(userTable, {
           where: {
             id: { $between: [-1000, 1] },

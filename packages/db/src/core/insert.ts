@@ -15,10 +15,10 @@ import { SyncTable } from "./createTable";
  */
 export async function insert<T, P extends keyof T>(
   table: SyncTable<T, P>,
-  entity: T
-): Promise<string> {
+  entity: Create<T, P>
+): Promise<T[P]> {
   const primaryKeyProperty = table[SyncKey].options.primary;
-  const primaryKey = String(entity[primaryKeyProperty]);
+  const primaryKey = entity[primaryKeyProperty] as unknown as T[P];
 
   if (table[SyncKey].storage.primary.has(primaryKey)) {
     throw new Error(`Primary key ${primaryKey} already in use.`);
@@ -27,3 +27,5 @@ export async function insert<T, P extends keyof T>(
   table[SyncKey].storage.primary.set(primaryKey, entity as unknown as T);
   return primaryKey;
 }
+
+export type Create<T, P extends keyof T> = Omit<T, P> & Required<Pick<T, P>>;

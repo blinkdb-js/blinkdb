@@ -18,7 +18,7 @@ export async function remove<T, P extends keyof T>(
   entity: Ids<T, P>
 ): Promise<boolean> {
   const primaryKeyProperty = table[SyncKey].options.primary;
-  const primaryKey = String(entity[primaryKeyProperty]);
+  const primaryKey = entity[primaryKeyProperty];
   return table[SyncKey].storage.primary.delete(primaryKey);
 }
 

@@ -16,7 +16,7 @@ export async function selectOrFilterItems<T, P extends keyof T>(
     return [];
   }
 
-  let itemsMap: Map<string, T> = new Map();
+  let itemsMap: Map<T[P], T> = new Map();
 
   for (let childFilter of filter.$or) {
     let childFilterItems =
@@ -30,7 +30,7 @@ export async function selectOrFilterItems<T, P extends keyof T>(
 
     for (let childItem of childFilterItems) {
       const primaryKeyProperty = table[SyncKey].options.primary;
-      const primaryKey = String(childItem[primaryKeyProperty]);
+      const primaryKey = childItem[primaryKeyProperty];
       itemsMap.set(primaryKey, childItem);
     }
   }

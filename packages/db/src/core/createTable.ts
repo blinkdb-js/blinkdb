@@ -70,7 +70,7 @@ export function createTable<T>(
 ): <P extends keyof T>(options: TableOptions<P>) => SyncTable<T, P>;
 
 export function createTable<T>(db: SyncDB, tableName: string) {
-  return <P extends keyof T>(options: TableOptions<P>): SyncTable<T, P | "id"> => {
+  return <P extends keyof T>(options: TableOptions<P>): SyncTable<T, P> => {
     return {
       [SyncKey]: {
         db,
@@ -90,12 +90,12 @@ export interface TableOptions<P> {
   primary: P;
 }
 
-export interface SyncTable<T, P> {
+export interface SyncTable<T, P extends keyof T> {
   [SyncKey]: {
     db: SyncDB;
     tableName: string;
     storage: {
-      primary: BTree<string, T>;
+      primary: BTree<T[P], T>;
     };
     options: Required<TableOptions<P>>;
   };

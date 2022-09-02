@@ -58,15 +58,15 @@ export async function selectAndFilterItems<T, P extends keyof T>(
       continue;
     }
 
-    let itemsMap: Map<string, T> = new Map(
+    let itemsMap: Map<T[P], T> = new Map(
       childFilterItems.map((item) => {
-        const primaryKey = String(item[primaryKeyProperty]);
+        const primaryKey = item[primaryKeyProperty];
         return [primaryKey, item];
       })
     );
 
     for (let [index, item] of Array.from(filterItems.entries())) {
-      const primaryKey = String(item[primaryKeyProperty]);
+      const primaryKey = item[primaryKeyProperty];
       if (!itemsMap.has(primaryKey)) {
         filterItems.splice(index, 1);
       }
