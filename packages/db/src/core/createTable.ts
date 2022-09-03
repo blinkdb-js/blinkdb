@@ -1,4 +1,5 @@
 import BTree from "sorted-btree";
+import { Dispatcher } from "../events/Dispatcher";
 import { SyncDB, SyncKey } from "./createDB";
 
 /**
@@ -78,6 +79,12 @@ export function createTable<T>(db: SyncDB, tableName: string) {
         storage: {
           primary: new BTree(),
         },
+        events: {
+          onClear: new Dispatcher(),
+          onInsert: new Dispatcher(),
+          onRemove: new Dispatcher(),
+          onUpdate: new Dispatcher()
+        },
         options: {
           primary: options?.primary ?? "id",
         },
@@ -97,6 +104,12 @@ export interface SyncTable<T, P extends keyof T> {
     storage: {
       primary: BTree<T[P], T>;
     };
+    events: {
+      onInsert: Dispatcher<{ entity: T }>,
+      onUpdate: Dispatcher<{ oldEntity: T, newEntity: T }>,
+      onRemove: Dispatcher<{ entity: T }>
+      onClear: Dispatcher
+    },
     options: Required<TableOptions<P>>;
   };
 }

@@ -36,7 +36,7 @@ export async function many<T, P extends keyof T>(table: SyncTable<T, P>): Promis
  */
 export async function many<T, P extends keyof T>(
   table: SyncTable<T, P>,
-  filter: Filter<T>
+  filter?: Filter<T>
 ): Promise<T[]>;
 
 export async function many<T, P extends keyof T>(

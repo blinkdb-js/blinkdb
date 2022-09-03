@@ -19,7 +19,9 @@ export async function remove<T, P extends keyof T>(
 ): Promise<boolean> {
   const primaryKeyProperty = table[SyncKey].options.primary;
   const primaryKey = entity[primaryKeyProperty];
-  return table[SyncKey].storage.primary.delete(primaryKey);
+  const deleted = table[SyncKey].storage.primary.delete(primaryKey);
+  table[SyncKey].events.onRemove.dispatch({ entity: entity as unknown as T });
+  return deleted;
 }
 
 export type Ids<T, P extends keyof T> = Required<Pick<T, P>>;

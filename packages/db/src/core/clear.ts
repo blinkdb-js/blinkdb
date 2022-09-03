@@ -11,4 +11,5 @@ import { SyncTable } from "./createTable";
  */
 export async function clear<T, P extends keyof T>(table: SyncTable<T, P>): Promise<void> {
   table[SyncKey].storage.primary.clear();
+  table[SyncKey].events.onClear.dispatch();
 }

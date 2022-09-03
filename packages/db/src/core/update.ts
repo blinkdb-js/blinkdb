@@ -1,3 +1,4 @@
+import { clone } from "./clone";
 import { SyncKey } from "./createDB";
 import { SyncTable } from "./createTable";
 
@@ -25,12 +26,15 @@ export async function update<T, P extends keyof T>(
     throw new Error(`Item with primary key "${primaryKey}" not found.`);
   }
 
+  const oldItem = clone(item);
   for (let key in diff) {
     if (key === primaryKeyProperty) {
       continue;
     }
     item[key as keyof T] = diff[key as keyof Diff<T, P>] as any;
   }
+
+  table[SyncKey].events.onUpdate.dispatch({ oldEntity: oldItem, newEntity: item });
 }
 
 export type Diff<T, P extends keyof T> = Partial<Omit<T, P>> & Required<Pick<T, P>>;
