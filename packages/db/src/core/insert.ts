@@ -1,3 +1,4 @@
+import { clone } from "./clone";
 import { SyncKey } from "./createDB";
 import { SyncTable } from "./createTable";
 
@@ -24,7 +25,10 @@ export async function insert<T, P extends keyof T>(
     throw new Error(`Primary key ${primaryKey} already in use.`);
   }
 
-  table[SyncKey].storage.primary.set(primaryKey, entity as unknown as T);
+  const storageEntity = (table[SyncKey].db[SyncKey].options.clone ? clone(entity) : entity) as unknown as T;
+
+  table[SyncKey].storage.primary.set(primaryKey, storageEntity);
+  table[SyncKey].events.onInsert.dispatch({ entity: storageEntity });
   return primaryKey;
 }
 

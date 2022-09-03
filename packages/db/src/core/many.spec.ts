@@ -314,7 +314,7 @@ describe("filter", () => {
           },
         });
 
-        expect(new Set(items)).toStrictEqual(new Set([charlie]));
+        expect(new Set(items)).toStrictEqual(new Set([{ ...charlie, someIds: [2, 4] }]));
       });
 
       it("should match items by equality regardless of array item order", async () => {
@@ -324,7 +324,7 @@ describe("filter", () => {
           },
         });
 
-        expect(new Set(items)).toStrictEqual(new Set([charlie]));
+        expect(new Set(items)).toStrictEqual(new Set([{ ...charlie, someIds: [2, 4] }]));
       });
 
       it("should match items with $contains", async () => {
