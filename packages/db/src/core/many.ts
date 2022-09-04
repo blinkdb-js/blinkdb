@@ -1,5 +1,6 @@
 import { filterItems } from "../query/filter";
 import { selectItems } from "../query/select";
+import { sortItems } from "../query/sort";
 import { Filter } from "../query/types";
 import { clone } from "./clone";
 import { ThunderKey } from "./createDB";
@@ -55,6 +56,11 @@ export async function many<T, P extends keyof T>(
 
     // Filter items
     items = filterItems(table, items, filter.where);
+  }
+
+  if (filter.sort) {
+    // Sort items
+    items = sortItems(items, filter.sort);
   }
 
   return table[ThunderKey].db[ThunderKey].options.clone ? clone(items) : items;

@@ -1,4 +1,5 @@
 import { filterItems } from "../query/filter";
+import { sortItems } from "../query/sort";
 import { Filter } from "../query/types";
 import { clone } from "./clone";
 import { ThunderKey } from "./createDB";
@@ -77,7 +78,10 @@ export async function watch<T, P extends keyof T>(
 
   const primaryKeyProperty = table[ThunderKey].options.primary;
 
-  const initialEntities = await many(table, filter);
+  let initialEntities = await many(table, filter);
+  if(filter?.sort) {
+    initialEntities = sortItems(initialEntities, filter.sort);
+  }
   table[ThunderKey].db[ThunderKey].options.clone ? cb(clone(initialEntities)) : cb(initialEntities);
 
   let entities: Map<T[P], T> = new Map();
@@ -95,6 +99,9 @@ export async function watch<T, P extends keyof T>(
     const primaryKey = entity[primaryKeyProperty];
     entities.set(primaryKey, entity);
     entityList.push(entity);
+    if(filter?.sort) {
+      entityList = sortItems(entityList, filter.sort);
+    }
 
     table[ThunderKey].db[ThunderKey].options.clone ? cb(clone(entityList)) : cb(entityList);
   });
@@ -118,6 +125,10 @@ export async function watch<T, P extends keyof T>(
       entityList = Array.from(entities.values());
     }
 
+    if(filter?.sort) {
+      entityList = sortItems(entityList, filter.sort);
+    }
+
     table[ThunderKey].db[ThunderKey].options.clone ? cb(clone(entityList)) : cb(entityList);
   });
 
@@ -126,6 +137,9 @@ export async function watch<T, P extends keyof T>(
     const deleted = entities.delete(primaryKey);
     if(deleted) {
       entityList = Array.from(entities.values());
+      if(filter?.sort) {
+        entityList = sortItems(entityList, filter.sort);
+      }
       table[ThunderKey].db[ThunderKey].options.clone ? cb(clone(entityList)) : cb(entityList);
     }
   });

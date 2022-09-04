@@ -633,4 +633,35 @@ describe("filter", () => {
       });
     });
   });
+
+  describe("sorting", () => {
+
+    it("should sort items in ascending order", async () => {
+      const items = await many(userTable, {
+        where: {
+          id: { $gte: 0 }
+        },
+        sort: {
+          key: "age",
+          order: "asc"
+        }
+      });
+
+      expect(items).toStrictEqual([alice, charlie, bob]);
+    });
+
+    it("should sort items in descending order", async () => {
+      const items = await many(userTable, {
+        where: {
+          id: { $gte: 0 }
+        },
+        sort: {
+          key: "age",
+          order: "desc"
+        }
+      });
+
+      expect(items).toStrictEqual([bob, charlie, alice]);
+    });
+  });
 });

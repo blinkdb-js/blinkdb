@@ -1,5 +1,6 @@
 export type Filter<T> = {
   where?: Where<T> | Or<T> | And<T>;
+  sort?: Sort<T>;
 };
 
 export type And<T> = {
@@ -12,6 +13,16 @@ export type Or<T> = {
 export type Where<T> = {
   [K in keyof T]?: Matchers<T[K]>;
 };
+
+export type Sort<T> = {
+  key: ValidSortKey<T>,
+  order: 'asc'|'desc'
+};
+
+export type ValidSortKey<T> = {
+  [K in keyof T]: T[K] extends ValidSortKeyType ? K : never;
+}[keyof T]
+export type ValidSortKeyType = number | string | Date | boolean | null | undefined;
 
 export type Matchers<T> = T extends string
   ? StringMatchers<T>
