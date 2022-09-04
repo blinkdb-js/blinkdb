@@ -1,4 +1,4 @@
-import { SyncKey, SyncTable } from "../../core";
+import { ThunderKey, Table } from "../../core";
 import { Or } from "../types";
 import { selectAndFilterItems } from "./and";
 import { selectWhereFilterItems } from "./where";
@@ -9,7 +9,7 @@ import { selectWhereFilterItems } from "./where";
  * @returns the selected items from the database, or `null` in case a full table scan is required.
  */
 export async function selectOrFilterItems<T, P extends keyof T>(
-  table: SyncTable<T, P>,
+  table: Table<T, P>,
   filter: Or<T>
 ): Promise<T[] | null> {
   if (filter.$or.length === 0) {
@@ -29,7 +29,7 @@ export async function selectOrFilterItems<T, P extends keyof T>(
     }
 
     for (let childItem of childFilterItems) {
-      const primaryKeyProperty = table[SyncKey].options.primary;
+      const primaryKeyProperty = table[ThunderKey].options.primary;
       const primaryKey = childItem[primaryKeyProperty];
       itemsMap.set(primaryKey, childItem);
     }

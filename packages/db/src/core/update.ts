@@ -1,6 +1,6 @@
 import { clone } from "./clone";
-import { SyncKey } from "./createDB";
-import { SyncTable } from "./createTable";
+import { ThunderKey } from "./createDB";
+import { Table } from "./createTable";
 
 /**
  * Saves updates of the given `entity` in `table`.
@@ -15,12 +15,12 @@ import { SyncTable } from "./createTable";
  * await update(userTable, { id: userId, age: 16 });
  */
 export async function update<T, P extends keyof T>(
-  table: SyncTable<T, P>,
+  table: Table<T, P>,
   diff: Diff<T, P>
 ): Promise<void> {
-  const primaryKeyProperty = table[SyncKey].options.primary;
+  const primaryKeyProperty = table[ThunderKey].options.primary;
   const primaryKey = diff[primaryKeyProperty] as unknown as T[P];
-  const item = table[SyncKey].storage.primary.get(primaryKey);
+  const item = table[ThunderKey].storage.primary.get(primaryKey);
 
   if (item === undefined || item === null) {
     throw new Error(`Item with primary key "${primaryKey}" not found.`);
@@ -34,7 +34,7 @@ export async function update<T, P extends keyof T>(
     item[key as keyof T] = diff[key as keyof Diff<T, P>] as any;
   }
 
-  table[SyncKey].events.onUpdate.dispatch({ oldEntity: oldItem, newEntity: item });
+  table[ThunderKey].events.onUpdate.dispatch({ oldEntity: oldItem, newEntity: item });
 }
 
 export type Diff<T, P extends keyof T> = Partial<Omit<T, P>> & Required<Pick<T, P>>;

@@ -1,6 +1,6 @@
 import BTree from "sorted-btree";
 import { Dispatcher } from "../events/Dispatcher";
-import { SyncDB, SyncKey } from "./createDB";
+import { Database, ThunderKey } from "./createDB";
 
 /**
  * Creates a new table where entities can be inserted/updated/deleted/retrieved.
@@ -32,9 +32,9 @@ import { SyncDB, SyncKey } from "./createDB";
  * const userTable = createTable<User>(db, "users")();
  */
 export function createTable<T extends { id: string | number }>(
-  db: SyncDB,
+  db: Database,
   tableName: string
-): <P extends keyof T = "id">(options?: TableOptions<P>) => SyncTable<T, P>;
+): <P extends keyof T = "id">(options?: TableOptions<P>) => Table<T, P>;
 
 /**
  * Creates a new table where entities can be inserted/updated/deleted/retrieved.
@@ -66,14 +66,14 @@ export function createTable<T extends { id: string | number }>(
  * const userTable = createTable<User>(db, "users")();
  */
 export function createTable<T>(
-  db: SyncDB,
+  db: Database,
   tableName: string
-): <P extends keyof T>(options: TableOptions<P>) => SyncTable<T, P>;
+): <P extends keyof T>(options: TableOptions<P>) => Table<T, P>;
 
-export function createTable<T>(db: SyncDB, tableName: string) {
-  return <P extends keyof T>(options: TableOptions<P>): SyncTable<T, P> => {
+export function createTable<T>(db: Database, tableName: string) {
+  return <P extends keyof T>(options: TableOptions<P>): Table<T, P> => {
     return {
-      [SyncKey]: {
+      [ThunderKey]: {
         db,
         tableName,
         storage: {
@@ -97,9 +97,9 @@ export interface TableOptions<P> {
   primary: P;
 }
 
-export interface SyncTable<T, P extends keyof T> {
-  [SyncKey]: {
-    db: SyncDB;
+export interface Table<T, P extends keyof T> {
+  [ThunderKey]: {
+    db: Database;
     tableName: string;
     storage: {
       primary: BTree<T[P], T>;

@@ -15,7 +15,7 @@
  * This is implemented in this `query/filter` module.
  */
 
-import { SyncTable } from "../../core";
+import { Table } from "../../core";
 import { Filter } from "../types";
 import { filterAndItems } from "./and";
 import { filterOrItems } from "./or";
@@ -25,7 +25,7 @@ import { filterWhereItems } from "./where";
  * @returns all items from `items` that match the given `filter`.
  */
 export function filterItems<T, P extends keyof T>(
-  table: SyncTable<T, P>,
+  table: Table<T, P>,
   items: T[],
   where: NonNullable<Filter<T>["where"]>
 ): T[] {

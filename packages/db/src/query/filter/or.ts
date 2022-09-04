@@ -1,10 +1,10 @@
-import { SyncTable } from "../../core";
+import { Table } from "../../core";
 import { And, Or, Where } from "../types";
 import { filterAndItems } from "./and";
 import { filterWhereItems } from "./where";
 
 export function filterOrItems<T, P extends keyof T>(
-  table: SyncTable<T, P>,
+  table: Table<T, P>,
   items: T[],
   filter: Or<T>
 ): T[] {

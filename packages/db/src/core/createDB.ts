@@ -1,4 +1,4 @@
-export const SyncKey = Symbol("Sync");
+export const ThunderKey = Symbol("Sync");
 
 /**
  * Creates a new database.
@@ -10,9 +10,9 @@ export const SyncKey = Symbol("Sync");
  * const userTable = createTable<User>(db, "users");
  * const taskTable = createTable<Task>(db, "tasks");
  */
-export function createDB(options?: Partial<DBOptions>): SyncDB {
+export function createDB(options?: Partial<DBOptions>): Database {
   return {
-    [SyncKey]: {
+    [ThunderKey]: {
       options: {
         clone: true,
         ...options,
@@ -33,8 +33,8 @@ export interface DBOptions {
   clone: boolean;
 }
 
-export interface SyncDB {
-  [SyncKey]: {
+export interface Database {
+  [ThunderKey]: {
     options: Required<DBOptions>;
   };
 }

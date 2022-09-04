@@ -1,8 +1,8 @@
 import { Filter } from "../query/types";
 import { clone } from "./clone";
-import { SyncKey } from "./createDB";
+import { ThunderKey } from "./createDB";
 import { many } from "./many";
-import { SyncTable } from "./createTable";
+import { Table } from "./createTable";
 
 /**
  * Retrieves the first entity from `table` matching the given `filter`.
@@ -16,7 +16,7 @@ import { SyncTable } from "./createTable";
  * const userWithId = await one(userTable, { where: { id: 10 } });
  */
 export async function one<T, P extends keyof T>(
-  table: SyncTable<T, P>,
+  table: Table<T, P>,
   filter: Filter<T>
 ): Promise<T> {
   const res = await many(table, filter);
@@ -26,5 +26,5 @@ export async function one<T, P extends keyof T>(
     throw new Error("More than one item found for the given query.");
   }
 
-  return table[SyncKey].db[SyncKey].options.clone ? clone(res[0]) : res[0];
+  return table[ThunderKey].db[ThunderKey].options.clone ? clone(res[0]) : res[0];
 }

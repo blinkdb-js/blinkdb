@@ -1,6 +1,6 @@
 import { clone } from "./clone";
-import { SyncKey } from "./createDB";
-import { SyncTable } from "./createTable";
+import { ThunderKey } from "./createDB";
+import { Table } from "./createTable";
 
 /**
  * Inserts a new entity into `table`.
@@ -15,20 +15,20 @@ import { SyncTable } from "./createTable";
  * const charlieId = insert(userTable, { id: uuid(), name: "Charlie", age: 34 });
  */
 export async function insert<T, P extends keyof T>(
-  table: SyncTable<T, P>,
+  table: Table<T, P>,
   entity: Create<T, P>
 ): Promise<T[P]> {
-  const primaryKeyProperty = table[SyncKey].options.primary;
+  const primaryKeyProperty = table[ThunderKey].options.primary;
   const primaryKey = entity[primaryKeyProperty] as unknown as T[P];
 
-  if (table[SyncKey].storage.primary.has(primaryKey)) {
+  if (table[ThunderKey].storage.primary.has(primaryKey)) {
     throw new Error(`Primary key ${primaryKey} already in use.`);
   }
 
-  const storageEntity = (table[SyncKey].db[SyncKey].options.clone ? clone(entity) : entity) as unknown as T;
+  const storageEntity = (table[ThunderKey].db[ThunderKey].options.clone ? clone(entity) : entity) as unknown as T;
 
-  table[SyncKey].storage.primary.set(primaryKey, storageEntity);
-  table[SyncKey].events.onInsert.dispatch({ entity: storageEntity });
+  table[ThunderKey].storage.primary.set(primaryKey, storageEntity);
+  table[ThunderKey].events.onInsert.dispatch({ entity: storageEntity });
   return primaryKey;
 }
 

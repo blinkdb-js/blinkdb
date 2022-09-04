@@ -1,5 +1,5 @@
-import { SyncKey } from "./createDB";
-import { SyncTable } from "./createTable";
+import { ThunderKey } from "./createDB";
+import { Table } from "./createTable";
 
 /**
  * Removes all entities from `table`.
@@ -9,7 +9,7 @@ import { SyncTable } from "./createTable";
  * const userTable = createTable<User>(db, "users")();
  * clear(userTable);
  */
-export async function clear<T, P extends keyof T>(table: SyncTable<T, P>): Promise<void> {
-  table[SyncKey].storage.primary.clear();
-  table[SyncKey].events.onClear.dispatch();
+export async function clear<T, P extends keyof T>(table: Table<T, P>): Promise<void> {
+  table[ThunderKey].storage.primary.clear();
+  table[ThunderKey].events.onClear.dispatch();
 }

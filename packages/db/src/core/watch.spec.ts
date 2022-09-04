@@ -1,6 +1,6 @@
 import { insert } from "./insert";
-import { createDB, SyncDB } from "./createDB";
-import { SyncTable, createTable } from "./createTable";
+import { createDB, Database } from "./createDB";
+import { Table, createTable } from "./createTable";
 import { watch } from "./watch";
 import { update } from "./update";
 import { remove } from "./remove";
@@ -12,8 +12,8 @@ interface User {
   age?: number;
 }
 
-let db: SyncDB;
-let userTable: SyncTable<User, "id">;
+let db: Database;
+let userTable: Table<User, "id">;
 
 const alice: User = { id: 0, name: "Alice", age: 16 };
 const bob: User = { id: 1, name: "Bob" };

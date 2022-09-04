@@ -2,8 +2,8 @@ import { filterItems } from "../query/filter";
 import { selectItems } from "../query/select";
 import { Filter } from "../query/types";
 import { clone } from "./clone";
-import { SyncKey } from "./createDB";
-import { SyncTable } from "./createTable";
+import { ThunderKey } from "./createDB";
+import { Table } from "./createTable";
 
 /**
  * Retrieve all entities from `table`.
@@ -13,7 +13,7 @@ import { SyncTable } from "./createTable";
  * const userTable = createTable<User>(db, "users")();
  * const allUsers = many(userTable);
  */
-export async function many<T, P extends keyof T>(table: SyncTable<T, P>): Promise<T[]>;
+export async function many<T, P extends keyof T>(table: Table<T, P>): Promise<T[]>;
 
 /**
  * Retrieve all entities from `table` that match the given `filter`.
@@ -35,16 +35,16 @@ export async function many<T, P extends keyof T>(table: SyncTable<T, P>): Promis
  * });
  */
 export async function many<T, P extends keyof T>(
-  table: SyncTable<T, P>,
+  table: Table<T, P>,
   filter?: Filter<T>
 ): Promise<T[]>;
 
 export async function many<T, P extends keyof T>(
-  table: SyncTable<T, P>,
+  table: Table<T, P>,
   filter?: Filter<T>
 ): Promise<T[]> {
   if (filter === undefined) {
-    return table[SyncKey].storage.primary.valuesArray();
+    return table[ThunderKey].storage.primary.valuesArray();
   }
 
   let items: T[] = [];
@@ -57,5 +57,5 @@ export async function many<T, P extends keyof T>(
     items = filterItems(table, items, filter.where);
   }
 
-  return table[SyncKey].db[SyncKey].options.clone ? clone(items) : items;
+  return table[ThunderKey].db[ThunderKey].options.clone ? clone(items) : items;
 }

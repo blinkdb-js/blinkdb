@@ -1,4 +1,4 @@
-import { SyncKey, SyncTable } from "../../core";
+import { ThunderKey, Table } from "../../core";
 import { Matchers, Where } from "../types";
 import { selectMatcherItems } from "./matchers";
 
@@ -8,7 +8,7 @@ import { selectMatcherItems } from "./matchers";
  * @returns the selected items from the database, or `null` in case a full table scan is required.
  */
 export async function selectWhereFilterItems<T, P extends keyof T>(
-  table: SyncTable<T, P>,
+  table: Table<T, P>,
   filter: Where<T>
 ): Promise<T[] | null> {
   // No matchers in filter? We can return early
@@ -16,11 +16,11 @@ export async function selectWhereFilterItems<T, P extends keyof T>(
     return [];
   }
 
-  const primaryKeyProperty = table[SyncKey].options.primary;
+  const primaryKeyProperty = table[ThunderKey].options.primary;
 
   // Check primary key for items to select
   if (primaryKeyProperty in filter) {
-    const btree = table[SyncKey].storage.primary;
+    const btree = table[ThunderKey].storage.primary;
     const matcher = filter[primaryKeyProperty] as Matchers<T[P]>;
     return selectMatcherItems(btree, matcher);
   }

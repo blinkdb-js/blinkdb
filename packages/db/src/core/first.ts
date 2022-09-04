@@ -1,8 +1,8 @@
 import { Filter } from "../query/types";
 import { clone } from "./clone";
-import { SyncKey } from "./createDB";
+import { ThunderKey } from "./createDB";
 import { many } from "./many";
-import { SyncTable } from "./createTable";
+import { Table } from "./createTable";
 
 /**
  * Retrieves the first entity from `table`.
@@ -14,7 +14,7 @@ import { SyncTable } from "./createTable";
  * const firstUser = await first(userTable);
  */
 export async function first<T, P extends keyof T>(
-  table: SyncTable<T, P>
+  table: Table<T, P>
 ): Promise<T | null>;
 
 /**
@@ -27,21 +27,21 @@ export async function first<T, P extends keyof T>(
  * const firstUser = await first(userTable, { where: { name: "Alice" } });
  */
 export async function first<T, P extends keyof T>(
-  table: SyncTable<T, P>,
+  table: Table<T, P>,
   filter: Filter<T>
 ): Promise<T | null>;
 
 export async function first<T, P extends keyof T>(
-  table: SyncTable<T, P>,
+  table: Table<T, P>,
   filter?: Filter<T>
 ): Promise<T | null> {
   if (filter === undefined) {
-    const btree = table[SyncKey].storage.primary;
+    const btree = table[ThunderKey].storage.primary;
     const minKey = btree.minKey();
     return minKey ? btree.get(minKey) ?? null : null;
   }
 
   const res = await many(table, filter);
-  const entity = table[SyncKey].db[SyncKey].options.clone ? clone(res[0]) : res[0];
+  const entity = table[ThunderKey].db[ThunderKey].options.clone ? clone(res[0]) : res[0];
   return entity ?? null;
 }

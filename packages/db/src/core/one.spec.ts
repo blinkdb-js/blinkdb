@@ -1,14 +1,14 @@
 import { insert } from "./insert";
-import { createDB, SyncDB } from "./createDB";
-import { SyncTable, createTable } from "./createTable";
+import { createDB, Database } from "./createDB";
+import { Table, createTable } from "./createTable";
 import { one } from "./one";
 
 interface User {
   id: number;
 }
 
-let db: SyncDB;
-let userTable: SyncTable<User, "id">;
+let db: Database;
+let userTable: Table<User, "id">;
 
 beforeEach(async () => {
   db = createDB();

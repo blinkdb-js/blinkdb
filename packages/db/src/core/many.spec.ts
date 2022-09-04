@@ -1,7 +1,7 @@
 import { insert } from "./insert";
-import { createDB, SyncDB } from "./createDB";
+import { createDB, Database } from "./createDB";
 import { many } from "./many";
-import { SyncTable, createTable } from "./createTable";
+import { Table, createTable } from "./createTable";
 
 interface User {
   id: number;
@@ -16,8 +16,8 @@ interface User {
   date?: Date;
 }
 
-let db: SyncDB;
-let userTable: SyncTable<User, "id">;
+let db: Database;
+let userTable: Table<User, "id">;
 
 beforeEach(() => {
   db = createDB();

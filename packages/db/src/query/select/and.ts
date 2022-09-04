@@ -1,4 +1,4 @@
-import { SyncKey, SyncTable } from "../../core";
+import { ThunderKey, Table } from "../../core";
 import { And } from "../types";
 import { selectOrFilterItems } from "./or";
 import { selectWhereFilterItems } from "./where";
@@ -9,7 +9,7 @@ import { selectWhereFilterItems } from "./where";
  * @returns the selected items from the database, or `null` in case a full table scan is required.
  */
 export async function selectAndFilterItems<T, P extends keyof T>(
-  table: SyncTable<T, P>,
+  table: Table<T, P>,
   filter: And<T>
 ): Promise<T[] | null> {
   if (filter.$and.length === 0) {
@@ -23,7 +23,7 @@ export async function selectAndFilterItems<T, P extends keyof T>(
       : await selectWhereFilterItems(table, childFilter);
   }
 
-  const primaryKeyProperty = table[SyncKey].options.primary;
+  const primaryKeyProperty = table[ThunderKey].options.primary;
 
   // Fill array with items of first filter
   const firstChildFilter = filter.$and[0];

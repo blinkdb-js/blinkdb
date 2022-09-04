@@ -15,7 +15,7 @@
  * This is implemented in the `query/filter` module.
  */
 
-import { SyncKey, SyncTable } from "../../core";
+import { ThunderKey, Table } from "../../core";
 import { Filter } from "../types";
 import { selectAndFilterItems } from "./and";
 import { selectOrFilterItems } from "./or";
@@ -27,7 +27,7 @@ import { selectWhereFilterItems } from "./where";
  * @returns the selected items from the database, or `null` in case a full table scan is required.
  */
 export async function selectItems<T, P extends keyof T>(
-  table: SyncTable<T, P>,
+  table: Table<T, P>,
   where: NonNullable<Filter<T>["where"]>
 ): Promise<T[]> {
   let possibleItems: T[] | null;
@@ -45,6 +45,6 @@ export async function selectItems<T, P extends keyof T>(
     return possibleItems;
   } else {
     // In case null is returned, a full table scan is required
-    return table[SyncKey].storage.primary.valuesArray();
+    return table[ThunderKey].storage.primary.valuesArray();
   }
 }

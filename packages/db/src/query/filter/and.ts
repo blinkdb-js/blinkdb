@@ -1,4 +1,4 @@
-import { SyncTable } from "../../core";
+import { Table } from "../../core";
 import { And, Or, Where } from "../types";
 import { filterOrItems } from "./or";
 import { filterWhereItems } from "./where";
@@ -7,7 +7,7 @@ import { filterWhereItems } from "./where";
  * @returns all items from `items` that match the given `filter`.
  */
 export function filterAndItems<T, P extends keyof T>(
-  table: SyncTable<T, P>,
+  table: Table<T, P>,
   items: T[],
   filter: And<T>
 ): T[] {

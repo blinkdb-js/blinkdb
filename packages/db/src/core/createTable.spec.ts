@@ -1,4 +1,4 @@
-import { createDB, SyncDB } from "./createDB";
+import { createDB, Database } from "./createDB";
 import { createTable } from "./createTable";
 
 interface User1 {
@@ -11,7 +11,7 @@ interface User2 {
   age: number;
 }
 
-let db: SyncDB;
+let db: Database;
 
 beforeEach(() => {
   db = createDB();

@@ -1,8 +1,8 @@
 import { filterItems } from "../query/filter";
 import { Filter } from "../query/types";
 import { clone } from "./clone";
-import { SyncKey } from "./createDB";
-import { SyncTable } from "./createTable";
+import { ThunderKey } from "./createDB";
+import { Table } from "./createTable";
 import { many } from "./many";
 
 /**
@@ -27,7 +27,7 @@ import { many } from "./many";
  * await remove(userTable, { id: userId });
  */
 export async function watch<T, P extends keyof T>(
-  table: SyncTable<T, P>,
+  table: Table<T, P>,
   callback: (entities: T[]) => Promise<void> | void
 ): Promise<{ stop: () => void }>;
 
@@ -55,13 +55,13 @@ export async function watch<T, P extends keyof T>(
  * await remove(userTable, { id: userId });
  */
 export async function watch<T, P extends keyof T>(
-  table: SyncTable<T, P>,
+  table: Table<T, P>,
   filter: Filter<T>,
   callback: (entities: T[]) => Promise<void> | void
 ): Promise<{ stop: () => void }>;
 
 export async function watch<T, P extends keyof T>(
-  table: SyncTable<T, P>,
+  table: Table<T, P>,
   filterOrCallback: Filter<T> | ((entities: T[]) => Promise<void> | void),
   callback?: (entities: T[]) => Promise<void> | void
 ): Promise<{ stop: () => void }> {
@@ -75,10 +75,10 @@ export async function watch<T, P extends keyof T>(
     cb = filterOrCallback;
   }
 
-  const primaryKeyProperty = table[SyncKey].options.primary;
+  const primaryKeyProperty = table[ThunderKey].options.primary;
 
   const initialEntities = await many(table, filter);
-  table[SyncKey].db[SyncKey].options.clone ? cb(clone(initialEntities)) : cb(initialEntities);
+  table[ThunderKey].db[ThunderKey].options.clone ? cb(clone(initialEntities)) : cb(initialEntities);
 
   let entities: Map<T[P], T> = new Map();
   let entityList: T[] = initialEntities;
@@ -87,7 +87,7 @@ export async function watch<T, P extends keyof T>(
     entities.set(primaryKey, entity);
   }
 
-  const removeOnInsertCb = table[SyncKey].events.onInsert.register(({ entity }) => {
+  const removeOnInsertCb = table[ThunderKey].events.onInsert.register(({ entity }) => {
     if (filter?.where && filterItems(table, [entity], filter.where).length === 0) {
       return;
     }
@@ -96,10 +96,10 @@ export async function watch<T, P extends keyof T>(
     entities.set(primaryKey, entity);
     entityList.push(entity);
 
-    table[SyncKey].db[SyncKey].options.clone ? cb(clone(entityList)) : cb(entityList);
+    table[ThunderKey].db[ThunderKey].options.clone ? cb(clone(entityList)) : cb(entityList);
   });
 
-  const removeOnUpdateCb = table[SyncKey].events.onUpdate.register(({ oldEntity, newEntity }) => {
+  const removeOnUpdateCb = table[ThunderKey].events.onUpdate.register(({ oldEntity, newEntity }) => {
     const matchesOldEntity = !filter?.where || filterItems(table, [oldEntity], filter.where).length !== 0;
     const matchesNewEntity = !filter?.where || filterItems(table, [newEntity], filter.where).length !== 0;
     if (!matchesOldEntity && !matchesNewEntity) {
@@ -118,19 +118,19 @@ export async function watch<T, P extends keyof T>(
       entityList = Array.from(entities.values());
     }
 
-    table[SyncKey].db[SyncKey].options.clone ? cb(clone(entityList)) : cb(entityList);
+    table[ThunderKey].db[ThunderKey].options.clone ? cb(clone(entityList)) : cb(entityList);
   });
 
-  const removeOnRemoveCb = table[SyncKey].events.onRemove.register(({ entity }) => {
+  const removeOnRemoveCb = table[ThunderKey].events.onRemove.register(({ entity }) => {
     const primaryKey = entity[primaryKeyProperty];
     const deleted = entities.delete(primaryKey);
     if(deleted) {
       entityList = Array.from(entities.values());
-      table[SyncKey].db[SyncKey].options.clone ? cb(clone(entityList)) : cb(entityList);
+      table[ThunderKey].db[ThunderKey].options.clone ? cb(clone(entityList)) : cb(entityList);
     }
   });
 
-  const removeOnClearCb = table[SyncKey].events.onClear.register(() => {
+  const removeOnClearCb = table[ThunderKey].events.onClear.register(() => {
     entities.clear();
     entityList = [];
 

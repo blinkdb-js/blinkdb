@@ -1,5 +1,5 @@
-import { SyncKey } from "./createDB";
-import { SyncTable } from "./createTable";
+import { ThunderKey } from "./createDB";
+import { Table } from "./createTable";
 
 /**
  * Removes a given `entity` from the `table`.
@@ -14,13 +14,13 @@ import { SyncTable } from "./createTable";
  * await remove(userTable, { id: userId });
  */
 export async function remove<T, P extends keyof T>(
-  table: SyncTable<T, P>,
+  table: Table<T, P>,
   entity: Ids<T, P>
 ): Promise<boolean> {
-  const primaryKeyProperty = table[SyncKey].options.primary;
+  const primaryKeyProperty = table[ThunderKey].options.primary;
   const primaryKey = entity[primaryKeyProperty];
-  const deleted = table[SyncKey].storage.primary.delete(primaryKey);
-  table[SyncKey].events.onRemove.dispatch({ entity: entity as unknown as T });
+  const deleted = table[ThunderKey].storage.primary.delete(primaryKey);
+  table[ThunderKey].events.onRemove.dispatch({ entity: entity as unknown as T });
   return deleted;
 }
 
