@@ -28,7 +28,7 @@ import { selectWhereFilterItems } from "./where";
  */
 export async function selectItems<T, P extends keyof T>(
   table: Table<T, P>,
-  where: NonNullable<Filter<T>["where"]>
+  where: NonNullable<Filter<T, P>["where"]>
 ): Promise<T[]> {
   let possibleItems: T[] | null;
 

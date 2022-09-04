@@ -57,16 +57,16 @@ export async function watch<T, P extends keyof T>(
  */
 export async function watch<T, P extends keyof T>(
   table: Table<T, P>,
-  filter: Filter<T>,
+  filter: Filter<T, P>,
   callback: (entities: T[]) => Promise<void> | void
 ): Promise<{ stop: () => void }>;
 
 export async function watch<T, P extends keyof T>(
   table: Table<T, P>,
-  filterOrCallback: Filter<T> | ((entities: T[]) => Promise<void> | void),
+  filterOrCallback: Filter<T, P> | ((entities: T[]) => Promise<void> | void),
   callback?: (entities: T[]) => Promise<void> | void
 ): Promise<{ stop: () => void }> {
-  let filter: Filter<T> | undefined;
+  let filter: Filter<T, P> | undefined;
   let cb: (entities: T[]) => Promise<void> | void;
   if (typeof filterOrCallback === 'object') {
     filter = filterOrCallback;

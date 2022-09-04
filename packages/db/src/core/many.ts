@@ -1,4 +1,5 @@
 import { filterItems } from "../query/filter";
+import { limitItems } from "../query/limit";
 import { selectItems } from "../query/select";
 import { sortItems } from "../query/sort";
 import { Filter } from "../query/types";
@@ -37,12 +38,12 @@ export async function many<T, P extends keyof T>(table: Table<T, P>): Promise<T[
  */
 export async function many<T, P extends keyof T>(
   table: Table<T, P>,
-  filter?: Filter<T>
+  filter?: Filter<T, P>
 ): Promise<T[]>;
 
 export async function many<T, P extends keyof T>(
   table: Table<T, P>,
-  filter?: Filter<T>
+  filter?: Filter<T, P>
 ): Promise<T[]> {
   if (filter === undefined) {
     return table[ThunderKey].storage.primary.valuesArray();
@@ -61,6 +62,11 @@ export async function many<T, P extends keyof T>(
   if (filter.sort) {
     // Sort items
     items = sortItems(items, filter.sort);
+  }
+
+  if (filter.limit) {
+    // Limit items
+    items = limitItems(table, items, filter.limit);
   }
 
   return table[ThunderKey].db[ThunderKey].options.clone ? clone(items) : items;

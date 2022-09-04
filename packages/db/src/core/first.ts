@@ -28,12 +28,12 @@ export async function first<T, P extends keyof T>(
  */
 export async function first<T, P extends keyof T>(
   table: Table<T, P>,
-  filter: Filter<T>
+  filter: Filter<T, P>
 ): Promise<T | null>;
 
 export async function first<T, P extends keyof T>(
   table: Table<T, P>,
-  filter?: Filter<T>
+  filter?: Filter<T, P>
 ): Promise<T | null> {
   if (filter === undefined) {
     const btree = table[ThunderKey].storage.primary;

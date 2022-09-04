@@ -664,4 +664,89 @@ describe("filter", () => {
       expect(items).toStrictEqual([bob, charlie, alice]);
     });
   });
+
+  describe("limit", () => {
+
+    it("should limit items with skip", async () => {
+      const items = await many(userTable, {
+        where: {
+          id: { $gte: 0 }
+        },
+        limit: {
+          skip: 2
+        }
+      });
+
+      expect(items).toStrictEqual([charlie]);
+    });
+
+    it("should limit items with take", async () => {
+      const items = await many(userTable, {
+        where: {
+          id: { $gte: 0 }
+        },
+        limit: {
+          take: 2
+        }
+      });
+
+      expect(items).toStrictEqual([alice, bob]);
+    });
+
+    it("should limit items with skip & take", async () => {
+      const items = await many(userTable, {
+        where: {
+          id: { $gte: 0 }
+        },
+        limit: {
+          skip: 1,
+          take: 2
+        }
+      });
+
+      expect(items).toStrictEqual([bob, charlie]);
+    });
+
+    it("should limit items with cursor", async () => {
+      const items = await many(userTable, {
+        where: {
+          id: { $gte: 0 }
+        },
+        limit: {
+          from: 1
+        }
+      });
+
+      expect(items).toStrictEqual([bob, charlie]);
+    });
+
+    it("should limit items with cursor & take", async () => {
+      const items = await many(userTable, {
+        where: {
+          id: { $gte: 0 }
+        },
+        limit: {
+          from: 0,
+          take: 2
+        }
+      });
+
+      expect(items).toStrictEqual([alice, bob]);
+    });
+
+    it("should limit items with cursor, skip & take", async () => {
+      const items = await many(userTable, {
+        where: {
+          id: { $gte: 0 }
+        },
+        limit: {
+          from: 0,
+          skip: 1,
+          take: 2
+        }
+      });
+
+      expect(items).toStrictEqual([bob, charlie]);
+    });
+  });
 });

@@ -27,7 +27,7 @@ import { filterWhereItems } from "./where";
 export function filterItems<T, P extends keyof T>(
   table: Table<T, P>,
   items: T[],
-  where: NonNullable<Filter<T>["where"]>
+  where: NonNullable<Filter<T, P>["where"]>
 ): T[] {
   if ("$and" in where) {
     return filterAndItems(table, items, where);

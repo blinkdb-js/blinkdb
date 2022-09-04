@@ -1,6 +1,7 @@
-export type Filter<T> = {
+export type Filter<T, P extends keyof T> = {
   where?: Where<T> | Or<T> | And<T>;
   sort?: Sort<T>;
+  limit?: Limit<T, P>;
 };
 
 export type And<T> = {
@@ -23,6 +24,12 @@ export type ValidSortKey<T> = {
   [K in keyof T]: T[K] extends ValidSortKeyType ? K : never;
 }[keyof T]
 export type ValidSortKeyType = number | string | Date | boolean | null | undefined;
+
+export type Limit<T, P extends keyof T> = {
+  from?: T[P];
+  skip?: number;
+  take?: number;
+}
 
 export type Matchers<T> = T extends string
   ? StringMatchers<T>

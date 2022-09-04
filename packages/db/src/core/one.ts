@@ -17,7 +17,7 @@ import { Table } from "./createTable";
  */
 export async function one<T, P extends keyof T>(
   table: Table<T, P>,
-  filter: Filter<T>
+  filter: Filter<T, P>
 ): Promise<T> {
   const res = await many(table, filter);
   if (res.length === 0) {
