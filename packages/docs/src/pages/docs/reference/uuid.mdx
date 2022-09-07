@@ -1,0 +1,17 @@
+---
+layout: "../../../layouts/DocsLayout.astro"
+title: "uuid"
+---
+
+# uuid()
+
+Returns a uuid - an universally unique identifier. You can use this as the primary key for entities.
+
+This uses [hyperid](https://www.npmjs.com/package/hyperid) under the hood, which is one of the fastest
+methods for uuid generation.
+
+```ts
+const userTable = createTable<User>(db, "users")();
+const aliceId = uuid();
+await insert(userTable, { id: aliceId, name: "Alice", age: 23 });
+```

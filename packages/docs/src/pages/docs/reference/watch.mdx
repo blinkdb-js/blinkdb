@@ -1,0 +1,28 @@
+---
+layout: "../../../layouts/DocsLayout.astro"
+title: "watch"
+---
+
+# watch()
+
+`watch()` observes changes in the table.
+Whenever an entity is inserted, updated, or deleted, blinkDB calls the provided callback
+with all table entities.
+
+```ts
+const userTable = createTable<User>(db, "users")();
+watch(userTable, users => {
+  console.log('All users: ', users);
+});
+```
+
+A [filter](/docs/filters) can also be specified, which causes `watch()` to only call the function
+if an inserted / updated / deleted entity matches, and only entities which match the filter
+are provided as arguments.
+
+```ts
+const userTable = createTable<User>(db, "users")();
+watch(userTable, { where: { age: lt(3) } }, babies => {
+  console.log('All babies: ', babies);
+});
+```

@@ -1,0 +1,15 @@
+---
+layout: "../../../layouts/DocsLayout.astro"
+title: "remove"
+---
+
+# remove()
+
+Removes a given entity from the table.
+
+```ts
+const userTable = createTable<User>(db, "users")();
+const userId = await insert(userTable, { id: uuid(), name: 'Alice', age: 15 });
+// Remove Alice from the table
+await remove(userTable, { id: userId });
+```

@@ -1,0 +1,20 @@
+---
+layout: "../../../layouts/DocsLayout.astro"
+title: "many"
+---
+
+# many()
+
+Retrieves entities from the table. If a [filter](/docs/filters) is supplied, blinkDB will only
+return matching items - if not given, all items are returned.
+
+```ts
+const userTable = createTable<User>(db, "users")();
+
+const allUsers = await many(userTable);
+const allUsersNamedAlice = await many(userTable, {
+  where: {
+    name: "Alice",
+  },
+});
+```

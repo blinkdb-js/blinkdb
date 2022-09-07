@@ -10,9 +10,9 @@ import { Table } from "./createTable";
  * @example
  * const db = createDB();
  * const userTable = createTable<User>(db, "users")();
- * const aliceId = insert(userTable, { id: uuid(), name: "Alice", age: 23 });
- * const bobId = insert(userTable, { id: uuid(), name: "Bob", age: 45 });
- * const charlieId = insert(userTable, { id: uuid(), name: "Charlie", age: 34 });
+ * const aliceId = await insert(userTable, { id: uuid(), name: "Alice", age: 23 });
+ * const bobId = await insert(userTable, { id: uuid(), name: "Bob", age: 45 });
+ * const charlieId = await insert(userTable, { id: uuid(), name: "Charlie", age: 34 });
  */
 export async function insert<T, P extends keyof T>(
   table: Table<T, P>,
@@ -25,7 +25,9 @@ export async function insert<T, P extends keyof T>(
     throw new Error(`Primary key ${primaryKey} already in use.`);
   }
 
-  const storageEntity = (table[ThunderKey].db[ThunderKey].options.clone ? clone(entity) : entity) as unknown as T;
+  const storageEntity = (table[ThunderKey].db[ThunderKey].options.clone
+    ? clone(entity)
+    : entity) as unknown as T;
 
   table[ThunderKey].storage.primary.set(primaryKey, storageEntity);
   table[ThunderKey].events.onInsert.dispatch({ entity: storageEntity });

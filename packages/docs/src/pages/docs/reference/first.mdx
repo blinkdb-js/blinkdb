@@ -1,0 +1,22 @@
+---
+layout: "../../../layouts/DocsLayout.astro"
+title: "first"
+---
+
+# first()
+
+Retrieves the first entity from the table.
+
+If a [filter](/docs/filters) is supplied, "first" means the first item that would be returned
+from a similar call to `many()` .
+
+```ts
+const userTable = createTable<User>(db, "users")();
+
+const oldestUser = await first(userTable, {
+  sort: {
+    key: "age",
+    order: "desc"
+  }
+});
+```

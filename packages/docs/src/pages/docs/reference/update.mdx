@@ -1,0 +1,18 @@
+---
+layout: "../../../layouts/DocsLayout.astro"
+title: "update"
+---
+
+# update()
+
+Updates a given entity in the table.
+
+An exception is thrown if the entity has not been inserted into the table before,
+e.g. if the primary key of the entity was not found.
+
+```ts
+const userTable = createTable<User>(db, "users")();
+const userId = await insert(userTable, { id: uuid(), name: 'Alice', age: 15 });
+// Increase the age of Alice
+await update(userTable, { id: userId, age: 16 });
+```

@@ -1,0 +1,15 @@
+---
+layout: "../../../layouts/DocsLayout.astro"
+title: "insert"
+---
+
+# insert()
+
+Inserts a new entity into a table, and returns the primary key of the inserted entity.
+
+```ts
+const userTable = createTable<User>(db, "users")();
+const aliceId = await insert(userTable, { id: uuid(), name: "Alice", age: 23 });
+const bobId = await insert(userTable, { id: uuid(), name: "Bob", age: 45 });
+const charlieId = await insert(userTable, { id: uuid(), name: "Charlie", age: 34 });
+```

@@ -13,7 +13,7 @@ import { Table } from "./createTable";
  * @example
  * const db = createDB();
  * const userTable = createTable<User>(db, "users")();
- * const allUsers = many(userTable);
+ * const allUsers = await many(userTable);
  */
 export async function many<T, P extends keyof T>(table: Table<T, P>): Promise<T[]>;
 
@@ -24,13 +24,13 @@ export async function many<T, P extends keyof T>(table: Table<T, P>): Promise<T[
  * const db = createDB();
  * const userTable = createTable<User>(db, "users")();
  * // All users called 'Alice'
- * const allUsersNamedAlice = many(userTable, {
+ * const allUsersNamedAlice = await many(userTable, {
  *   where: {
  *     name: "Alice"
  *   }
  * });
  * // All users aged 25 and up
- * const allUsersOlderThan25 = many(userTable, {
+ * const allUsersOlderThan25 = await many(userTable, {
  *   where: {
  *     age: gt(25)
  *   }
