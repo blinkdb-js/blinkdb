@@ -17,7 +17,12 @@ export function limitItems<T, P extends keyof T>(
   const primaryKeyProperty = table[ThunderKey].options.primary;
 
   if (limit.from !== undefined) {
-    while (defaultComparator(items[0][primaryKeyProperty] as string | number, limit.from as string | number) < 0) {
+    while (
+      defaultComparator(
+        items[0][primaryKeyProperty] as unknown as string | number,
+        limit.from as unknown as string | number
+      ) < 0
+    ) {
       items.shift();
     }
   }

@@ -7,7 +7,7 @@ import { Table } from "./createTable";
  * @example
  * const db = createDB();
  * const userTable = createTable<User>(db, "users")();
- * clear(userTable);
+ * await clear(userTable);
  */
 export async function clear<T, P extends keyof T>(table: Table<T, P>): Promise<void> {
   table[ThunderKey].storage.primary.clear();
