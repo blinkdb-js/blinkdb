@@ -1,11 +1,11 @@
 ---
 layout: "../../layouts/DocsLayout.astro"
-title: "Basics"
+title: "Creating Tables"
 ---
 
-# Basics
+# Creating Tables
 
-Once you've installed blinkDB (using `npm install blinkdb`), you can create your own database.
+Once you've [installed blinkDB](/docs/installation), you can create your own database.
 
 ```ts
 import { createDB } from 'blinkdb';
@@ -32,4 +32,4 @@ const table = createTable<User>(db, "users")();
 
 - [What if I want to use another primary key?](/docs/reference/createTable#primary-keys)
 
-🥳🎉 Congratulations - it's that simple! You can now create, query, update, and delete items.
+🥳🎉 Congratulations - it's that simple! You can now [create, query, update, and delete items](/docs/crud).

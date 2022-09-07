@@ -36,15 +36,15 @@ const { frontmatter } = Astro.props;
   }
 
   .markdown h3 {
-    @apply text-2xl mt-8 mb-4 font-display tracking-wide font-bold text-black;
+    @apply text-xl mt-6 mb-3 font-display tracking-wide font-bold text-black;
   }
 
   .markdown h4 {
-    @apply text-2xl mt-4 mb-2 font-display tracking-wide font-bold text-black;
+    @apply text-xl mt-4 mb-2 font-display tracking-wide font-bold text-black;
   }
 
   .markdown h5 {
-    @apply text-xl mt-4 mb-2 font-display tracking-wide font-bold text-black;
+    @apply text-lg mt-4 mb-2 font-display tracking-wide font-bold text-black;
   }
 
   .markdown p {
@@ -78,8 +78,7 @@ const { frontmatter } = Astro.props;
   }
 
   .markdown :not(pre) > code {
-    background-color: #22272e;
-    @apply p-1 rounded text-gray-200;
+    @apply px-1 py-0.5 rounded bg-slate-200 text-sm;
   }
 
   .markdown table {
@@ -92,6 +91,10 @@ const { frontmatter } = Astro.props;
 
   .markdown td {
     @apply p-4;
+  }
+
+  .markdown hr {
+    @apply my-8;
   }
 </style>
 
