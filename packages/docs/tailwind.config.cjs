@@ -5,7 +5,8 @@ module.exports = {
   theme: {
     fontFamily: {
       'display': ['Fredoka', ...defaultTheme.fontFamily.sans],
-      'sans': ['Inter', ...defaultTheme.fontFamily.sans]
+      'sans': ['Inter', ...defaultTheme.fontFamily.sans],
+      'mono': ['Source Code Pro', ...defaultTheme.fontFamily.mono]
     },
     extend: {
       animation: {
