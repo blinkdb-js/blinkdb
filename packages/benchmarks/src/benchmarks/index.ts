@@ -1,2 +1,2 @@
 //import "./map-vs-btree.ts";
-import "./thunderdb-vs-lokijs.ts";
+import "./blinkdb-vs-lokijs.ts";

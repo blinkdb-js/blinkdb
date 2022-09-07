@@ -1,7 +1,7 @@
 {
-  "name": "@thunder/benchmarks",
+  "name": "@blinkdb/benchmarks",
   "version": "1.0.0",
-  "description": "benchmarks for thunder",
+  "description": "benchmarks for blinkdb",
   "main": "index.js",
   "author": "",
   "license": "MIT",
@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@ngneat/falso": "^6.1.0",
-    "@thunder/db": "^1.0.0",
+    "blinkdb": "^1.0.0",
     "clone": "^2.1.2",
     "lokijs": "^1.5.12"
   }

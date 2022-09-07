@@ -1,6 +1,6 @@
 import BTree from "sorted-btree";
 import { Dispatcher } from "../events/Dispatcher";
-import { Database, ThunderKey } from "./createDB";
+import { Database, BlinkKey } from "./createDB";
 
 /**
  * Creates a new table where entities can be inserted/updated/deleted/retrieved.
@@ -73,7 +73,7 @@ export function createTable<T>(
 export function createTable<T>(db: Database, tableName: string) {
   return <P extends keyof T>(options: TableOptions<P>): Table<T, P> => {
     return {
-      [ThunderKey]: {
+      [BlinkKey]: {
         db,
         tableName,
         storage: {
@@ -83,7 +83,7 @@ export function createTable<T>(db: Database, tableName: string) {
           onClear: new Dispatcher(),
           onInsert: new Dispatcher(),
           onRemove: new Dispatcher(),
-          onUpdate: new Dispatcher()
+          onUpdate: new Dispatcher(),
         },
         options: {
           primary: options?.primary ?? "id",
@@ -98,18 +98,18 @@ export interface TableOptions<P> {
 }
 
 export interface Table<T, P extends keyof T> {
-  [ThunderKey]: {
+  [BlinkKey]: {
     db: Database;
     tableName: string;
     storage: {
       primary: BTree<T[P], T>;
     };
     events: {
-      onInsert: Dispatcher<{ entity: T }>,
-      onUpdate: Dispatcher<{ oldEntity: T, newEntity: T }>,
-      onRemove: Dispatcher<{ entity: T }>
-      onClear: Dispatcher
-    },
+      onInsert: Dispatcher<{ entity: T }>;
+      onUpdate: Dispatcher<{ oldEntity: T; newEntity: T }>;
+      onRemove: Dispatcher<{ entity: T }>;
+      onClear: Dispatcher;
+    };
     options: Required<TableOptions<P>>;
   };
 }

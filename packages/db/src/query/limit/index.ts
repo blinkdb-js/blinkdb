@@ -1,5 +1,5 @@
 import { defaultComparator } from "sorted-btree";
-import { Table, ThunderKey } from "../../core";
+import { Table, BlinkKey } from "../../core";
 import { Filter } from "../types";
 
 /**
@@ -14,7 +14,7 @@ export function limitItems<T, P extends keyof T>(
     return [];
   }
 
-  const primaryKeyProperty = table[ThunderKey].options.primary;
+  const primaryKeyProperty = table[BlinkKey].options.primary;
 
   if (limit.from !== undefined) {
     while (

@@ -1,4 +1,4 @@
-import { ThunderKey, Table } from "../../core";
+import { BlinkKey, Table } from "../../core";
 import { Or } from "../types";
 import { selectAndFilterItems } from "./and";
 import { selectWhereFilterItems } from "./where";
@@ -29,7 +29,7 @@ export async function selectOrFilterItems<T, P extends keyof T>(
     }
 
     for (let childItem of childFilterItems) {
-      const primaryKeyProperty = table[ThunderKey].options.primary;
+      const primaryKeyProperty = table[BlinkKey].options.primary;
       const primaryKey = childItem[primaryKeyProperty];
       itemsMap.set(primaryKey, childItem);
     }

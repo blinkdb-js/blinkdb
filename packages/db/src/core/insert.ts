@@ -1,5 +1,5 @@
 import { clone } from "./clone";
-import { ThunderKey } from "./createDB";
+import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 
 /**
@@ -18,19 +18,19 @@ export async function insert<T, P extends keyof T>(
   table: Table<T, P>,
   entity: Create<T, P>
 ): Promise<T[P]> {
-  const primaryKeyProperty = table[ThunderKey].options.primary;
+  const primaryKeyProperty = table[BlinkKey].options.primary;
   const primaryKey = entity[primaryKeyProperty] as unknown as T[P];
 
-  if (table[ThunderKey].storage.primary.has(primaryKey)) {
+  if (table[BlinkKey].storage.primary.has(primaryKey)) {
     throw new Error(`Primary key ${primaryKey} already in use.`);
   }
 
-  const storageEntity = (table[ThunderKey].db[ThunderKey].options.clone
+  const storageEntity = (table[BlinkKey].db[BlinkKey].options.clone
     ? clone(entity)
     : entity) as unknown as T;
 
-  table[ThunderKey].storage.primary.set(primaryKey, storageEntity);
-  table[ThunderKey].events.onInsert.dispatch({ entity: storageEntity });
+  table[BlinkKey].storage.primary.set(primaryKey, storageEntity);
+  table[BlinkKey].events.onInsert.dispatch({ entity: storageEntity });
   return primaryKey;
 }
 

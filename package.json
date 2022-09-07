@@ -1,5 +1,6 @@
 {
-  "name": "thunder",
+  "name": "@blinkdb/workspace",
+  "private": true,
   "workspaces": [
     "packages/*"
   ],

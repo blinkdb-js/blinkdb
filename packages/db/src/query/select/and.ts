@@ -1,4 +1,4 @@
-import { ThunderKey, Table } from "../../core";
+import { BlinkKey, Table } from "../../core";
 import { And } from "../types";
 import { selectOrFilterItems } from "./or";
 import { selectWhereFilterItems } from "./where";
@@ -23,7 +23,7 @@ export async function selectAndFilterItems<T, P extends keyof T>(
       : await selectWhereFilterItems(table, childFilter);
   }
 
-  const primaryKeyProperty = table[ThunderKey].options.primary;
+  const primaryKeyProperty = table[BlinkKey].options.primary;
 
   // Fill array with items of first filter
   const firstChildFilter = filter.$and[0];

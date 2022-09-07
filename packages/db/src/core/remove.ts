@@ -1,4 +1,4 @@
-import { ThunderKey } from "./createDB";
+import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 
 /**
@@ -17,10 +17,10 @@ export async function remove<T, P extends keyof T>(
   table: Table<T, P>,
   entity: Ids<T, P>
 ): Promise<boolean> {
-  const primaryKeyProperty = table[ThunderKey].options.primary;
+  const primaryKeyProperty = table[BlinkKey].options.primary;
   const primaryKey = entity[primaryKeyProperty];
-  const deleted = table[ThunderKey].storage.primary.delete(primaryKey);
-  table[ThunderKey].events.onRemove.dispatch({ entity: entity as unknown as T });
+  const deleted = table[BlinkKey].storage.primary.delete(primaryKey);
+  table[BlinkKey].events.onRemove.dispatch({ entity: entity as unknown as T });
   return deleted;
 }
 

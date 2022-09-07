@@ -1,4 +1,4 @@
-import { ThunderKey, Table } from "../../core";
+import { BlinkKey, Table } from "../../core";
 import { Matchers, Where } from "../types";
 import { selectMatcherItems } from "./matchers";
 
@@ -16,11 +16,11 @@ export async function selectWhereFilterItems<T, P extends keyof T>(
     return [];
   }
 
-  const primaryKeyProperty = table[ThunderKey].options.primary;
+  const primaryKeyProperty = table[BlinkKey].options.primary;
 
   // Check primary key for items to select
   if (primaryKeyProperty in filter) {
-    const btree = table[ThunderKey].storage.primary;
+    const btree = table[BlinkKey].storage.primary;
     const matcher = filter[primaryKeyProperty] as Matchers<T[P]>;
     return selectMatcherItems(btree, matcher);
   }

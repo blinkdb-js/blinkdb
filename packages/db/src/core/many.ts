@@ -4,7 +4,7 @@ import { selectItems } from "../query/select";
 import { sortItems } from "../query/sort";
 import { Filter } from "../query/types";
 import { clone } from "./clone";
-import { ThunderKey } from "./createDB";
+import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 
 /**
@@ -46,7 +46,7 @@ export async function many<T, P extends keyof T>(
   filter?: Filter<T, P>
 ): Promise<T[]> {
   if (filter === undefined) {
-    return table[ThunderKey].storage.primary.valuesArray();
+    return table[BlinkKey].storage.primary.valuesArray();
   }
 
   let items: T[] = [];
@@ -69,5 +69,5 @@ export async function many<T, P extends keyof T>(
     items = limitItems(table, items, filter.limit);
   }
 
-  return table[ThunderKey].db[ThunderKey].options.clone ? clone(items) : items;
+  return table[BlinkKey].db[BlinkKey].options.clone ? clone(items) : items;
 }

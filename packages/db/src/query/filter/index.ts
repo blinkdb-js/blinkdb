@@ -1,5 +1,5 @@
 /**
- * @file The selecting engine for ThunderDB.
+ * @file The selecting engine for BlinkDB.
  *
  * Querying items from the database happens in two stages:
  *

@@ -1,4 +1,4 @@
-import { ThunderKey } from "./createDB";
+import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 
 /**
@@ -10,6 +10,6 @@ import { Table } from "./createTable";
  * await clear(userTable);
  */
 export async function clear<T, P extends keyof T>(table: Table<T, P>): Promise<void> {
-  table[ThunderKey].storage.primary.clear();
-  table[ThunderKey].events.onClear.dispatch();
+  table[BlinkKey].storage.primary.clear();
+  table[BlinkKey].events.onClear.dispatch();
 }

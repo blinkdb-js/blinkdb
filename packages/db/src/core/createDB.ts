@@ -1,4 +1,4 @@
-export const ThunderKey = Symbol("Sync");
+export const BlinkKey = Symbol("BlinkDB");
 
 /**
  * Creates a new database.
@@ -12,7 +12,7 @@ export const ThunderKey = Symbol("Sync");
  */
 export function createDB(options?: Partial<DBOptions>): Database {
   return {
-    [ThunderKey]: {
+    [BlinkKey]: {
       options: {
         clone: true,
         ...options,
@@ -34,7 +34,7 @@ export interface DBOptions {
 }
 
 export interface Database {
-  [ThunderKey]: {
+  [BlinkKey]: {
     options: Required<DBOptions>;
   };
 }

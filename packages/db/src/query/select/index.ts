@@ -1,5 +1,5 @@
 /**
- * @file The selecting engine for ThunderDB.
+ * @file The selecting engine for BlinkDB.
  *
  * Querying items from the database happens in two stages:
  *
@@ -15,7 +15,7 @@
  * This is implemented in the `query/filter` module.
  */
 
-import { ThunderKey, Table } from "../../core";
+import { BlinkKey, Table } from "../../core";
 import { Filter } from "../types";
 import { selectAndFilterItems } from "./and";
 import { selectOrFilterItems } from "./or";
@@ -45,6 +45,6 @@ export async function selectItems<T, P extends keyof T>(
     return possibleItems;
   } else {
     // In case null is returned, a full table scan is required
-    return table[ThunderKey].storage.primary.valuesArray();
+    return table[BlinkKey].storage.primary.valuesArray();
   }
 }

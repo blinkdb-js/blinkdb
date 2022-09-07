@@ -2,17 +2,17 @@ import { filterItems } from "../query/filter";
 import { sortItems } from "../query/sort";
 import { Filter } from "../query/types";
 import { clone } from "./clone";
-import { ThunderKey } from "./createDB";
+import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 import { many } from "./many";
 
 /**
  * Watches all changes in `table` and calls `callback` whenever entities are inserted, updated, or removed.
- * 
+ *
  * The callback is called once immediately after registering with all current entities in the `table`.
- * 
+ *
  * @returns a function to be called if you want to stop watching changes.
- * 
+ *
  * @example
  * const db = createDB();
  * const userTable = createTable<User>(db, "users")();
@@ -35,12 +35,12 @@ export async function watch<T, P extends keyof T>(
 /**
  * Watches all changes in `table` and calls `callback` whenever entities
  * that match the given `filter` are inserted, updated, or removed.
- * 
+ *
  * The callback is called once immediately after registering with all
  * current entities in the `table` that match the given `filter`.
- * 
+ *
  * @returns a function to be called if you want to stop watching changes.
- * 
+ *
  * @example
  * const db = createDB();
  * const userTable = createTable<User>(db, "users")();
@@ -68,7 +68,7 @@ export async function watch<T, P extends keyof T>(
 ): Promise<{ stop: () => void }> {
   let filter: Filter<T, P> | undefined;
   let cb: (entities: T[]) => Promise<void> | void;
-  if (typeof filterOrCallback === 'object') {
+  if (typeof filterOrCallback === "object") {
     filter = filterOrCallback;
     cb = callback!;
   } else {
@@ -76,13 +76,15 @@ export async function watch<T, P extends keyof T>(
     cb = filterOrCallback;
   }
 
-  const primaryKeyProperty = table[ThunderKey].options.primary;
+  const primaryKeyProperty = table[BlinkKey].options.primary;
 
   let initialEntities = await many(table, filter);
-  if(filter?.sort) {
+  if (filter?.sort) {
     initialEntities = sortItems(initialEntities, filter.sort);
   }
-  table[ThunderKey].db[ThunderKey].options.clone ? cb(clone(initialEntities)) : cb(initialEntities);
+  table[BlinkKey].db[BlinkKey].options.clone
+    ? cb(clone(initialEntities))
+    : cb(initialEntities);
 
   let entities: Map<T[P], T> = new Map();
   let entityList: T[] = initialEntities;
@@ -91,7 +93,7 @@ export async function watch<T, P extends keyof T>(
     entities.set(primaryKey, entity);
   }
 
-  const removeOnInsertCb = table[ThunderKey].events.onInsert.register(({ entity }) => {
+  const removeOnInsertCb = table[BlinkKey].events.onInsert.register(({ entity }) => {
     if (filter?.where && filterItems(table, [entity], filter.where).length === 0) {
       return;
     }
@@ -99,57 +101,61 @@ export async function watch<T, P extends keyof T>(
     const primaryKey = entity[primaryKeyProperty];
     entities.set(primaryKey, entity);
     entityList.push(entity);
-    if(filter?.sort) {
+    if (filter?.sort) {
       entityList = sortItems(entityList, filter.sort);
     }
 
-    table[ThunderKey].db[ThunderKey].options.clone ? cb(clone(entityList)) : cb(entityList);
+    table[BlinkKey].db[BlinkKey].options.clone ? cb(clone(entityList)) : cb(entityList);
   });
 
-  const removeOnUpdateCb = table[ThunderKey].events.onUpdate.register(({ oldEntity, newEntity }) => {
-    const matchesOldEntity = !filter?.where || filterItems(table, [oldEntity], filter.where).length !== 0;
-    const matchesNewEntity = !filter?.where || filterItems(table, [newEntity], filter.where).length !== 0;
-    if (!matchesOldEntity && !matchesNewEntity) {
-      return;
-    } else if (matchesOldEntity && !matchesNewEntity) {
-      const primaryKey = oldEntity[primaryKeyProperty];
-      entities.delete(primaryKey);
-      entityList = Array.from(entities.values());
-    } else if (!matchesOldEntity && matchesNewEntity) {
-      const primaryKey = newEntity[primaryKeyProperty];
-      entities.set(primaryKey, newEntity);
-      entityList.push(newEntity);
-    } else if (matchesOldEntity && matchesNewEntity) {
-      const primaryKey = newEntity[primaryKeyProperty];
-      entities.set(primaryKey, newEntity);
-      entityList = Array.from(entities.values());
-    }
+  const removeOnUpdateCb = table[BlinkKey].events.onUpdate.register(
+    ({ oldEntity, newEntity }) => {
+      const matchesOldEntity =
+        !filter?.where || filterItems(table, [oldEntity], filter.where).length !== 0;
+      const matchesNewEntity =
+        !filter?.where || filterItems(table, [newEntity], filter.where).length !== 0;
+      if (!matchesOldEntity && !matchesNewEntity) {
+        return;
+      } else if (matchesOldEntity && !matchesNewEntity) {
+        const primaryKey = oldEntity[primaryKeyProperty];
+        entities.delete(primaryKey);
+        entityList = Array.from(entities.values());
+      } else if (!matchesOldEntity && matchesNewEntity) {
+        const primaryKey = newEntity[primaryKeyProperty];
+        entities.set(primaryKey, newEntity);
+        entityList.push(newEntity);
+      } else if (matchesOldEntity && matchesNewEntity) {
+        const primaryKey = newEntity[primaryKeyProperty];
+        entities.set(primaryKey, newEntity);
+        entityList = Array.from(entities.values());
+      }
 
-    if(filter?.sort) {
-      entityList = sortItems(entityList, filter.sort);
-    }
-
-    table[ThunderKey].db[ThunderKey].options.clone ? cb(clone(entityList)) : cb(entityList);
-  });
-
-  const removeOnRemoveCb = table[ThunderKey].events.onRemove.register(({ entity }) => {
-    const primaryKey = entity[primaryKeyProperty];
-    const deleted = entities.delete(primaryKey);
-    if(deleted) {
-      entityList = Array.from(entities.values());
-      if(filter?.sort) {
+      if (filter?.sort) {
         entityList = sortItems(entityList, filter.sort);
       }
-      table[ThunderKey].db[ThunderKey].options.clone ? cb(clone(entityList)) : cb(entityList);
+
+      table[BlinkKey].db[BlinkKey].options.clone ? cb(clone(entityList)) : cb(entityList);
+    }
+  );
+
+  const removeOnRemoveCb = table[BlinkKey].events.onRemove.register(({ entity }) => {
+    const primaryKey = entity[primaryKeyProperty];
+    const deleted = entities.delete(primaryKey);
+    if (deleted) {
+      entityList = Array.from(entities.values());
+      if (filter?.sort) {
+        entityList = sortItems(entityList, filter.sort);
+      }
+      table[BlinkKey].db[BlinkKey].options.clone ? cb(clone(entityList)) : cb(entityList);
     }
   });
 
-  const removeOnClearCb = table[ThunderKey].events.onClear.register(() => {
+  const removeOnClearCb = table[BlinkKey].events.onClear.register(() => {
     entities.clear();
     entityList = [];
 
     cb(entityList);
-  })
+  });
 
   return {
     stop: () => {
@@ -157,6 +163,6 @@ export async function watch<T, P extends keyof T>(
       removeOnUpdateCb();
       removeOnRemoveCb();
       removeOnClearCb();
-    }
+    },
   };
 }

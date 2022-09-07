@@ -1,5 +1,5 @@
 import loki from "lokijs";
-import { clear, insert, createDB, many, createTable, one } from "@thunder/db";
+import { clear, insert, createDB, many, createTable, one } from "blinkdb";
 import { randFirstName } from "@ngneat/falso";
 import { compare } from "../framework";
 
@@ -10,11 +10,11 @@ interface User {
 }
 
 (async () => {
-  // ThunderDB setup
-  const thunderdb = createDB({
+  // BlinkDB setup
+  const blinkdb = createDB({
     clone: false,
   });
-  const thunderUserTable = createTable<User>(thunderdb, "users")();
+  const blinkUserTable = createTable<User>(blinkdb, "users")();
 
   // LokiJS setup
   const lokidb = new loki("users.db");
@@ -38,9 +38,9 @@ interface User {
       lokijs: async () => {
         lokiUserTable.insert(users);
       },
-      thunderdb: async () => {
+      blinkdb: async () => {
         for (let user of users) {
-          await insert(thunderUserTable, user);
+          await insert(blinkUserTable, user);
         }
       },
     },
@@ -48,7 +48,7 @@ interface User {
       runs: 100,
       beforeEach: () => {
         lokiUserTable.clear();
-        clear(thunderUserTable);
+        clear(blinkUserTable);
         // users needs to be reset because lokijs injects directly into the objects
         for (let user of users) {
           delete (user as any).meta;
@@ -62,8 +62,8 @@ interface User {
     lokijs: async () => {
       const x = lokiUserTable.get(2);
     },
-    thunderdb: async () => {
-      const x = await one(thunderUserTable, { where: { id: 2 } });
+    blinkdb: async () => {
+      const x = await one(blinkUserTable, { where: { id: 2 } });
     },
   });
 
@@ -71,8 +71,8 @@ interface User {
     lokijs: async () => {
       const x = lokiUserTable.find({ id: 2 });
     },
-    thunderdb: async () => {
-      const x = await one(thunderUserTable, { where: { id: 2 } });
+    blinkdb: async () => {
+      const x = await one(blinkUserTable, { where: { id: 2 } });
     },
   });
 
@@ -80,8 +80,8 @@ interface User {
     lokijs: async () => {
       const x = lokiUserTable.find({ id: { $gt: 8000 } });
     },
-    thunderdb: async () => {
-      const x = await many(thunderUserTable, {
+    blinkdb: async () => {
+      const x = await many(blinkUserTable, {
         where: { id: { $gt: 8000 } },
       });
     },
@@ -91,8 +91,8 @@ interface User {
     lokijs: async () => {
       const x = lokiUserTable.find({ id: { $gte: 8000 } });
     },
-    thunderdb: async () => {
-      const x = await many(thunderUserTable, {
+    blinkdb: async () => {
+      const x = await many(blinkUserTable, {
         where: { id: { $gte: 8000 } },
       });
     },
@@ -102,8 +102,8 @@ interface User {
     lokijs: async () => {
       const x = lokiUserTable.find({ id: { $lte: 2000 } });
     },
-    thunderdb: async () => {
-      const x = await many(thunderUserTable, {
+    blinkdb: async () => {
+      const x = await many(blinkUserTable, {
         where: { id: { $lte: 2000 } },
       });
     },
@@ -113,8 +113,8 @@ interface User {
     lokijs: async () => {
       const x = lokiUserTable.find({ id: { $lt: 2000 } });
     },
-    thunderdb: async () => {
-      const x = await many(thunderUserTable, {
+    blinkdb: async () => {
+      const x = await many(blinkUserTable, {
         where: { id: { $lt: 2000 } },
       });
     },
@@ -126,8 +126,8 @@ interface User {
         $and: [{ id: { $gt: 1000 } }, { age: { $gt: 5 } }],
       });
     },
-    thunderdb: async () => {
-      const x = await many(thunderUserTable, {
+    blinkdb: async () => {
+      const x = await many(blinkUserTable, {
         where: { $and: [{ id: { $gt: 1000 } }, { age: { $gt: 5 } }] },
       });
     },
@@ -139,8 +139,8 @@ interface User {
         $and: [{ id: { $lte: 10 } }, { age: { $lt: 5 } }],
       });
     },
-    thunderdb: async () => {
-      const x = await many(thunderUserTable, {
+    blinkdb: async () => {
+      const x = await many(blinkUserTable, {
         where: { $and: [{ id: { $lte: 10 } }, { age: { $lt: 5 } }] },
       });
     },
@@ -152,8 +152,8 @@ interface User {
         $or: [{ id: 10 }, { id: 50 }],
       });
     },
-    thunderdb: async () => {
-      const x = await many(thunderUserTable, {
+    blinkdb: async () => {
+      const x = await many(blinkUserTable, {
         where: { $or: [{ id: 10 }, { id: 50 }] },
       });
     },
@@ -163,8 +163,8 @@ interface User {
     lokijs: async () => {
       const x = lokiUserTable.find({ id: { $in: [10, 50, 100] } });
     },
-    thunderdb: async () => {
-      const x = await many(thunderUserTable, {
+    blinkdb: async () => {
+      const x = await many(blinkUserTable, {
         where: { id: { $in: [10, 50, 100] } },
       });
     },
@@ -174,8 +174,8 @@ interface User {
     lokijs: async () => {
       const x = lokiUserTable.find({ id: { $between: [90, 100] } });
     },
-    thunderdb: async () => {
-      const x = await many(thunderUserTable, {
+    blinkdb: async () => {
+      const x = await many(blinkUserTable, {
         where: { id: { $between: [90, 100] } },
       });
     },

@@ -1,5 +1,5 @@
 {
-  "name": "@thunder/db",
+  "name": "blinkdb",
   "version": "1.0.0",
   "description": "A lightning fast, in-memory database for client-side JS",
   "main": "dist/index.js",
