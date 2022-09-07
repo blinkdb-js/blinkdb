@@ -1,0 +1,34 @@
+---
+layout: "../../../layouts/DocsLayout.astro"
+title: "createDB"
+---
+
+# createDB()
+
+Creates a new database.
+
+Using the `db` object, you can create new tables in which to save your entities.
+
+```ts
+const db = createDB();
+const userTable = createTable<User>(db, "users")();
+const taskTable = createTable<Task>(db, "tasks")();
+```
+
+| Option                  | Description                                                                               |
+| ----------------------- | ----------------------------------------------------------------------------------------- |
+| `clone` (default: true) | Whether to clone entities received/sent from/to the user. See [Performance](#performance) |
+
+## Performance
+
+By default, blinkDB clones entities whenever you call `insert()` / `update()` or any of the query functions.
+While this means a slight hit to performance, this prevents you from modifying entities without blinkDB's knowledge,
+which could lead to difficult to debug bugs.
+
+If you're sure that you can live with the risk, you can turn off cloning:
+
+```ts
+const db = createDB({
+  clone: false,
+});
+```

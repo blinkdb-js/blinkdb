@@ -1,25 +1,8 @@
 ---
-export interface Props extends astroHTML.JSX.ImgHTMLAttributes {
-  withColor?: boolean;
-  withText?: boolean;
-};
+export interface Props extends astroHTML.JSX.ImgHTMLAttributes {};
 
 import Logo from '../assets/logo.svg';
-import ColorLogo from '../assets/logo-color.svg';
-import TextLogo from '../assets/logo-text.svg';
-import ColorTextLogo from '../assets/logo-text-color.svg';
-const { withColor, withText, ...attrs } = Astro.props;
-
-const Image = {
-  true: {
-    true: ColorTextLogo,
-    false: ColorLogo
-  }[String(withText ?? false)],
-  false: {
-    true: TextLogo,
-    false: Logo
-  }[String(withText ?? false)]
-}[String(withColor ?? false)];
+const { ...attrs } = Astro.props;
 ---
 
-<img src={Image} alt="BlinkDB Logo" {...attrs} />
+<img src={Logo} alt="BlinkDB Logo" {...attrs} />

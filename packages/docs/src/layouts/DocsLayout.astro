@@ -1,0 +1,90 @@
+---
+import Sidebar from "../components/sidebar.astro";
+import BaseLayout from "./BaseLayout.astro";
+
+---
+
+<BaseLayout condensed={true}>
+  <div class="mx-auto sm:max-w-7xl flex space-x-20 h-full">
+    <Sidebar></Sidebar>
+    <div class="p-4 w-[80ch] markdown"><slot /></div>
+  </div>
+</BaseLayout>
+
+<style is:global>
+  .markdown {
+    @apply text-gray-800;
+  }
+
+  .markdown h1 {
+    @apply text-4xl mt-12 mb-6 font-display tracking-wide font-bold text-black;
+  }
+
+  .markdown > :first-child {
+    @apply mt-4;
+  }
+
+  .markdown h2 {
+    @apply text-2xl mt-8 mb-4 font-display tracking-wide font-bold text-black;
+  }
+
+  .markdown h3 {
+    @apply text-2xl mt-8 mb-4 font-display tracking-wide font-bold text-black;
+  }
+
+  .markdown h4 {
+    @apply text-2xl mt-4 mb-2 font-display tracking-wide font-bold text-black;
+  }
+
+  .markdown h5 {
+    @apply text-xl mt-4 mb-2 font-display tracking-wide font-bold text-black;
+  }
+
+  .markdown p {
+    @apply mt-6 mb-6;
+    line-height: calc(1ex / 0.32);
+  }
+
+  .markdown ul {
+    @apply list-disc ml-8 py-2;
+  }
+
+  .markdown ol {
+    @apply list-decimal ml-8 py-2;
+  }
+
+  .markdown li::marker {
+    @apply text-gray-400;
+  }
+
+  .markdown a {
+    @apply underline decoration-blue-400 decoration-2 hover:decoration-blue-200;
+  }
+
+  .markdown blockquote {
+    @apply my-8 pl-4 border-l-4 border-l-slate-300;
+  }
+
+  .markdown pre {
+    background-color: #22272e;
+    @apply px-3 py-4 rounded-lg shadow-2xl w-full;
+  }
+
+  .markdown :not(pre) > code {
+    background-color: #22272e;
+    @apply p-1 rounded text-gray-200;
+  }
+
+  .markdown table {
+    @apply my-8 w-full text-sm rounded border;
+  }
+
+  .markdown th {
+    @apply bg-slate-100 text-left p-4 border-b;
+  }
+
+  .markdown td {
+    @apply p-4;
+  }
+</style>
+

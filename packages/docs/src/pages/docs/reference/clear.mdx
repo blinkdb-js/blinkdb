@@ -1,0 +1,13 @@
+---
+layout: "../../../layouts/DocsLayout.astro"
+title: "clear"
+---
+
+# clear()
+
+Deletes all entities in a given table.
+
+```ts
+const userTable = createTable<User>(db, "users")();
+await clear(userTable);
+```

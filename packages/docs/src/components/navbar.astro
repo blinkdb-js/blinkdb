@@ -1,13 +1,20 @@
 ---
 import Logo from './logo.astro';
+
+export interface Props {
+  condensed?: boolean;
+  class?: string;
+}
+
+const props: Props = Astro.props;
 ---
 
-<div class="border-b backdrop-blur">
-  <navbar class="flex justify-between items-center max-w-7xl mx-auto p-2 ">
-    <div class="flex items-center space-x-1">
-      <Logo class="h-12" withColor={true} />
+<div class:list={["fixed top-0 left-0 w-full backdrop-blur bg-white/75", props.condensed && "border-b", props.class]}>
+  <navbar class:list={["flex justify-between items-center p-2", props.condensed && "mx-auto sm:max-w-7xl"]}>
+    <a href="/" class="flex items-center space-x-1">
+      <Logo class="h-12" />
       <span class="text-xl font-semibold">blinkDB</span>
-    </div>
-    <a href="docs" class="font-semibold text-gray-800 transition-colors duration-75 hover:text-blue-500">Docs</a>
+    </a>
+    <a href="/docs" class="p-2 font-semibold text-gray-800 transition-colors duration-75 hover:text-blue-500">Docs</a>
   </navbar>
 </div>

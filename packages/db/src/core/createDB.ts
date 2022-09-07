@@ -7,8 +7,8 @@ export const ThunderKey = Symbol("Sync");
  *
  * @example
  * const db = createDB();
- * const userTable = createTable<User>(db, "users");
- * const taskTable = createTable<Task>(db, "tasks");
+ * const userTable = createTable<User>(db, "users")();
+ * const taskTable = createTable<Task>(db, "tasks")();
  */
 export function createDB(options?: Partial<DBOptions>): Database {
   return {

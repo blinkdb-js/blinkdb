@@ -1,0 +1,18 @@
+---
+import SidebarGroup from "./sidebar-group.astro";
+import SidebarItem from "./sidebar-item.astro";
+---
+
+<div class="px-2 py-6 text-sm sticky top-16 self-start">
+  <ul class="space-y-6">
+    <SidebarGroup name="Getting Started">
+      <SidebarItem href="/docs">Overview</SidebarItem>
+      <SidebarItem href="/docs/basics">Basics</SidebarItem>
+    </SidebarGroup>
+    <SidebarGroup name="Reference">
+      <SidebarItem href="/docs/reference/clear">clear()</SidebarItem>
+      <SidebarItem href="/docs/reference/createDB">createDB()</SidebarItem>
+      <SidebarItem href="/docs/reference/createTable">createTable()</SidebarItem>
+    </SidebarGroup>
+  </ul>
+</div>

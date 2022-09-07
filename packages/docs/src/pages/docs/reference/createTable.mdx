@@ -1,0 +1,39 @@
+---
+layout: "../../../layouts/DocsLayout.astro"
+title: "createTable"
+---
+
+# createTable()
+
+Creates a new table where entities can be inserted/updated/deleted/retrieved.
+
+```ts
+interface User {
+  id: string;
+  name: string;
+  age?: number;
+}
+
+const db = createDB();
+const userTable = createTable<User>(db, "users")();
+```
+
+| Option    | Description                                                      |
+| --------- | ---------------------------------------------------------------- |
+| `primary` | The primary key of the entity. See [Primary Keys](#primary-keys) |
+
+## Primary keys
+
+BlinkDB automatically assumes that the primary key of a table is `id`, if not otherwise supplied:
+
+```ts
+interface Task {
+  uuid: string;
+  name?: string;
+  description?: string;
+}
+
+const userTable = createTable<Task>(db, "tasks")({
+  primary: "uuid"
+});
+```
