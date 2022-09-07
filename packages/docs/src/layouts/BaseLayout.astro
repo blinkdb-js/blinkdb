@@ -4,9 +4,11 @@ import "@fontsource/inter";
 
 import Navbar, { Props as NavbarProps } from "../components/navbar.astro";
 
-export interface Props extends NavbarProps {}
+export interface Props extends NavbarProps {
+  title?: string;
+}
 
-const props: Props = Astro.props;
+const { title, frontmatter, ...attrs } = Astro.props;
 ---
 
 <html lang="en">
@@ -15,10 +17,10 @@ const props: Props = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <title>Astro</title>
+    <title>{title ? `BlinkDB - ${title}` : "BlinkDB"}</title>
   </head>
   <body class="overflow-y-scroll h-full">
-    <Navbar {...props} />
+    <Navbar {...attrs} />
     <div class="mt-16"><slot /></div>
   </body>
 </html>

@@ -2,9 +2,16 @@
 import Sidebar from "../components/sidebar.astro";
 import BaseLayout from "./BaseLayout.astro";
 
+export interface Props {
+  frontmatter?: {
+    title: string
+  }
+}
+
+const { frontmatter } = Astro.props;
 ---
 
-<BaseLayout condensed={true}>
+<BaseLayout title={frontmatter?.title} condensed={true}>
   <div class="mx-auto sm:max-w-7xl flex space-x-20 h-full">
     <Sidebar></Sidebar>
     <div class="p-4 w-[80ch] markdown"><slot /></div>
