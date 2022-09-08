@@ -230,3 +230,104 @@ const users = await many(userTable, {
 ```
 
 <hr />
+
+## Sort
+
+BlinkDB can sort your items for you, which can be much faster
+than you doing it yourself (depending on the query). To sort your received items, specify the `key` (which property to sort on),
+and an `order`, either `asc` (ascending) or `desc` (descending).
+
+The query below will give you all users sorted by age:
+
+```ts
+// Retrieve all users sorted descending by age
+// e.g. the oldest user first, the youngest user last
+const users = await many(userTable, {
+  sort: {
+    key: 'age',
+    order: 'desc'
+  }
+});
+```
+
+<hr />
+
+## Limit
+
+Retrieving ALL users from the database can be a huge undertaking, especially
+if you have a lot of entities. Most frontends have either pagination or infinite
+scrolling in order to prevent loading all items at once. In the backend,
+this is most often solved by offset-based pagination or cursor-based pagination - 
+both of which BlinkDB supports.
+
+### Offset-based pagination
+
+For offset-based pagination, you must specify:
+
+- `skip`, or at which index to begin
+- `take`, or how many items to return
+
+If you would like to display 10 users per page,
+to retrieve the contents of the first page, you would use:
+
+```ts
+// Retrieve all users on the first page
+const users = await many(userTable, {
+  limit: {
+    skip: 0 * 10,
+    take: 10
+  }
+});
+```
+
+Consequently, for the second page you would use:
+
+```ts
+// Retrieve all users on the second page
+const users = await many(userTable, {
+  limit: {
+    skip: 1 * 10,
+    take: 10
+  }
+});
+```
+
+Offset-based pagination is inferior to cursor-based pagination,
+which provides superior performance.
+
+### Cursor-based pagination
+
+For cursor-based pagination, you must specify:
+
+- `from`, the primary id of the first entity to return
+- `take`, or how many items to return
+- (optionally `skip: 1`, if you don't want to return the entity with the primary key of `from`)
+
+If you would like to display 10 users per page,
+to retrieve the contents of the first page, you would use:
+
+```ts
+// Retrieve all users on the first page
+const users = await many(userTable, {
+  limit: {
+    take: 10
+  }
+});
+
+// Get the user id of the last user
+const lastUserId = users[users.length - 1]?.id;
+```
+
+And for the second page you would use:
+
+```ts
+// Retrieve all users on the second page
+const users = await many(userTable, {
+  limit: {
+    from: lastUserId,
+    // In order to not return the lastUser of the previous page
+    skip: 1,
+    take: 10
+  }
+});
+```
