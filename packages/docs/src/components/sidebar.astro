@@ -1,28 +1,3 @@
----
-import SidebarGroup from "./sidebar-group.astro";
-import SidebarItem from "./sidebar-item.astro";
----
-
-<div class="px-2 py-6 text-sm sticky top-16 self-start">
-  <ul class="space-y-6">
-    <SidebarGroup name="Getting Started">
-      <SidebarItem href="/docs">Overview</SidebarItem>
-      <SidebarItem href="/docs/installation">Installation</SidebarItem>
-      <SidebarItem href="/docs/tables">Creating Tables</SidebarItem>
-      <SidebarItem href="/docs/crud">CRUD</SidebarItem>
-    </SidebarGroup>
-    <SidebarGroup name="Reference">
-      <SidebarItem href="/docs/reference/clear">clear()</SidebarItem>
-      <SidebarItem href="/docs/reference/createDB">createDB()</SidebarItem>
-      <SidebarItem href="/docs/reference/createTable">createTable()</SidebarItem>
-      <SidebarItem href="/docs/reference/first">first()</SidebarItem>
-      <SidebarItem href="/docs/reference/insert">insert()</SidebarItem>
-      <SidebarItem href="/docs/reference/many">many()</SidebarItem>
-      <SidebarItem href="/docs/reference/one">one()</SidebarItem>
-      <SidebarItem href="/docs/reference/remove">remove()</SidebarItem>
-      <SidebarItem href="/docs/reference/update">update()</SidebarItem>
-      <SidebarItem href="/docs/reference/uuid">uuid()</SidebarItem>
-      <SidebarItem href="/docs/reference/watch">watch()</SidebarItem>
-    </SidebarGroup>
-  </ul>
+<div class="px-2 py-6 text-sm sticky top-16 self-start w-40">
+  <slot />
 </div>

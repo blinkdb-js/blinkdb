@@ -1,20 +1,36 @@
 ---
+import NavMenu from "../components/nav-menu.astro";
+import PageMenuItem from "../components/page-menu-item.astro";
 import Sidebar from "../components/sidebar.astro";
 import BaseLayout from "./BaseLayout.astro";
 
 export interface Props {
   frontmatter?: {
-    title: string
-  }
+    title: string;
+    url: string;
+  };
+  headings: { depth: number; slug: string; text: string }[];
 }
 
-const { frontmatter } = Astro.props;
+const { frontmatter, headings, ...props } = Astro.props;
 ---
 
 <BaseLayout title={frontmatter?.title} condensed={true}>
-  <div class="mx-auto sm:max-w-7xl flex space-x-20 h-full">
-    <Sidebar></Sidebar>
+  <div class="mx-auto flex justify-center space-x-20 h-full">
+    <Sidebar>
+      <NavMenu />
+    </Sidebar>
     <div class="p-4 w-[80ch] markdown"><slot /></div>
+    <Sidebar>
+      {
+        headings.length > 3 &&
+          headings.map((h) => (
+            <PageMenuItem href={frontmatter.url + "#" + h.slug} indent={h.depth}>
+              {h.text}
+            </PageMenuItem>
+          ))
+      }
+    </Sidebar>
   </div>
 </BaseLayout>
 
@@ -45,6 +61,15 @@ const { frontmatter } = Astro.props;
 
   .markdown h5 {
     @apply text-lg mt-4 mb-2 font-display tracking-wide font-bold text-black;
+  }
+
+  .markdown h1::before,
+  .markdown h2::before,
+  .markdown h3::before,
+  .markdown h4::before,
+  .markdown h5::before {
+    @apply block h-20 -mt-20 invisible;
+    content: "";
   }
 
   .markdown p {
@@ -97,4 +122,3 @@ const { frontmatter } = Astro.props;
     @apply my-8;
   }
 </style>
-
