@@ -1,6 +1,12 @@
 ---
 import NavMenuGroup from "./nav-menu-group.astro";
 import NavMenuItem from "./nav-menu-item.astro";
+
+interface Frontmatter {
+  title: string;
+}
+
+const references = await Astro.glob<Frontmatter>('../pages/docs/reference/*.mdx');
 ---
 
 <ul class="space-y-6">
@@ -11,16 +17,8 @@ import NavMenuItem from "./nav-menu-item.astro";
     <NavMenuItem href="/docs/crud">CRUD</NavMenuItem>
   </NavMenuGroup>
   <NavMenuGroup name="Reference">
-    <NavMenuItem href="/docs/reference/clear">clear()</NavMenuItem>
-    <NavMenuItem href="/docs/reference/createDB">createDB()</NavMenuItem>
-    <NavMenuItem href="/docs/reference/createTable">createTable()</NavMenuItem>
-    <NavMenuItem href="/docs/reference/first">first()</NavMenuItem>
-    <NavMenuItem href="/docs/reference/insert">insert()</NavMenuItem>
-    <NavMenuItem href="/docs/reference/many">many()</NavMenuItem>
-    <NavMenuItem href="/docs/reference/one">one()</NavMenuItem>
-    <NavMenuItem href="/docs/reference/remove">remove()</NavMenuItem>
-    <NavMenuItem href="/docs/reference/update">update()</NavMenuItem>
-    <NavMenuItem href="/docs/reference/uuid">uuid()</NavMenuItem>
-    <NavMenuItem href="/docs/reference/watch">watch()</NavMenuItem>
+    {references.map(r => (
+      <NavMenuItem href={r.url}>{r.frontmatter.title}</NavMenuItem>
+    ))}
   </NavMenuGroup>
 </ul>
