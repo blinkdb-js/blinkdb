@@ -38,11 +38,18 @@ const items = await many(userTable, {
             { name: "lokijs", time: 4.803 },
           ].map((i) => (
             <div class="flex items-center space-x-2">
-              <div class="h-4" style={{ width: `calc(${Math.max(i.time, 0.5)} * 3em)` }}>
-                <div class="rounded-sm h-full bg-blue-400 animate-extendwidth" />
+              <div class="h-4" style={{ width: `calc(${Math.max(i.time, 0.5 / 3)} * 3em)` }}>
+                <div
+                  class="rounded-sm h-full bg-blue-400 animate-extendwidth"
+                  style={{ "animation-duration": `${i.time * 100}ms` }}
+                />
               </div>
               <span>
-                {i.name === "blinkDB" ? <span class="font-bold">blinkDB ⚡</span> : i.name}
+                {i.name === "blinkDB" ? (
+                  <span class="font-bold">blinkDB ⚡</span>
+                ) : (
+                  i.name
+                )}
                 <span class="text-xs italic">({i.time}ms)</span>
               </span>
             </div>
@@ -61,7 +68,8 @@ const items = await many(userTable, {
         on the <span class="font-bold">frontend</span>
       </p>
       <p>
-        - with full support for <span class="underline decoration-blue-400">indexes</span>,
+        - with full support for <span class="underline decoration-blue-400">indexes</span
+        >,
         <span class="underline decoration-blue-400">queries</span>, and both
         <span class="underline decoration-blue-400">unstructured</span> &
         <span class="underline decoration-blue-400">relational data</span>.
