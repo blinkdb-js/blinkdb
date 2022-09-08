@@ -65,3 +65,50 @@ const usersOlderThan26 = await many(userTable, {
 ```
 
 BlinkDB allows you to filter, sort, and limit items - see more on [Filters](/docs/filters).
+
+### Retrieving one entity
+
+In case you only need the first item of a query result, you can use `find()`.
+
+```ts
+const youngestUser = await find(userTable, {
+  sort: {
+    key: 'age',
+    order: 'asc'
+  }
+});
+```
+
+On the other hand, if you're sure the query you're using will only ever return one item,
+you can use `one()` - It will throw an exception if there isn't exactly one entity matching the filter.
+
+```ts
+const alice = await one(userTable, {
+  where: {
+    id: 'alice-uuid'
+  }
+});
+```
+
+## Updating entities
+
+To update entities, simply call `update()`, and provide the primary key the entity as well as any changes you'd like
+to make.
+
+```ts
+const userTable = createTable<User>(db, "users")();
+const userId = await insert(userTable, { id: uuid(), name: 'Alice', age: 15 });
+// Increase the age of Alice
+await update(userTable, { id: userId, age: 16 });
+```
+
+## Deleting entities
+
+You can delete entities by calling `remove()` with the primary key of the entity to be deleted.
+
+```ts
+const userTable = createTable<User>(db, "users")();
+const userId = await insert(userTable, { id: uuid(), name: 'Alice', age: 15 });
+// Remove Alice from the table
+await remove(userTable, { id: userId });
+```
