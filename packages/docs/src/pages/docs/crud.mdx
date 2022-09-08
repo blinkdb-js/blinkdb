@@ -90,6 +90,8 @@ const alice = await one(userTable, {
 });
 ```
 
+<hr />
+
 ## Updating entities
 
 To update entities, simply call `update()`, and provide the primary key the entity as well as any changes you'd like
@@ -101,6 +103,8 @@ const userId = await insert(userTable, { id: uuid(), name: 'Alice', age: 15 });
 // Increase the age of Alice
 await update(userTable, { id: userId, age: 16 });
 ```
+
+<hr />
 
 ## Deleting entities
 

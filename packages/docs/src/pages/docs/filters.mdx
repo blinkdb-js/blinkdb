@@ -1,0 +1,232 @@
+---
+layout: "../../layouts/DocsLayout.astro"
+title: "Filters"
+---
+
+# Filters
+
+BlinkDB has a powerful query system, and can filter, sort & limit your data.
+
+```ts
+const userTable = createTable<User>(db, 'users')();
+
+const users = await many(userTable, {
+  where: {
+    age: gt(16),
+    name: in('Alice', 'Bob'),
+    todoCount: between(0, 10)
+  },
+  sort: {
+    key: 'age',
+    order: 'asc'
+  }
+});
+```
+
+When you call `many()`, `one()`, `first()`, or `watch()`, you can supply
+a query in order to tell BlinkDB what items you want to receive & how you want
+to receive them.
+
+The properties you can supply in the query are always the same:
+
+```ts
+export type Filter<T, P extends keyof T> = {
+  where?: Where<T> | Or<T> | And<T>;
+  sort?: Sort<T>;
+  limit?: Limit<T, P>;
+};
+```
+
+With `where`, you specify what items to receive, `sort` specifies how
+items are to be sorted, and `limit` tells BlinkDB how many items
+you want.
+
+## Where
+
+With where, you can specify if you want to load an entity from the
+database based on their properties. The simplest case is equality
+checking - with the following query, you can load all users from
+the database who are 16 years old and called `Alice`:
+
+```ts
+// Retrieves all users called Alice who are 16 years old
+const users = await many(userTable, {
+  where: {
+    age: 16,
+    name: 'Alice'
+  }
+});
+```
+
+If you're matching based on equality, you can also use a so called
+"matcher" - which is just a function to make the above look a little bit
+prettier:
+
+```ts
+// Retrieves all users called Alice who are 16 years old
+const users = await many(userTable, {
+  where: {
+    age: eq(16),
+    name: eq('Alice')
+  }
+});
+```
+
+But don't worry! Equality checking is not the only matcher available,
+there are many more below.
+
+### `in(...)`
+
+`in(...)` matches all entities where the set property is one of the
+supplied values.
+
+```ts
+// Match all users called Alice, Bob, or Vance
+const users = await many(userTable, {
+  where: {
+    name: in('Alice', 'Bob', 'Vance')
+  }
+});
+```
+
+### `gt(...)`
+
+`gt(...)` matches all entities where the set property is greater than
+the supplied value (either a string, number, or Date).
+
+```ts
+// Match all users older than 43yrs
+const users = await many(userTable, {
+  where: {
+    age: gt(43)
+  }
+});
+```
+
+### `gte(...)`
+
+`gte(...)` matches all entities where the set property is equal to
+or greater than the supplied value (either a string, number, or Date).
+
+```ts
+// Match all users who are 87yrs old or older
+const users = await many(userTable, {
+  where: {
+    age: gte(87)
+  }
+});
+```
+
+### `lt(...)`
+
+`lt(...)` matches all entities where the set property is less than
+the supplied value (either a string, number, or Date).
+
+```ts
+// Match all users younger than 20yrs
+const users = await many(userTable, {
+  where: {
+    age: lt(20)
+  }
+});
+```
+
+### `lte(...)`
+
+`lte(...)` matches all entities where the set property is equal to
+or less than the supplied value (either a string, number, or Date).
+
+```ts
+// Match all users who are 31yrs old or younger
+const users = await many(userTable, {
+  where: {
+    age: lte(31)
+  }
+});
+```
+
+### `between(...)`
+
+`between(...)` matches all entities where the set property is between
+the first supplied value (inclusive) and the second supplied value (inclusive).
+The property to check against can be of type string, number, or Date.
+
+```ts
+// Match all users who are between 40yrs and 50yrs old
+const users = await many(userTable, {
+  where: {
+    age: between(40, 50)
+  }
+});
+```
+
+### `contains(...)`
+
+`contains(...)` matches all entities where the set array property
+includes the given value.
+
+```ts
+interface Users {
+  nicknames: string[];
+}
+
+// Match all users who have 'Big Nick' as a nickname
+const users = await many(userTable, {
+  where: {
+    nicknames: contains('Big Nick')
+  }
+});
+```
+
+### `and(...)`
+
+`and(...)` matches all entities which match all
+of the supplied matchers.
+
+```ts
+// Match all users called Alice who are 26yrs old
+const users = await many(userTable, {
+  where: and([
+    {
+      age: 26
+    },
+    {
+      name: 'Alice'
+    }
+  ])
+});
+```
+
+The above query can also be written without `and(...)`, like this:
+
+```ts
+// Match all users called Alice who are 26yrs old
+const users = await many(userTable, {
+  where: {
+    age: 26,
+    name: 'Alice'
+  }
+});
+```
+
+### `or(...)`
+
+`or(...)` matches all entities which match at least one
+of the supplied matchers.
+
+```ts
+// Match all users who are either younger than 40yrs
+// or older than 50yrs
+const users = await many(userTable, {
+  where: or([
+    {
+      age: lt(40)
+    },
+    {
+      age: gt(50)
+    }
+  ])
+});
+```
+
+<hr />

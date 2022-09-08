@@ -15,6 +15,7 @@ const references = await Astro.glob<Frontmatter>('../pages/docs/reference/*.mdx'
     <NavMenuItem href="/docs/installation">Installation</NavMenuItem>
     <NavMenuItem href="/docs/tables">Creating Tables</NavMenuItem>
     <NavMenuItem href="/docs/crud">CRUD</NavMenuItem>
+    <NavMenuItem href="/docs/filters">Filters</NavMenuItem>
   </NavMenuGroup>
   <NavMenuGroup name="Reference">
     {references.map(r => (
