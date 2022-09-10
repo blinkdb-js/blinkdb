@@ -101,7 +101,18 @@ export function createTable<T>(db: Database, tableName: string) {
 }
 
 export interface TableOptions<P, I> {
+  /**
+   * The primary key of the entity.
+   *
+   * Defaults to `id` if your entity has that property.
+   */
   primary: P;
+  /**
+   * Properties on which BlinkDB should create an index.
+   *
+   * Indexes drastically increase query performance when you specify properties often used in filters,
+   * but decrease write performance a bit.
+   */
   indexes?: I[];
 }
 
