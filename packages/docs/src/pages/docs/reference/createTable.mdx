@@ -21,6 +21,7 @@ const userTable = createTable<User>(db, "users")();
 | Option    | Description                                                      |
 | --------- | ---------------------------------------------------------------- |
 | `primary` | The primary key of the entity. See [Primary Keys](#primary-keys) |
+| `indexes` | Fields of the entity on which an index should be created. See [Indexes](#indexes) |
 
 ## Primary keys
 
@@ -35,5 +36,26 @@ interface Task {
 
 const userTable = createTable<Task>(db, "tasks")({
   primary: "uuid"
+});
+```
+
+## Indexes
+
+Indexes are a valuable type performance improvement for databases by reducing the amount of items scanned per query.
+To use them effectively, specify properties here that are often used in filters when you call `first()` / `one()` / `many()` / `watch()` -
+This will increase speed drastically, with only a small performance hit on writes.
+
+```ts
+interface User {
+  id: string;
+  // Email will be used often in filters, better create an index
+  email: string;
+  // No need for an index on Age - itwon't be specified much in filters
+  age: number;
+}
+
+const userTable = createTable<Task>(db, "tasks")({
+  primary: "uuid",
+  indexes: ["email"]
 });
 ```
