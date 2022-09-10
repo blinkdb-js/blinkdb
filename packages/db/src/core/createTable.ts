@@ -34,7 +34,7 @@ import { Database, BlinkKey } from "./createDB";
 export function createTable<T extends { id: string | number }>(
   db: Database,
   tableName: string
-): <P extends keyof T = "id">(options?: TableOptions<P>) => Table<T, P>;
+): <P extends keyof T = "id">(options?: TableOptions<P, keyof T>) => Table<T, P>;
 
 /**
  * Creates a new table where entities can be inserted/updated/deleted/retrieved.
@@ -68,16 +68,22 @@ export function createTable<T extends { id: string | number }>(
 export function createTable<T>(
   db: Database,
   tableName: string
-): <P extends keyof T>(options: TableOptions<P>) => Table<T, P>;
+): <P extends keyof T>(options: TableOptions<P, keyof T>) => Table<T, P>;
 
 export function createTable<T>(db: Database, tableName: string) {
-  return <P extends keyof T>(options: TableOptions<P>): Table<T, P> => {
+  return <P extends keyof T>(options?: TableOptions<P, keyof T>): Table<T, P> => {
     return {
       [BlinkKey]: {
         db,
         tableName,
         storage: {
           primary: new BTree(),
+          indexes: (options?.indexes ?? []).reduce<IndexStorage<T>>((prev, cur) => {
+            return {
+              ...prev,
+              [cur]: new BTree(),
+            };
+          }, {} as IndexStorage<T>),
         },
         events: {
           onClear: new Dispatcher(),
@@ -86,15 +92,17 @@ export function createTable<T>(db: Database, tableName: string) {
           onUpdate: new Dispatcher(),
         },
         options: {
-          primary: options?.primary ?? "id",
+          primary: options?.primary ?? ("id" as P),
+          indexes: options?.indexes ?? [],
         },
       },
     };
   };
 }
 
-export interface TableOptions<P> {
+export interface TableOptions<P, I> {
   primary: P;
+  indexes?: I[];
 }
 
 export interface Table<T, P extends keyof T> {
@@ -103,6 +111,7 @@ export interface Table<T, P extends keyof T> {
     tableName: string;
     storage: {
       primary: BTree<T[P], T>;
+      indexes: IndexStorage<T>;
     };
     events: {
       onInsert: Dispatcher<{ entity: T }>;
@@ -110,6 +119,10 @@ export interface Table<T, P extends keyof T> {
       onRemove: Dispatcher<{ entity: T }>;
       onClear: Dispatcher;
     };
-    options: Required<TableOptions<P>>;
+    options: Required<TableOptions<P, keyof T>>;
   };
 }
+
+type IndexStorage<T> = {
+  [Key in keyof T]: BTree<Key, T[]>;
+};

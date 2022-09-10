@@ -41,3 +41,13 @@ it("should create a table with a different primary key", () => {
     primary: "age",
   });
 });
+
+it("should create a table with indexes", () => {
+  createTable<User1>(
+    db,
+    "user"
+  )({
+    primary: "name",
+    indexes: ["id"],
+  });
+});

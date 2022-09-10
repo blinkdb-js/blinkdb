@@ -21,7 +21,13 @@ let userTable: Table<User, "id">;
 
 beforeEach(() => {
   db = createDB();
-  userTable = createTable<User>(db, "users")();
+  userTable = createTable<User>(
+    db,
+    "users"
+  )({
+    primary: "id",
+    indexes: ["age", "date"],
+  });
 });
 
 it("should return no items if there are no items in the database", async () => {
@@ -635,16 +641,15 @@ describe("filter", () => {
   });
 
   describe("sorting", () => {
-
     it("should sort items in ascending order", async () => {
       const items = await many(userTable, {
         where: {
-          id: { $gte: 0 }
+          id: { $gte: 0 },
         },
         sort: {
           key: "age",
-          order: "asc"
-        }
+          order: "asc",
+        },
       });
 
       expect(items).toStrictEqual([alice, charlie, bob]);
@@ -653,12 +658,12 @@ describe("filter", () => {
     it("should sort items in descending order", async () => {
       const items = await many(userTable, {
         where: {
-          id: { $gte: 0 }
+          id: { $gte: 0 },
         },
         sort: {
           key: "age",
-          order: "desc"
-        }
+          order: "desc",
+        },
       });
 
       expect(items).toStrictEqual([bob, charlie, alice]);
@@ -666,15 +671,14 @@ describe("filter", () => {
   });
 
   describe("limit", () => {
-
     it("should limit items with skip", async () => {
       const items = await many(userTable, {
         where: {
-          id: { $gte: 0 }
+          id: { $gte: 0 },
         },
         limit: {
-          skip: 2
-        }
+          skip: 2,
+        },
       });
 
       expect(items).toStrictEqual([charlie]);
@@ -683,11 +687,11 @@ describe("filter", () => {
     it("should limit items with take", async () => {
       const items = await many(userTable, {
         where: {
-          id: { $gte: 0 }
+          id: { $gte: 0 },
         },
         limit: {
-          take: 2
-        }
+          take: 2,
+        },
       });
 
       expect(items).toStrictEqual([alice, bob]);
@@ -696,12 +700,12 @@ describe("filter", () => {
     it("should limit items with skip & take", async () => {
       const items = await many(userTable, {
         where: {
-          id: { $gte: 0 }
+          id: { $gte: 0 },
         },
         limit: {
           skip: 1,
-          take: 2
-        }
+          take: 2,
+        },
       });
 
       expect(items).toStrictEqual([bob, charlie]);
@@ -710,11 +714,11 @@ describe("filter", () => {
     it("should limit items with cursor", async () => {
       const items = await many(userTable, {
         where: {
-          id: { $gte: 0 }
+          id: { $gte: 0 },
         },
         limit: {
-          from: 1
-        }
+          from: 1,
+        },
       });
 
       expect(items).toStrictEqual([bob, charlie]);
@@ -723,12 +727,12 @@ describe("filter", () => {
     it("should limit items with cursor & take", async () => {
       const items = await many(userTable, {
         where: {
-          id: { $gte: 0 }
+          id: { $gte: 0 },
         },
         limit: {
           from: 0,
-          take: 2
-        }
+          take: 2,
+        },
       });
 
       expect(items).toStrictEqual([alice, bob]);
@@ -737,13 +741,13 @@ describe("filter", () => {
     it("should limit items with cursor, skip & take", async () => {
       const items = await many(userTable, {
         where: {
-          id: { $gte: 0 }
+          id: { $gte: 0 },
         },
         limit: {
           from: 0,
           skip: 1,
-          take: 2
-        }
+          take: 2,
+        },
       });
 
       expect(items).toStrictEqual([bob, charlie]);

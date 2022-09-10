@@ -1,3 +1,4 @@
+import BTree from "sorted-btree";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
@@ -30,6 +31,19 @@ export async function insert<T, P extends keyof T>(
     : entity) as unknown as T;
 
   table[BlinkKey].storage.primary.set(primaryKey, storageEntity);
+  for (const [property, btree] of Object.entries<BTree<any, T[]>>(
+    table[BlinkKey].storage.indexes
+  )) {
+    const key = (entity as any)[property];
+    if (key === null || key === undefined) continue;
+
+    if (btree.has(key)) {
+      const items = btree.get(key)!;
+      btree.set(key, [...items, storageEntity]);
+    } else {
+      btree.set(key, [storageEntity]);
+    }
+  }
   table[BlinkKey].events.onInsert.dispatch({ entity: storageEntity });
   return primaryKey;
 }

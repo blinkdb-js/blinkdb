@@ -1,3 +1,4 @@
+import BTree from "sorted-btree";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 
@@ -20,6 +21,22 @@ export async function remove<T, P extends keyof T>(
   const primaryKeyProperty = table[BlinkKey].options.primary;
   const primaryKey = entity[primaryKeyProperty];
   const deleted = table[BlinkKey].storage.primary.delete(primaryKey);
+  for (const [property, btree] of Object.entries<BTree<any, T[]>>(
+    table[BlinkKey].storage.indexes
+  )) {
+    const key = (entity as any)[property];
+    if (key === null || key === undefined) continue;
+
+    if (btree.has(key)) {
+      let items = btree.get(key)!;
+      items = items.filter((i) => i[primaryKeyProperty] !== primaryKey);
+      if (items.length === 0) {
+        btree.delete(key);
+      } else {
+        btree.set(key, items);
+      }
+    }
+  }
   table[BlinkKey].events.onRemove.dispatch({ entity: entity as unknown as T });
   return deleted;
 }
