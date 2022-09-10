@@ -28,7 +28,7 @@ export async function selectWhereFilterItems<T, P extends keyof T>(
 
   // Check if any other index is available to select
   for (const [property, btree] of Object.entries<BTree<any, T[]>>(
-    table[BlinkKey].storage.indexes
+    table[BlinkKey].storage.indexes as any
   )) {
     if (property in filter) {
       const matcher = filter[property as keyof T] as any;

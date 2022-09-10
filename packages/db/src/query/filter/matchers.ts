@@ -18,32 +18,31 @@ export function matchesMatcher<T, P extends keyof T>(
   property: T[P],
   matcher: Matchers<T[P]>
 ): boolean {
-  if(matcher === null) return false;
+  if (matcher === null) return false;
 
-  if (typeof matcher === "object" && "$equals" in matcher) {
-    return matchesEqMatcher(property, (matcher as { $equals: T[P] }).$equals);
-  } else if (typeof matcher === "object" && "$gte" in matcher) {
-    return matchesGteMatcher(property, matcher as GteMatcher<T[P]>);
-  } else if (typeof matcher === "object" && "$gt" in matcher) {
-    return matchesGtMatcher(property, matcher as GtMatcher<T[P]>);
-  } else if (typeof matcher === "object" && "$lte" in matcher) {
-    return matchesLteMatcher(property, matcher as LteMatcher<T[P]>);
-  } else if (typeof matcher === "object" && "$lt" in matcher) {
-    return matchesLtMatcher(property, matcher as LtMatcher<T[P]>);
-  } else if (
-    typeof matcher === "object" &&
-    "$contains" in matcher &&
-    Array.isArray(property)
-  ) {
-    return matchesContainsMatcher(property, matcher as ContainsMatcher<T[P]>);
-  } else if (typeof matcher === "object" && "$in" in matcher) {
-    return matchesInMatcher(property, matcher as InMatcher<T[P]>);
-  } else if (typeof matcher === "object" && "$between" in matcher) {
-    return matchesBetweenMatcher(property, matcher as BetweenMatcher<T[P]>);
-  } else if (matcher instanceof Date && property instanceof Date) {
-    return matchesEqMatcher(property, matcher as Date);
+  // `any` here prevents TS complaining from generating an union type too complex to represent
+  if ((matcher as any) instanceof Date && (property as any) instanceof Date) {
+    return matchesEqMatcher(property, matcher as any);
   } else if (typeof matcher === "object") {
-    return matchesSubWhereMatcher(property, matcher as SubWhere<T[P]>);
+    if ("$equals" in matcher) {
+      return matchesEqMatcher(property, (matcher as { $equals: T[P] }).$equals);
+    } else if ("$gte" in matcher) {
+      return matchesGteMatcher(property, matcher as GteMatcher<T[P]>);
+    } else if ("$gt" in matcher) {
+      return matchesGtMatcher(property, matcher as GtMatcher<T[P]>);
+    } else if ("$lte" in matcher) {
+      return matchesLteMatcher(property, matcher as LteMatcher<T[P]>);
+    } else if ("$lt" in matcher) {
+      return matchesLtMatcher(property, matcher as LtMatcher<T[P]>);
+    } else if ("$contains" in matcher && Array.isArray(property)) {
+      return matchesContainsMatcher(property, matcher as ContainsMatcher<T[P]>);
+    } else if ("$in" in matcher) {
+      return matchesInMatcher(property, matcher as InMatcher<T[P]>);
+    } else if ("$between" in matcher) {
+      return matchesBetweenMatcher(property, matcher as BetweenMatcher<T[P]>);
+    } else {
+      return matchesSubWhereMatcher(property, matcher as SubWhere<T[P]>);
+    }
   } else {
     return matchesEqMatcher(property, matcher as T[P]);
   }

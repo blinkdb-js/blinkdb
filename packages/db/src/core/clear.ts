@@ -12,7 +12,7 @@ import { Table } from "./createTable";
  */
 export async function clear<T, P extends keyof T>(table: Table<T, P>): Promise<void> {
   table[BlinkKey].storage.primary.clear();
-  for (const index of Object.values<BTree>(table[BlinkKey].storage.indexes)) {
+  for (const index of Object.values<BTree>(table[BlinkKey].storage.indexes as any)) {
     index.clear();
   }
   table[BlinkKey].events.onClear.dispatch();
