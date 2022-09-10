@@ -135,5 +135,5 @@ export interface Table<T, P extends keyof T> {
 }
 
 type IndexStorage<T> = {
-  [Key in keyof T]: BTree<Key, T[]>;
+  [Key in keyof T]?: BTree<T[Key], T[]>;
 };

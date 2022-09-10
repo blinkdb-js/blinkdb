@@ -47,3 +47,22 @@ it("should update multiple properties", async () => {
     age: 25,
   });
 });
+
+it("should update indexes", async () => {
+  userTable = createTable<User>(
+    db,
+    "users"
+  )({
+    primary: "id",
+    indexes: ["age", "name"],
+  });
+
+  await insert(userTable, { id: 0, name: "Alice", age: 16 });
+  await update(userTable, { id: 0, name: "Alice the II.", age: 25 });
+  const alice = await one(userTable, { where: { name: "Alice the II.", age: 25 } });
+  expect(alice).toStrictEqual({
+    id: 0,
+    name: "Alice the II.",
+    age: 25,
+  });
+});

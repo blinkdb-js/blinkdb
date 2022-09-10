@@ -32,7 +32,7 @@ export async function insert<T, P extends keyof T>(
 
   table[BlinkKey].storage.primary.set(primaryKey, storageEntity);
   for (const [property, btree] of Object.entries<BTree<any, T[]>>(
-    table[BlinkKey].storage.indexes
+    table[BlinkKey].storage.indexes as any
   )) {
     const key = (entity as any)[property];
     if (key === null || key === undefined) continue;

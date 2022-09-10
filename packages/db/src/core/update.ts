@@ -32,6 +32,21 @@ export async function update<T, P extends keyof T>(
       continue;
     }
     item[key as keyof T] = diff[key as keyof Diff<T, P>] as any;
+    if (oldItem[key as keyof T] !== diff[key as keyof Diff<T, P>]) {
+      const btree = table[BlinkKey].storage.indexes[key as keyof T];
+      if (btree !== undefined) {
+        let oldIndexItems = btree.get(oldItem[key as keyof T])!;
+        oldIndexItems = oldIndexItems?.filter(
+          (i) => i[primaryKeyProperty] !== oldItem[primaryKeyProperty]
+        );
+        btree.set(oldItem[key as keyof T], oldIndexItems);
+        const newIndexItems = btree.get(diff[key as keyof Diff<T, P>] as T[keyof T]);
+        btree.set(
+          diff[key as keyof Diff<T, P>] as T[keyof T],
+          newIndexItems ? [...newIndexItems, item] : [item]
+        );
+      }
+    }
   }
 
   table[BlinkKey].events.onUpdate.dispatch({ oldEntity: oldItem, newEntity: item });

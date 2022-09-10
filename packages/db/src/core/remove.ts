@@ -22,7 +22,7 @@ export async function remove<T, P extends keyof T>(
   const primaryKey = entity[primaryKeyProperty];
   const deleted = table[BlinkKey].storage.primary.delete(primaryKey);
   for (const [property, btree] of Object.entries<BTree<any, T[]>>(
-    table[BlinkKey].storage.indexes
+    table[BlinkKey].storage.indexes as any
   )) {
     const key = (entity as any)[property];
     if (key === null || key === undefined) continue;
