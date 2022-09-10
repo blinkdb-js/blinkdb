@@ -18,7 +18,7 @@ export async function selectMatcherItems<T, P extends keyof T>(
   btree: BTree<T[P], T>,
   matcher: Matchers<T[P]>
 ): Promise<T[] | null> {
-  if(matcher === null) return null;
+  if (matcher === null) return null;
 
   if (typeof matcher === "object" && "$equals" in matcher) {
     return selectEqMatcherItems(btree, (matcher as { $equals: T[P] }).$equals);
@@ -141,7 +141,15 @@ async function selectInMatcherItems<T, P extends keyof T>(
   const items: T[] = [];
 
   btree.forRange(minKey, maxKey, true, (key, val) => {
-    if (key === minKey || key == maxKey || matcherItems.includes(key)) {
+    const matchesMinKey =
+      key instanceof Date && minKey instanceof Date
+        ? key.getTime() === minKey.getTime()
+        : key === minKey;
+    const matchesMaxKey =
+      key instanceof Date && maxKey instanceof Date
+        ? key.getTime() === maxKey.getTime()
+        : key === maxKey;
+    if (matchesMinKey || matchesMaxKey || matcherItems.includes(key)) {
       items.push(val);
     }
   });
