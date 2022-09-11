@@ -15,7 +15,7 @@ items in a table.
 
 ## Creating entities
 
-In order to query your table, first you need to put entities inside it.
+The first step you want to do will probably be inserting entities inside the table.
 You can do so with `insert()`:
 
 ```ts
@@ -26,13 +26,10 @@ const userTable = createTable<User>(db, "users")();
 await insert(userTable, { id: 'some-uuid', name: 'Alice', age: 24 });
 ```
 
-Typescript automatically makes sure that you are using the correct properties, and that you don't forget
-about the required ones.
-
 ### Generating an UUID
 
 If your entities are using strings as primary keys, you're probably hoping to use UUIDs - universally unique
-identifiers. BlinkDB automatically supplies you with a `uuid()`, blazing fast method for generating them.
+identifiers. BlinkDB automatically supplies you with `uuid()`, a blazing fast method for generating them.
 
 ```ts
 await insert(userTable, { id: uuid(), name: 'Bob', age: 21 });
@@ -43,7 +40,7 @@ await insert(userTable, { id: uuid(), name: 'Bob', age: 21 });
 ## Querying entities
 
 Now that you have items in your table, it's time to retrieve them! Of course, you can always
-retrieve all items from a table with `many()`:
+retrieve *all* items from a table with `many()`:
 
 ```ts
 const users = await many(userTable);
@@ -68,10 +65,10 @@ BlinkDB allows you to filter, sort, and limit items - see more on [Filters](/doc
 
 ### Retrieving one entity
 
-In case you only need the first item of a query result, you can use `find()`.
+In case you only need the first item of a query result, you can use `first()`.
 
 ```ts
-const youngestUser = await find(userTable, {
+const youngestUser = await first(userTable, {
   sort: {
     key: 'age',
     order: 'asc'
@@ -79,7 +76,7 @@ const youngestUser = await find(userTable, {
 });
 ```
 
-On the other hand, if you're sure the query you're using will only ever return one item,
+On the other hand, if you want to make sure that the query you're using will only ever return one item,
 you can use `one()` - It will throw an exception if there isn't exactly one entity matching the filter.
 
 ```ts
@@ -94,8 +91,8 @@ const alice = await one(userTable, {
 
 ## Updating entities
 
-To update entities, simply call `update()`, and provide the primary key the entity as well as any changes you'd like
-to make.
+To update entities, simply call `update()`, and provide the primary key of the entity. While you *can* provide the entire
+object to the `update()` method, you don't have to - you can only update selected properties as well.
 
 ```ts
 const userTable = createTable<User>(db, "users")();
@@ -108,7 +105,7 @@ await update(userTable, { id: userId, age: 16 });
 
 ## Deleting entities
 
-You can delete entities by calling `remove()` with the primary key of the entity to be deleted.
+You can delete entities by calling `remove()` with the primary key of the entity that should be deleted.
 
 ```ts
 const userTable = createTable<User>(db, "users")();

@@ -18,7 +18,7 @@ const { frontmatter, headings } = Astro.props;
 <BaseLayout title={frontmatter?.title} condensed={true}>
   <div class="mx-auto flex flex-col-reverse md:flex-row max-w-7xl justify-between gap-5 h-full">
     <Sidebar
-      class="whitespace-nowrap md:sticky px-8 md:px-4 bg-white md:bg-none border-t-2 md:border-t-0 w-full md:w-fit"
+      class="whitespace-nowrap md:sticky px-8 md:px-4 bg-white md:bg-none border-t-2 w-full md:w-fit"
     >
       <NavMenu class="md:w-44" />
     </Sidebar>

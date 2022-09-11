@@ -28,6 +28,7 @@ const userTable = createTable<User>(db, "users")();
 BlinkDB automatically assumes that the primary key of a table is `id` , if not otherwise supplied:
 
 ```ts
+// `uuid` should be the primary id
 interface Task {
   uuid: string;
   name?: string;
@@ -43,7 +44,9 @@ const userTable = createTable<Task>(db, "tasks")({
 
 Indexes are a valuable type performance improvement for databases by reducing the amount of items scanned per query.
 To use them effectively, specify properties here that are often used in filters when you call `first()` / `one()` / `many()` / `watch()` -
-This will increase speed drastically, with only a small performance hit on writes.
+This will increase speed for queries drastically, with only a small performance hit on writes.
+
+At startup, BlinkDB will automatically create a primary key index for you.
 
 ```ts
 interface User {

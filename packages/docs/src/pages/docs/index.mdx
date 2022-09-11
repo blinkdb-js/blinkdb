@@ -9,8 +9,8 @@ import EyeIcon from "../../components/icons/eye-icon.astro";
 
 # Overview
 
-> No matter if you're using [Redux](https://redux.js.org/), [MobX](https://mobx.js.org/README.html), or just a simple JS `Map()` -
-> The data structures they use are not optimized for large-scale data, often buckling under the weight of having to handle
+> No matter if you're using [Redux](https://redux.js.org/), [MobX](https://mobx.js.org/README.html), or just a simple JS `Map()` in your Frontend -
+> These storage methods are not optimized for large-scale data, often buckling under the weight of having to handle
 > a couple thousand objects at once. So, **why not bring the queries, indices, convenience and raw speed of databases to the frontend?**
 
 <div class="my-16">
@@ -41,14 +41,16 @@ import EyeIcon from "../../components/icons/eye-icon.astro";
   </span>
 </div>
 
-**blinkDB** is a highly optimized, production ready database just for your frontend. It uses the same
+<span class="[&>*]:!my-2">
+**blinkDB** is a strongly optimized, blazingly fast database just for your frontend. It uses the same
 techniques & data structures as existing databases in order to speed up the retrieval of items,
-resulting in blazing fast performance, regardless if you're working with **10.000** or **1.000.000** database entities.
+resulting in incredible performance, regardless if you're working with **10.000** or **1.000.000** database entities.
+</span>
 
 </div>
 
 <div class="space-y-14">
-  <div class="flex flex-col md:flex-row gap-4">
+  <div class="flex flex-col md:flex-row md:gap-4">
     <div class="flex-auto basis-1/2">
       <TypescriptIcon class="h-20" />
       <h2 class="!mt-0">First-class Typescript</h2>
@@ -66,7 +68,7 @@ resulting in blazing fast performance, regardless if you're working with **10.00
     ```
   </div>
 
-  <div class="flex flex-col-reverse md:flex-row gap-4">
+  <div class="flex flex-col-reverse md:flex-row md:gap-4">
     ```ts
       // First 100 users named Alice with an age from 30 to 55
       const users = await many(userTable, {
@@ -86,7 +88,7 @@ resulting in blazing fast performance, regardless if you're working with **10.00
     </div>
   </div>
 
-  <div class="flex flex-col md:flex-row gap-4">
+  <div class="flex flex-col md:flex-row md:gap-4">
     <div class="flex-auto basis-1/2">
       <div class="w-20 bg-green-300 p-4 rounded-lg"><EyeIcon class="w-full" /></div>
       <h2 class="!mt-0">Observe changes</h2>

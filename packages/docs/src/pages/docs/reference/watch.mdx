@@ -16,6 +16,9 @@ watch(userTable, users => {
 });
 ```
 
+`watch()` is much, much faster than manually retrieving items everytime you insert, update, or remove. It's perfect for
+usage inside reactive components like React Hooks.
+
 A [filter](/docs/filters) can also be specified, which causes `watch()` to only call the function
 if an inserted / updated / deleted entity matches, and only entities which match the filter
 are provided as arguments.

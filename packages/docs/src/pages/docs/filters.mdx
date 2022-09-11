@@ -58,8 +58,8 @@ const users = await many(userTable, {
 });
 ```
 
-If you're matching based on equality, you can also use a so called
-"matcher" - which is just a function to make the above look a little bit
+If you're matching based on equality, you can also use a so-called
+"matcher" - just a function to make the above look a little bit
 prettier:
 
 ```ts
@@ -72,7 +72,7 @@ const users = await many(userTable, {
 });
 ```
 
-But don't worry! Equality checking is not the only matcher available,
+That might look unnecessary, but `eq(...)` is not the only matcher available,
 there are many more below.
 
 ### `in(...)`
@@ -254,7 +254,7 @@ const users = await many(userTable, {
 
 ## Limit
 
-Retrieving ALL users from the database can be a huge undertaking, especially
+Retrieving *all* items from a table can take a long time, especially
 if you have a lot of entities. Most frontends have either pagination or infinite
 scrolling in order to prevent loading all items at once. In the backend,
 this is most often solved by offset-based pagination or cursor-based pagination - 
@@ -264,7 +264,7 @@ both of which BlinkDB supports.
 
 For offset-based pagination, you must specify:
 
-- `skip`, or at which index to begin
+- `skip`, or how many items to skip before returning them
 - `take`, or how many items to return
 
 If you would like to display 10 users per page,
@@ -291,9 +291,6 @@ const users = await many(userTable, {
   }
 });
 ```
-
-Offset-based pagination is inferior to cursor-based pagination,
-which provides superior performance.
 
 ### Cursor-based pagination
 
@@ -325,7 +322,7 @@ And for the second page you would use:
 const users = await many(userTable, {
   limit: {
     from: lastUserId,
-    // In order to not return the lastUser of the previous page
+    // In order to skip the lastUser of page 1
     skip: 1,
     take: 10
   }
