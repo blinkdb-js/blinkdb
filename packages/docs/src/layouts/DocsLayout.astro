@@ -12,16 +12,18 @@ export interface Props {
   headings: { depth: number; slug: string; text: string }[];
 }
 
-const { frontmatter, headings, ...props } = Astro.props;
+const { frontmatter, headings } = Astro.props;
 ---
 
 <BaseLayout title={frontmatter?.title} condensed={true}>
-  <div class="mx-auto flex justify-center space-x-20 h-full">
-    <Sidebar>
-      <NavMenu />
+  <div class="mx-auto flex flex-col-reverse md:flex-row max-w-7xl justify-between gap-5 h-full">
+    <Sidebar
+      class="whitespace-nowrap md:sticky px-8 md:px-4 bg-white md:bg-none border-t-2 md:border-t-0 w-full md:w-fit"
+    >
+      <NavMenu class="md:w-44" />
     </Sidebar>
-    <div class="p-4 w-[80ch] markdown"><slot /></div>
-    <Sidebar>
+    <div class="p-2 sm:p-4 flex-auto max-w-[80ch] markdown"><slot /></div>
+    <Sidebar class="hidden lg:block w-44 sticky">
       {
         headings.length > 3 &&
           headings.map((h) => (
@@ -123,7 +125,7 @@ const { frontmatter, headings, ...props } = Astro.props;
 
   .markdown pre {
     background-color: #22272e;
-    @apply px-3 py-4 rounded-lg shadow-2xl w-full text-sm;
+    @apply px-3 py-4 rounded-lg shadow-2xl w-full text-sm mt-3 mb-3 mr-3;
   }
 
   .markdown table {

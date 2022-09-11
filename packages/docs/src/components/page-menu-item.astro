@@ -14,8 +14,6 @@ const className = {
 }[props.indent]
 ---
 
-<div class={"py-1 hover:text-gray-600 " + className}>
-  <a href={props.href}>
-    <slot />
-  </a>
-</div>
+<a class="hover:text-gray-600" href={props.href}>
+  <div class={"py-0.5 " + className}><slot /></div>
+</a>

@@ -1,3 +1,9 @@
-<div class="px-2 py-6 text-sm sticky top-16 self-start w-40">
+---
+export type Props = astroHTML.JSX.HTMLAttributes;
+
+const { class: className, ...attrs } = Astro.props;
+---
+
+<div class:list={["md:px-2 py-6 text-sm top-16 self-start min-w-40", className]} {...attrs}>
   <slot />
 </div>

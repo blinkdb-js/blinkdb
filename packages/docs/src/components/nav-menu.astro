@@ -2,14 +2,17 @@
 import NavMenuGroup from "./nav-menu-group.astro";
 import NavMenuItem from "./nav-menu-item.astro";
 
+export type Props = astroHTML.JSX.HTMLAttributes;
+
 interface Frontmatter {
   title: string;
 }
 
+const { class: className, ...attrs } = Astro.props;
 const references = await Astro.glob<Frontmatter>('../pages/docs/reference/*.mdx');
 ---
 
-<ul class="space-y-6">
+<ul class:list={["gap-12 flex flex-row md:flex-col flex-wrap md:flex-wrap", className]} {...attrs}>
   <NavMenuGroup name="Getting Started">
     <NavMenuItem href="/docs">Overview</NavMenuItem>
     <NavMenuItem href="/docs/installation">Installation</NavMenuItem>
