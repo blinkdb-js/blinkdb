@@ -22,7 +22,7 @@ import { Code } from "astro/components";
 // with an age greater than 24
 const items = await many(userTable, {
   where: {
-    name: in('Alice', 'Charlie'),
+    name: oneOf('Alice', 'Charlie'),
     age: gt(24)
   },
 });`}
@@ -63,7 +63,7 @@ const items = await many(userTable, {
     <div class="font-display sm:text-center text-xl sm:text-3xl">
       <p>
         <span class="font-bold">blinkDB</span>
-        is a database optimized for
+        is a in-memory database optimized for
         <span class="font-bold">large-scale storage</span>
         on the <span class="font-bold">frontend</span>
       </p>

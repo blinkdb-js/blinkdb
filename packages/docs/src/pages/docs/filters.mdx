@@ -13,7 +13,7 @@ const userTable = createTable<User>(db, 'users')();
 const users = await many(userTable, {
   where: {
     age: gt(16),
-    name: in('Alice', 'Bob'),
+    name: oneOf('Alice', 'Bob'),
     todoCount: between(0, 10)
   },
   sort: {
@@ -75,16 +75,16 @@ const users = await many(userTable, {
 That might look unnecessary, but `eq(...)` is not the only matcher available,
 there are many more below.
 
-### `in(...)`
+### `oneOf(...)`
 
-`in(...)` matches all entities where the set property is one of the
+`oneOf(...)` matches all entities where the set property is one of the
 supplied values.
 
 ```ts
 // Match all users called Alice, Bob, or Vance
 const users = await many(userTable, {
   where: {
-    name: in('Alice', 'Bob', 'Vance')
+    name: oneOf('Alice', 'Bob', 'Vance')
   }
 });
 ```
