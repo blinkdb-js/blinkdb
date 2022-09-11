@@ -23,8 +23,6 @@ export async function selectAndFilterItems<T, P extends keyof T>(
       : await selectWhereFilterItems(table, childFilter);
   }
 
-  const primaryKeyProperty = table[BlinkKey].options.primary;
-
   // Fill array with items of first filter
   const firstChildFilter = filter.$and[0];
   let filterItems =
@@ -32,39 +30,16 @@ export async function selectAndFilterItems<T, P extends keyof T>(
       ? await selectOrFilterItems(table, firstChildFilter)
       : await selectWhereFilterItems(table, firstChildFilter);
 
+  if (filterItems !== null) return filterItems;
+
   // Iterate over all items from the other filters and delete from map
   for (let childFilter of filter.$and.slice(1)) {
-    let childFilterItems =
+    filterItems =
       "$or" in childFilter
         ? await selectOrFilterItems(table, childFilter)
         : await selectWhereFilterItems(table, childFilter);
 
-    if (childFilterItems === null) {
-      continue;
-    }
-
-    if (childFilterItems.length === 0) {
-      return [];
-    }
-
-    if (filterItems === null) {
-      filterItems = childFilterItems;
-      continue;
-    }
-
-    let itemsMap: Map<T[P], T> = new Map(
-      childFilterItems.map((item) => {
-        const primaryKey = item[primaryKeyProperty];
-        return [primaryKey, item];
-      })
-    );
-
-    for (let [index, item] of Array.from(filterItems.entries())) {
-      const primaryKey = item[primaryKeyProperty];
-      if (!itemsMap.has(primaryKey)) {
-        filterItems.splice(index, 1);
-      }
-    }
+    if (filterItems !== null) return filterItems;
   }
 
   return filterItems;
