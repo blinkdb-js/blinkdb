@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="http://blinkdb.io/" target="blank"><img src="./logo.svg" width="120" alt="BlinkDB Logo" /></a>
+  <a href="http://blinkdb.io/" target="blank"><img src="https://raw.githubusercontent.com/blinkdb-js/blinkdb/main/packages/db/logo.svg" width="120" alt="BlinkDB Logo" /></a>
 </p>
 
 <p align="center">
