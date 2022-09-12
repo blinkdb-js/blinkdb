@@ -1,4 +1,5 @@
 ---
+import GithubIcon from './icons/github-icon.astro';
 import Logo from './logo.astro';
 
 export interface Props {
@@ -10,11 +11,18 @@ const props: Props = Astro.props;
 ---
 
 <div class:list={["fixed top-0 left-0 w-full backdrop-blur bg-white/75", props.condensed && "border-b", props.class]}>
-  <navbar class:list={["flex justify-between items-center p-2", props.condensed && "mx-auto sm:max-w-7xl"]}>
+  <navbar class:list={["flex justify-between items-center px-3 py-2", props.condensed && "mx-auto sm:max-w-7xl"]}>
     <a href="/" class="flex items-center gap-1">
-      <Logo class="h-12" />
+      <Logo class="h-12 w-12" />
       <span class="text-xl font-semibold">blinkDB</span>
     </a>
-    <a href="/docs" class="p-2 font-semibold text-gray-800 transition-colors duration-75 hover:text-blue-500">Docs</a>
+    <div class="flex items-center text-gray-800 divide-x">
+      <div class="px-3">
+        <a href="/docs" class="p-2 font-semibold transition-colors duration-75 hover:text-blue-500">Docs</a>
+      </div>
+      <div class="px-3">
+        <a href="https://github.com/blinkdb-js/blinkdb"><GithubIcon class="h-6 w-6" /></a>
+      </div>
+    </div>
   </navbar>
 </div>
