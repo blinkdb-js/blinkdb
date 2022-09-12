@@ -12,12 +12,18 @@ interface User {
 
 let db: Database;
 let userTable: Table<User, "id">;
+let userTableWithIndex: Table<User, "id">;
 
 beforeEach(async () => {
   db = createDB();
   userTable = createTable<User>(db, "users")();
+  userTableWithIndex = createTable<User>(
+    db,
+    "users"
+  )({ primary: "id", indexes: ["name"] });
 
   await insert(userTable, { id: 0, name: "Alice", age: 16 });
+  await insert(userTableWithIndex, { id: 0, name: "Alice", age: 16 });
   await insert(userTable, { id: 1, name: "Bob" });
   await insert(userTable, { id: 2, name: "Charlie", age: 49 });
 });
@@ -36,4 +42,12 @@ it("should remove an entity", async () => {
   await remove(userTable, { id: 1 });
   const bob = await first(userTable, { where: { id: 1 } });
   expect(bob).toBe(null);
+});
+
+it("should correctly remove an entity from a table with index", async () => {
+  await remove(userTableWithIndex, { id: 0 });
+  const alice = await first(userTableWithIndex, { where: { id: 0 } });
+  expect(alice).toBe(null);
+  const alice2 = await first(userTableWithIndex, { where: { name: "Alice" } });
+  expect(alice2).toBe(null);
 });
