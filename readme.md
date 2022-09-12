@@ -20,6 +20,8 @@ const items = await many(userTable, {
 });
 ```
 
+> BlinkDB is not yet mature. If you aren't convinced with the current feature set, check back in **version 1.0.0**.
+
 ## Motivation
 
 Today, SPAs and modern UI frameworks are more complex than ever before, and in the biggest codebases, gigantic amounts of data are used in JS directly. Unfortunately, while user-friendly, the existing solutions - stores like [Redux](https://redux.js.org/) or [MobX](https://mobx.js.org/README.html) - are not optimized for performance with large quantities of entities.

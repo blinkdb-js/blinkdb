@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="http://blinkdb.io/" target="blank"><img src="./packages/docs/src/assets/logo.svg" width="120" alt="BlinkDB Logo" /></a>
+  <a href="http://blinkdb.io/" target="blank"><img src="./logo.svg" width="120" alt="BlinkDB Logo" /></a>
 </p>
 
 <p align="center">
@@ -19,6 +19,8 @@ const items = await many(userTable, {
   },
 });
 ```
+
+> BlinkDB is not yet mature. If you aren't convinced with the current feature set, check back in **version 1.0.0**.
 
 ## Motivation
 
