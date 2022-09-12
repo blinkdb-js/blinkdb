@@ -10,7 +10,7 @@
 <hr />
 
 ```ts
-import { many, oneOf, gt } from 'blinkdb';
+import { many } from 'blinkdb';
 
 const items = await many(userTable, {
   where: {
