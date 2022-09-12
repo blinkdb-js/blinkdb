@@ -37,8 +37,8 @@ export async function update<T, P extends keyof T>(
       if (btree !== undefined) {
         let oldIndexItems = btree.get(oldItem[key as keyof T])!;
         const arrayIndex = oldIndexItems.indexOf(item);
+        // This condition is only false if clone is disabled and the user changed the indexed property without calling update
         if (arrayIndex !== -1) {
-          // This only happens if clone is disabled and the user changed the indexed property without calling update
           oldIndexItems.splice(arrayIndex, 1);
         }
 
