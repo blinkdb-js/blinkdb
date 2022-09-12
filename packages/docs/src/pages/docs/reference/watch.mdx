@@ -25,7 +25,7 @@ are provided as arguments.
 
 ```ts
 const userTable = createTable<User>(db, "users")();
-watch(userTable, { where: { age: lt(3) } }, babies => {
+watch(userTable, { where: { age: { $lt: 3 } } }, babies => {
   console.log('All babies: ', babies);
 });
 ```

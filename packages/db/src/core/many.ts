@@ -32,7 +32,7 @@ export async function many<T, P extends keyof T>(table: Table<T, P>): Promise<T[
  * // All users aged 25 and up
  * const allUsersOlderThan25 = await many(userTable, {
  *   where: {
- *     age: gt(25)
+ *     age: { $gt: 25 }
  *   }
  * });
  */

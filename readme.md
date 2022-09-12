@@ -14,8 +14,8 @@ import { many, oneOf, gt } from 'blinkdb';
 
 const items = await many(userTable, {
   where: {
-    name: oneOf('Alice', 'Charlie'),
-    age: gt(24)
+    name: { $in: ['Alice', 'Charlie'] },
+    age: { $gt: 24 }
   },
 });
 ```

@@ -55,7 +55,7 @@ For example, you can retrieve the first ten users older than 26 like this:
 ```ts
 const usersOlderThan26 = await many(userTable, {
   where: {
-    age: gt(26)
+    age: { $gt: 26 }
   },
   limit: { take: 10 }
 });
