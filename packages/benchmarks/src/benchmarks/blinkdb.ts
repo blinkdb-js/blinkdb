@@ -10,9 +10,7 @@ interface User {
 
 (async () => {
   // BlinkDB setup
-  const blinkdb = createDB({
-    clone: true,
-  });
+  const blinkdb = createDB();
   const blinkUserTable = createTable<User>(blinkdb, "users")();
   const blinkUserTableWithIndex = createTable<User>(
     blinkdb,
