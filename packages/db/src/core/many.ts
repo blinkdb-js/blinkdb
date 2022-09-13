@@ -46,7 +46,8 @@ export async function many<T, P extends keyof T>(
   filter?: Filter<T, P>
 ): Promise<T[]> {
   if (filter === undefined) {
-    return table[BlinkKey].storage.primary.valuesArray();
+    const allItems = table[BlinkKey].storage.primary.valuesArray();
+    return table[BlinkKey].db[BlinkKey].options.clone ? clone(allItems) : allItems;
   }
 
   let items: T[] = [];
