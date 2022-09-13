@@ -23,7 +23,7 @@ export function createDB(options?: Partial<DBOptions>): Database {
 
 export interface DBOptions {
   /**
-   * Toggles whether entities are cloned before being written with function `insert` or
+   * Toggles whether entities are cloned before being written with `insert` or
    * returned from functions like `many()`, `first()` or `one()`.
    *
    * If enabled, adds a performance cost, but prevents the user from modifying

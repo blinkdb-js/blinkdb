@@ -28,7 +28,7 @@ export async function remove<T, P extends keyof T>(
   const item =
     indexEntries.length > 0 ? table[BlinkKey].storage.primary.get(primaryKey) : null;
   const deleted = table[BlinkKey].storage.primary.delete(primaryKey);
-  if (item != null) {
+  if (item !== undefined) {
     for (const [property, btree] of indexEntries) {
       const key = (item as any)[property];
       if (key == null) continue;

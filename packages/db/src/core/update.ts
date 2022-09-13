@@ -43,7 +43,7 @@ export async function update<T, P extends keyof T>(
         }
 
         const newIndexItems = btree.get(diff[key as keyof Diff<T, P>] as T[keyof T]);
-        if (newIndexItems != null) {
+        if (newIndexItems !== undefined) {
           newIndexItems.push(item);
         } else {
           btree.set(diff[key as keyof Diff<T, P>] as T[keyof T], [item]);
