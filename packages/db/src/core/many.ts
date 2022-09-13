@@ -57,6 +57,8 @@ export async function many<T, P extends keyof T>(
 
     // Filter items
     items = filterItems(table, items, filter.where);
+  } else {
+    items = table[BlinkKey].storage.primary.valuesArray();
   }
 
   if (filter.sort) {

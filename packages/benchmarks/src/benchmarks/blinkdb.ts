@@ -1,5 +1,14 @@
 import { randFirstName } from "@ngneat/falso";
-import { clear, createDB, createTable, first, insert, remove, update } from "blinkdb";
+import {
+  clear,
+  createDB,
+  createTable,
+  first,
+  insert,
+  many,
+  remove,
+  update,
+} from "blinkdb";
 import { compare } from "../framework";
 
 interface User {
@@ -84,4 +93,15 @@ interface User {
       },
     }
   );
+
+  await compare("many query with limit", {
+    blinkdb: async () => {
+      const x = await many(blinkUserTable, {
+        limit: {
+          skip: 5000,
+          take: 50,
+        },
+      });
+    },
+  });
 })();
