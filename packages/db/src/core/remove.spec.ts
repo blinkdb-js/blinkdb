@@ -37,3 +37,15 @@ it("should remove an entity", async () => {
   const bob = await first(userTable, { where: { id: 1 } });
   expect(bob).toBe(null);
 });
+
+it("should correctly remove an entity from a table with index", async () => {
+  userTable = createTable<User>(db, "users")({ primary: "id", indexes: ["name"] });
+
+  await insert(userTable, { id: 0, name: "Alice", age: 16 });
+
+  await remove(userTable, { id: 0 });
+  const alice = await first(userTable, { where: { id: 0 } });
+  expect(alice).toBe(null);
+  const alice2 = await first(userTable, { where: { name: "Alice" } });
+  expect(alice2).toBe(null);
+});

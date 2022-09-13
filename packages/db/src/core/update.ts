@@ -36,15 +36,18 @@ export async function update<T, P extends keyof T>(
       const btree = table[BlinkKey].storage.indexes[key as keyof T];
       if (btree !== undefined) {
         let oldIndexItems = btree.get(oldItem[key as keyof T])!;
-        oldIndexItems = oldIndexItems?.filter(
-          (i) => i[primaryKeyProperty] !== oldItem[primaryKeyProperty]
-        );
-        btree.set(oldItem[key as keyof T], oldIndexItems);
+        const arrayIndex = oldIndexItems.indexOf(item);
+        // This condition is only false if clone is disabled and the user changed the indexed property without calling update
+        if (arrayIndex !== -1) {
+          oldIndexItems.splice(arrayIndex, 1);
+        }
+
         const newIndexItems = btree.get(diff[key as keyof Diff<T, P>] as T[keyof T]);
-        btree.set(
-          diff[key as keyof Diff<T, P>] as T[keyof T],
-          newIndexItems ? [...newIndexItems, item] : [item]
-        );
+        if (newIndexItems !== undefined) {
+          newIndexItems.push(item);
+        } else {
+          btree.set(diff[key as keyof Diff<T, P>] as T[keyof T], [item]);
+        }
       }
     }
   }

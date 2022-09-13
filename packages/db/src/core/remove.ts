@@ -20,20 +20,29 @@ export async function remove<T, P extends keyof T>(
 ): Promise<boolean> {
   const primaryKeyProperty = table[BlinkKey].options.primary;
   const primaryKey = entity[primaryKeyProperty];
-  const deleted = table[BlinkKey].storage.primary.delete(primaryKey);
-  for (const [property, btree] of Object.entries<BTree<any, T[]>>(
+  const indexEntries = Object.entries<BTree<any, T[]>>(
     table[BlinkKey].storage.indexes as any
-  )) {
-    const key = (entity as any)[property];
-    if (key === null || key === undefined) continue;
+  );
+  // For tables without indexes, it is not necessary to retrieve the actual entity before deleting it
+  // For tables with indexes, we need the full entity to find all corresponding index entries
+  const item =
+    indexEntries.length > 0 ? table[BlinkKey].storage.primary.get(primaryKey) : null;
+  const deleted = table[BlinkKey].storage.primary.delete(primaryKey);
+  if (item !== undefined) {
+    for (const [property, btree] of indexEntries) {
+      const key = (item as any)[property];
+      if (key == null) continue;
 
-    if (btree.has(key)) {
-      let items = btree.get(key)!;
-      items = items.filter((i) => i[primaryKeyProperty] !== primaryKey);
-      if (items.length === 0) {
-        btree.delete(key);
-      } else {
-        btree.set(key, items);
+      const items = btree.get(key);
+      if (items != null) {
+        const deleteIndex = items.indexOf(item);
+        if (deleteIndex !== -1) {
+          if (items.length === 1) {
+            btree.delete(key);
+          } else {
+            items.splice(deleteIndex, 1);
+          }
+        }
       }
     }
   }
