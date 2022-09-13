@@ -4,6 +4,10 @@
   "workspaces": [
     "packages/*"
   ],
+  "scripts": {
+    "prepare": "node ./prepare.js",
+    "test": "jest"
+  },
   "devDependencies": {
     "@swc/core": "^1.2.242",
     "@swc/jest": "^0.2.22",
@@ -18,8 +22,5 @@
   },
   "lint-staged": {
     "*.{js,ts}": "prettier --write"
-  },
-  "scripts": {
-    "prepare": "node ./prepare.js"
   }
 }
