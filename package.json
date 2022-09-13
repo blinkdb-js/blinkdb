@@ -7,6 +7,7 @@
   "scripts": {
     "prepare": "node ./prepare.js",
     "build": "npm run build -w=blinkdb",
+    "publish": "npm publish -w=blinkdb",
     "test": "jest"
   },
   "devDependencies": {
