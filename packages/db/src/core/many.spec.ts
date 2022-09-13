@@ -752,5 +752,15 @@ describe("filter", () => {
 
       expect(items).toStrictEqual([bob, charlie]);
     });
+
+    it("should return items with only take specified", async () => {
+      const items = await many(userTable, {
+        limit: {
+          take: 2,
+        },
+      });
+
+      expect(items).toHaveLength(2);
+    });
   });
 });
