@@ -26,7 +26,7 @@ export async function remove<T, P extends keyof T>(
   // For tables without indexes, it is not necessary to retrieve the actual entity before deleting it
   // For tables with indexes, we need the full entity to find all corresponding index entries
   const item =
-    indexEntries.length > 0 ? table[BlinkKey].storage.primary.get(primaryKey) : null;
+    indexEntries.length > 0 ? table[BlinkKey].storage.primary.get(primaryKey) : undefined;
   const deleted = table[BlinkKey].storage.primary.delete(primaryKey);
   if (item !== undefined) {
     for (const [property, btree] of indexEntries) {
@@ -34,7 +34,7 @@ export async function remove<T, P extends keyof T>(
       if (key == null) continue;
 
       const items = btree.get(key);
-      if (items != null) {
+      if (items !== undefined) {
         const deleteIndex = items.indexOf(item);
         if (deleteIndex !== -1) {
           if (items.length === 1) {
