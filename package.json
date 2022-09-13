@@ -6,6 +6,7 @@
   ],
   "scripts": {
     "prepare": "node ./prepare.js",
+    "build": "npm run build -w=blinkdb",
     "test": "jest"
   },
   "devDependencies": {
