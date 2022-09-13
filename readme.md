@@ -32,5 +32,5 @@ BlinkDB provides an alternative - a strongly optimized in-memory database for yo
 
 ## Getting started
 
-- Check out the website at https://blink.io.
-- Read the docs at https://blink.io/docs.
+- Check out the website at https://blinkdb.io.
+- Read the docs at https://blinkdb.io/docs.

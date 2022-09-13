@@ -51,9 +51,9 @@ At startup, BlinkDB will automatically create a primary key index for you.
 ```ts
 interface User {
   id: string;
-  // Email will be used often in filters, better create an index
+  // Email will often be used in filters, better create an index
   email: string;
-  // No need for an index on Age - itwon't be specified much in filters
+  // No need for an index on Age - it won't be specified much in filters
   age: number;
 }
 

@@ -37,9 +37,9 @@ export async function insert<T, P extends keyof T>(
     const key = (entity as any)[property];
     if (key === null || key === undefined) continue;
 
-    if (btree.has(key)) {
-      const items = btree.get(key)!;
-      btree.set(key, [...items, storageEntity]);
+    const items = btree.get(key);
+    if (items !== undefined) {
+      items.push(storageEntity);
     } else {
       btree.set(key, [storageEntity]);
     }

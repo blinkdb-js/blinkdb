@@ -15,29 +15,30 @@ export function limitItems<T, P extends keyof T>(
   }
 
   const primaryKeyProperty = table[BlinkKey].options.primary;
+  let fromIndex = 0;
+  let toIndex = items.length;
 
   if (limit.from !== undefined) {
-    while (
-      defaultComparator(
-        items[0][primaryKeyProperty] as unknown as string | number,
-        limit.from as unknown as string | number
-      ) < 0
-    ) {
-      items.shift();
-    }
+    fromIndex = items.findIndex(
+      (item) =>
+        defaultComparator(
+          item[primaryKeyProperty] as unknown as string | number,
+          limit.from as unknown as string | number
+        ) >= 0
+    );
   }
 
   if (limit.skip !== undefined) {
-    for (let i = 0; i < limit.skip; i++) {
-      items.shift();
-    }
+    fromIndex += limit.skip;
   }
 
   if (limit.take !== undefined) {
-    while (items.length > limit.take) {
-      items.pop();
-    }
+    toIndex = Math.min(fromIndex + limit.take, toIndex);
   }
 
-  return items;
+  if (fromIndex === 0 && toIndex === items.length) {
+    return items;
+  }
+
+  return items.slice(fromIndex, toIndex);
 }

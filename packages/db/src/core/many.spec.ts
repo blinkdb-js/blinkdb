@@ -91,6 +91,14 @@ describe("filter", () => {
     expect(new Set(items)).toStrictEqual(new Set([alice]));
   });
 
+  it("should return a clone if db.clone is set to true", async () => {
+    const items = await many(userTable);
+    const items2 = await many(userTable);
+
+    items[0].name = "Eve";
+    expect(items2[0].name).toEqual("Alice");
+  });
+
   it("should return the exact items if db.clone is set to false", async () => {
     db = createDB({
       clone: false,
@@ -751,6 +759,16 @@ describe("filter", () => {
       });
 
       expect(items).toStrictEqual([bob, charlie]);
+    });
+
+    it("should return items with only take specified", async () => {
+      const items = await many(userTable, {
+        limit: {
+          take: 2,
+        },
+      });
+
+      expect(items).toHaveLength(2);
     });
   });
 });
