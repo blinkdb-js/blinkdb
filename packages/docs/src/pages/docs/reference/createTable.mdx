@@ -23,6 +23,30 @@ const userTable = createTable<User>(db, "users")();
 | `primary` | The primary key of the entity. See [Primary Keys](#primary-keys) |
 | `indexes` | Fields of the entity on which an index should be created. See [Indexes](#indexes) |
 
+## Valid Entities
+
+The interface you pass to `createTable()` defines what properties are available on your entity.
+Valid property types are primitives (`string`, `boolean`, `number`, `null`, `undefined`, `BigInt`), `Date`s,
+arrays, and complex objects. You cannot use symbols or functions as a type.
+
+```ts
+interface ValidEntity {
+  name: string;
+  isDeleted: boolean;
+  age: number;
+  surname: string|null;
+  likesPizza?: boolean;
+  ageInMs: BigInt;
+  createdAt: Date;
+  nicknames: string[];
+  some: {
+    nested: {
+      object: boolean;
+    }
+  },
+}
+```
+
 ## Primary keys
 
 BlinkDB automatically assumes that the primary key of a table is `id` , if not otherwise supplied:

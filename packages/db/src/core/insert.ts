@@ -17,7 +17,7 @@ import { Table } from "./createTable";
  */
 export async function insert<T, P extends keyof T>(
   table: Table<T, P>,
-  entity: Create<T, P>
+  entity: Create<T, P> & ValidEntity<Create<T, P>>
 ): Promise<T[P]> {
   const primaryKeyProperty = table[BlinkKey].options.primary;
   const primaryKey = entity[primaryKeyProperty] as unknown as T[P];
@@ -47,5 +47,14 @@ export async function insert<T, P extends keyof T>(
   table[BlinkKey].events.onInsert.dispatch({ entity: storageEntity });
   return primaryKey;
 }
+
+/**
+ * The interfaces of entities are only valid if no property is of type Function or Symbol.
+ */
+export type ValidEntity<T> = T extends Function | Symbol
+  ? never
+  : T extends object
+  ? { [K in keyof T]: ValidEntity<T[K]> }
+  : T;
 
 export type Create<T, P extends keyof T> = Omit<T, P> & Required<Pick<T, P>>;
