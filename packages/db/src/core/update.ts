@@ -19,34 +19,42 @@ export async function update<T, P extends keyof T>(
   diff: Diff<T, P>
 ): Promise<void> {
   const primaryKeyProperty = table[BlinkKey].options.primary;
-  const primaryKey = diff[primaryKeyProperty] as unknown as T[P];
-  const item = table[BlinkKey].storage.primary.get(primaryKey);
+  const primaryKey = diff[primaryKeyProperty];
 
-  if (item === undefined || item === null) {
+  if (primaryKey === undefined || primaryKey === null) {
+    throw new Error(`"${primaryKey}" is an invalid primary key value.`);
+  }
+
+  const oldItem = table[BlinkKey].storage.primary.get(primaryKey);
+
+  if (oldItem === undefined || oldItem === null) {
     throw new Error(`Item with primary key "${primaryKey}" not found.`);
   }
 
-  const oldItem = clone(item);
-  for (let key in diff) {
-    if (key === primaryKeyProperty) {
+  const item: T = clone(oldItem);
+
+  let key: keyof T;
+  for (key in diff) {
+    const diffValue = diff[key];
+    if (key === primaryKeyProperty || diffValue === undefined || diffValue === null) {
       continue;
     }
-    item[key as keyof T] = diff[key as keyof Diff<T, P>] as any;
-    if (oldItem[key as keyof T] !== diff[key as keyof Diff<T, P>]) {
-      const btree = table[BlinkKey].storage.indexes[key as keyof T];
+    item[key] = diffValue ?? item[key];
+    if (oldItem[key] !== diffValue) {
+      const btree = table[BlinkKey].storage.indexes[key];
       if (btree !== undefined) {
-        let oldIndexItems = btree.get(oldItem[key as keyof T])!;
+        let oldIndexItems = btree.get(oldItem[key])!;
         const arrayIndex = oldIndexItems.indexOf(item);
         // This condition is only false if clone is disabled and the user changed the indexed property without calling update
         if (arrayIndex !== -1) {
           oldIndexItems.splice(arrayIndex, 1);
         }
 
-        const newIndexItems = btree.get(diff[key as keyof Diff<T, P>] as T[keyof T]);
+        const newIndexItems = btree.get(diffValue);
         if (newIndexItems !== undefined) {
           newIndexItems.push(item);
         } else {
-          btree.set(diff[key as keyof Diff<T, P>] as T[keyof T], [item]);
+          btree.set(diffValue, [item]);
         }
       }
     }
@@ -55,4 +63,4 @@ export async function update<T, P extends keyof T>(
   table[BlinkKey].events.onUpdate.dispatch({ oldEntity: oldItem, newEntity: item });
 }
 
-export type Diff<T, P extends keyof T> = Partial<Omit<T, P>> & Required<Pick<T, P>>;
+export type Diff<T, P extends keyof T> = Partial<T> & { [Key in P]-?: T[P] };
