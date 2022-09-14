@@ -14,7 +14,7 @@ import { Table } from "./createTable";
  * // Increase the age of Alice
  * await update(userTable, { id: userId, age: 16 });
  */
-export async function update<T, P extends keyof T>(
+export async function update<T extends object, P extends keyof T>(
   table: Table<T, P>,
   diff: Diff<T, P>
 ): Promise<void> {
@@ -25,13 +25,13 @@ export async function update<T, P extends keyof T>(
     throw new Error(`"${primaryKey}" is an invalid primary key value.`);
   }
 
-  const oldItem = table[BlinkKey].storage.primary.get(primaryKey);
+  const item = table[BlinkKey].storage.primary.get(primaryKey);
 
-  if (oldItem === undefined || oldItem === null) {
+  if (item === undefined || item === null) {
     throw new Error(`Item with primary key "${primaryKey}" not found.`);
   }
 
-  const item: T = clone(oldItem);
+  const oldItem = clone(item);
 
   let key: keyof T;
   for (key in diff) {
@@ -39,7 +39,7 @@ export async function update<T, P extends keyof T>(
     if (key === primaryKeyProperty || diffValue === undefined || diffValue === null) {
       continue;
     }
-    item[key] = diffValue ?? item[key];
+    item[key] = diffValue;
     if (oldItem[key] !== diffValue) {
       const btree = table[BlinkKey].storage.indexes[key];
       if (btree !== undefined) {

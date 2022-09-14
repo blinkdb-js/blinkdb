@@ -83,7 +83,7 @@ export function createTable<T>(db: Database, tableName: string) {
               ...prev,
               [cur]: new BTree(),
             };
-          }, {} as IndexStorage<T>),
+          }, {}),
         },
         events: {
           onClear: new Dispatcher(),
