@@ -33,28 +33,26 @@ export async function update<T extends object, P extends keyof T>(
 
   const oldItem = clone(item);
 
-  let key: keyof T;
+  let key: keyof Diff<T, P>;
   for (key in diff) {
-    const diffValue = diff[key];
-    if (key === primaryKeyProperty || diffValue === undefined || diffValue === null) {
-      continue;
-    }
-    item[key] = diffValue;
-    if (oldItem[key] !== diffValue) {
-      const btree = table[BlinkKey].storage.indexes[key];
-      if (btree !== undefined) {
-        let oldIndexItems = btree.get(oldItem[key])!;
-        const arrayIndex = oldIndexItems.indexOf(item);
-        // This condition is only false if clone is disabled and the user changed the indexed property without calling update
-        if (arrayIndex !== -1) {
-          oldIndexItems.splice(arrayIndex, 1);
-        }
+    if (key !== primaryKeyProperty) {
+      item[key] = diff[key];
+      if (oldItem[key] !== item[key]) {
+        const btree = table[BlinkKey].storage.indexes[key];
+        if (btree !== undefined) {
+          let oldIndexItems = btree.get(oldItem[key])!;
+          const arrayIndex = oldIndexItems.indexOf(item);
+          // This condition is only false if clone is disabled and the user changed the indexed property without calling update
+          if (arrayIndex !== -1) {
+            oldIndexItems.splice(arrayIndex, 1);
+          }
 
-        const newIndexItems = btree.get(diffValue);
-        if (newIndexItems !== undefined) {
-          newIndexItems.push(item);
-        } else {
-          btree.set(diffValue, [item]);
+          const newIndexItems = btree.get(item[key]);
+          if (newIndexItems !== undefined) {
+            newIndexItems.push(item);
+          } else {
+            btree.set(item[key], [item]);
+          }
         }
       }
     }
@@ -63,4 +61,6 @@ export async function update<T extends object, P extends keyof T>(
   table[BlinkKey].events.onUpdate.dispatch({ oldEntity: oldItem, newEntity: item });
 }
 
-export type Diff<T, P extends keyof T> = Partial<T> & { [Key in P]-?: T[P] };
+export type Diff<T extends object, P extends keyof T> = Partial<T> & {
+  [Key in P]-?: T[P];
+};
