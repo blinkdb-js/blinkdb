@@ -2,7 +2,8 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
-    "declaration": true
+    "declaration": true,
+    "exactOptionalPropertyTypes": true
   },
   "exclude": ["**/*.spec.ts", "dist/"]
 }

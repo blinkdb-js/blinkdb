@@ -14,12 +14,17 @@ import { Table } from "./createTable";
  * // Increase the age of Alice
  * await update(userTable, { id: userId, age: 16 });
  */
-export async function update<T, P extends keyof T>(
+export async function update<T extends object, P extends keyof T>(
   table: Table<T, P>,
   diff: Diff<T, P>
 ): Promise<void> {
   const primaryKeyProperty = table[BlinkKey].options.primary;
-  const primaryKey = diff[primaryKeyProperty] as unknown as T[P];
+  const primaryKey = diff[primaryKeyProperty];
+
+  if (primaryKey === undefined || primaryKey === null) {
+    throw new Error(`"${primaryKey}" is an invalid primary key value.`);
+  }
+
   const item = table[BlinkKey].storage.primary.get(primaryKey);
 
   if (item === undefined || item === null) {
@@ -27,26 +32,27 @@ export async function update<T, P extends keyof T>(
   }
 
   const oldItem = clone(item);
-  for (let key in diff) {
-    if (key === primaryKeyProperty) {
-      continue;
-    }
-    item[key as keyof T] = diff[key as keyof Diff<T, P>] as any;
-    if (oldItem[key as keyof T] !== diff[key as keyof Diff<T, P>]) {
-      const btree = table[BlinkKey].storage.indexes[key as keyof T];
-      if (btree !== undefined) {
-        let oldIndexItems = btree.get(oldItem[key as keyof T])!;
-        const arrayIndex = oldIndexItems.indexOf(item);
-        // This condition is only false if clone is disabled and the user changed the indexed property without calling update
-        if (arrayIndex !== -1) {
-          oldIndexItems.splice(arrayIndex, 1);
-        }
 
-        const newIndexItems = btree.get(diff[key as keyof Diff<T, P>] as T[keyof T]);
-        if (newIndexItems !== undefined) {
-          newIndexItems.push(item);
-        } else {
-          btree.set(diff[key as keyof Diff<T, P>] as T[keyof T], [item]);
+  let key: keyof Diff<T, P>;
+  for (key in diff) {
+    if (key !== primaryKeyProperty) {
+      item[key] = diff[key];
+      if (oldItem[key] !== item[key]) {
+        const btree = table[BlinkKey].storage.indexes[key];
+        if (btree !== undefined) {
+          let oldIndexItems = btree.get(oldItem[key])!;
+          const arrayIndex = oldIndexItems.indexOf(item);
+          // This condition is only false if clone is disabled and the user changed the indexed property without calling update
+          if (arrayIndex !== -1) {
+            oldIndexItems.splice(arrayIndex, 1);
+          }
+
+          const newIndexItems = btree.get(item[key]);
+          if (newIndexItems !== undefined) {
+            newIndexItems.push(item);
+          } else {
+            btree.set(item[key], [item]);
+          }
         }
       }
     }
@@ -55,4 +61,6 @@ export async function update<T, P extends keyof T>(
   table[BlinkKey].events.onUpdate.dispatch({ oldEntity: oldItem, newEntity: item });
 }
 
-export type Diff<T, P extends keyof T> = Partial<Omit<T, P>> & Required<Pick<T, P>>;
+export type Diff<T extends object, P extends keyof T> = Partial<T> & {
+  [Key in P]-?: T[P];
+};

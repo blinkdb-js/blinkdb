@@ -83,7 +83,7 @@ export function createTable<T>(db: Database, tableName: string) {
               ...prev,
               [cur]: new BTree(),
             };
-          }, {} as IndexStorage<T>),
+          }, {}),
         },
         events: {
           onClear: new Dispatcher(),
@@ -135,5 +135,5 @@ export interface Table<T, P extends keyof T> {
 }
 
 type IndexStorage<T> = {
-  [Key in keyof T]?: BTree<T[Key], T[]>;
+  [Key in keyof T]?: BTree<T[keyof T], T[]>;
 };
