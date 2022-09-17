@@ -8,7 +8,8 @@ interface User1 {
 
 interface User2 {
   uuid: string;
-  age: number;
+  age?: number;
+  some: number;
 }
 
 let db: Database;
@@ -38,7 +39,7 @@ it("should create a table with a different primary key", () => {
     db,
     "user"
   )({
-    primary: "age",
+    primary: "some"
   });
 });
 
