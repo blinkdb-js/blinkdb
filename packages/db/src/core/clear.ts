@@ -1,4 +1,3 @@
-import BTree from "sorted-btree";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 
