@@ -17,24 +17,24 @@ import { Table } from "./createTable";
  */
 export async function insert<T, P extends keyof T>(
   table: Table<T, P>,
-  entity: Create<T, P> & ValidEntity<Create<T, P>>
+  entity: ValidEntity<Create<T, P>>
 ): Promise<T[P]> {
+  const validEntity = entity as Create<T, P>;
   const primaryKeyProperty = table[BlinkKey].options.primary;
-  const primaryKey = entity[primaryKeyProperty] as unknown as T[P];
+  const primaryKey = validEntity[primaryKeyProperty];
 
   if (table[BlinkKey].storage.primary.has(primaryKey)) {
     throw new Error(`Primary key ${primaryKey} already in use.`);
   }
 
-  const storageEntity = (table[BlinkKey].db[BlinkKey].options.clone
-    ? clone(entity)
-    : entity) as unknown as T;
+  const storageEntity = table[BlinkKey].db[BlinkKey].options.clone
+    ? clone(validEntity)
+    : validEntity;
 
   table[BlinkKey].storage.primary.set(primaryKey, storageEntity);
-  for (const [property, btree] of Object.entries<BTree<any, T[]>>(
-    table[BlinkKey].storage.indexes as any
-  )) {
-    const key = (entity as any)[property];
+  for (const property in table[BlinkKey].storage.indexes) {
+    const btree = table[BlinkKey].storage.indexes[property]!;
+    const key = validEntity[property];
     if (key === null || key === undefined) continue;
 
     const items = btree.get(key);
@@ -57,4 +57,6 @@ export type ValidEntity<T> = T extends Function | Symbol
   ? { [K in keyof T]: ValidEntity<T[K]> }
   : T;
 
-export type Create<T, P extends keyof T> = Omit<T, P> & Required<Pick<T, P>>;
+export type Create<T, P extends keyof T> = T & {
+  [Key in P]-?: T[P];
+};
