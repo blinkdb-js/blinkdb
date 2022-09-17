@@ -1,5 +1,6 @@
 ---
 import GithubIcon from './icons/github-icon.astro';
+import NpmIcon from './icons/npm-icon.astro';
 import Logo from './logo.astro';
 
 export interface Props {
@@ -20,7 +21,8 @@ const props: Props = Astro.props;
       <div class="px-3">
         <a href="/docs" class="p-2 font-semibold transition-colors duration-75 hover:text-blue-500">Docs</a>
       </div>
-      <div class="px-3">
+      <div class="px-3 flex gap-4">
+        <a href="https://www.npmjs.com/package/blinkdb"><NpmIcon class="h-6 w-6" /></a>
         <a href="https://github.com/blinkdb-js/blinkdb"><GithubIcon class="h-6 w-6" /></a>
       </div>
     </div>
