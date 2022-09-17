@@ -1,0 +1,35 @@
+---
+layout: "../../layouts/DocsLayout.astro"
+title: "Observing changes"
+---
+
+# Observing changes
+
+If you're using a frontend framework like [React](https://reactjs.org/) or [Vue](https://vuejs.org/),
+it's a bad idea to query the database everytime you want to render its items in your components.
+Your component might rerender multiple times a second, and while BlinkDB makes queries
+very fast, there is a better alternative.
+
+`watch()` will observe a table and call the provided callback every time an item is inserted, updated, or deleted
+(The callback will also be called once after calling `watch(...)` with all items in the table).
+
+```ts
+const watcher = watch(userTable, users => {
+  console.log('All users', users);
+});
+```
+
+Only retrieving certain items from the table is also possible - just provide the [filter](/docs/filter) to `watch(...)`,
+and your callback will only be called if items matching the filter are inserted/updated/deleted.
+
+```ts
+const watcher = watch(userTable, { where: { age: { $lt: 3 } } }, babies => {
+  console.log('All babies: ', babies);
+});
+```
+
+If you want to stop receiving updates, call the `.close()` function on the object returned from `watch()`.
+
+```ts
+watcher.close();
+```
