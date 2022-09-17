@@ -11,8 +11,11 @@ An exception is thrown if the entity has not been inserted into the table before
 e.g. if the primary key of the entity was not found.
 
 ```ts
-const userTable = createTable<User>(db, "users")();
-const userId = await insert(userTable, { id: uuid(), name: 'Alice', age: 15 });
 // Increase the age of Alice
-await update(userTable, { id: userId, age: 16 });
+await update(userTable, { id: "alice-uuid", age: 16 });
 ```
+
+| Parameter | Description                                                           |
+| --------- | --------------------------------------------------------------------- |
+| `table`   | The table created by [`createTable()`](/docs/reference/createTable) . |
+| `item`    | The item (or primary keys of an item + some properties) to update.    |

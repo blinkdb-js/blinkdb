@@ -11,12 +11,15 @@ If a [filter](/docs/filters) is supplied, "first" means the first item that woul
 from a similar call to `many()` .
 
 ```ts
-const userTable = createTable<User>(db, "users")();
-
 const oldestUser = await first(userTable, {
   sort: {
     key: "age",
-    order: "desc"
-  }
+    order: "desc",
+  },
 });
 ```
+
+| Parameter | Description                                                                                                    |
+| --------- | -------------------------------------------------------------------------------------------------------------- |
+| `table`   | The table created by [`createTable()`](/docs/reference/createTable) .                                          |
+| `filter`  | Optional. If given, the item returned will be the first one to match the filter. See [filters](/docs/filters). |

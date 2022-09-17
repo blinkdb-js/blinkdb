@@ -11,7 +11,6 @@ This uses [hyperid](https://www.npmjs.com/package/hyperid) under the hood, which
 methods for uuid generation.
 
 ```ts
-const userTable = createTable<User>(db, "users")();
 const aliceId = uuid();
 await insert(userTable, { id: aliceId, name: "Alice", age: 23 });
 ```

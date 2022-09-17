@@ -8,8 +8,11 @@ title: "remove()"
 Removes a given entity from the table.
 
 ```ts
-const userTable = createTable<User>(db, "users")();
-const userId = await insert(userTable, { id: uuid(), name: 'Alice', age: 15 });
 // Remove Alice from the table
-await remove(userTable, { id: userId });
+await remove(userTable, { id: "alice-uuid" });
 ```
+
+| Parameter | Description                                                              |
+| --------- | ------------------------------------------------------------------------ |
+| `table`   | The table created by [`createTable()`](/docs/reference/createTable) .    |
+| `item`    | The item (or primary keys of an item) which gets removed from the table. |

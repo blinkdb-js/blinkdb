@@ -8,6 +8,9 @@ title: "clear()"
 Deletes all entities in a given table.
 
 ```ts
-const userTable = createTable<User>(db, "users")();
 await clear(userTable);
 ```
+
+| Parameter | Description                                                           |
+| --------- | --------------------------------------------------------------------- |
+| `table`   | The table created by [`createTable()`](/docs/reference/createTable) . |

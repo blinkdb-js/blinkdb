@@ -9,23 +9,22 @@ title: "watch()"
 Whenever an entity is inserted, updated, or deleted, blinkDB calls the provided callback
 with all table entities.
 
+`watch()` is much, much faster than manually retrieving items everytime you insert, update, or remove.
+It's perfect for usage inside reactive components like React Hooks.
+
 ```ts
-const userTable = createTable<User>(db, "users")();
-watch(userTable, users => {
-  console.log('All users: ', users);
+// Call `callback` whenever ALL entities change
+watch(userTable, (users) => {
+  console.log("All users: ", users);
+});
+// Call `callback` whenever an item matching the filter changes
+watch(userTable, { where: { age: { $lt: 3 } } }, (babies) => {
+  console.log("All babies: ", babies);
 });
 ```
 
-`watch()` is much, much faster than manually retrieving items everytime you insert, update, or remove. It's perfect for
-usage inside reactive components like React Hooks.
-
-A [filter](/docs/filters) can also be specified, which causes `watch()` to only call the function
-if an inserted / updated / deleted entity matches, and only entities which match the filter
-are provided as arguments.
-
-```ts
-const userTable = createTable<User>(db, "users")();
-watch(userTable, { where: { age: { $lt: 3 } } }, babies => {
-  console.log('All babies: ', babies);
-});
-```
+| Parameter  | Description                                                                                  |
+| ---------- | -------------------------------------------------------------------------------------------- |
+| `table`    | The table created by [`createTable()`](/docs/reference/createTable) .                        |
+| `filter`   | Optional. If present, `callback` will only be called when a changed item matches the filter. |
+| `callback` | The function which will be called whenever an item is inserted/updated/deleted.              |

@@ -49,6 +49,10 @@ const { frontmatter, headings } = Astro.props;
     @apply px-1 py-0.5 rounded bg-slate-200 text-sm;
   }
 
+  .markdown a > code {
+    @apply inline-block text-blue-600 hover:text-blue-400 font-bold;
+  }
+
   .markdown h1 {
     @apply text-4xl mt-12 mb-6 font-display tracking-wide font-bold text-black;
   }

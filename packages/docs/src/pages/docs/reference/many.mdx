@@ -9,8 +9,6 @@ Retrieves entities from the table. If a [filter](/docs/filters) is supplied, bli
 return matching items - if not given, all items are returned.
 
 ```ts
-const userTable = createTable<User>(db, "users")();
-
 const allUsers = await many(userTable);
 const allUsersNamedAlice = await many(userTable, {
   where: {
@@ -18,3 +16,8 @@ const allUsersNamedAlice = await many(userTable, {
   },
 });
 ```
+
+| Parameter | Description                                                                             |
+| --------- | --------------------------------------------------------------------------------------- |
+| `table`   | The table created by [`createTable()`](/docs/reference/createTable) .                   |
+| `filter`  | Optional. If given, items returned will match the filter. See [filters](/docs/filters). |

@@ -14,13 +14,17 @@ interface User {
   age?: number;
 }
 
-const db = createDB();
 const userTable = createTable<User>(db, "users")();
 ```
 
-| Option    | Description                                                      |
-| --------- | ---------------------------------------------------------------- |
-| `primary` | The primary key of the entity. See [Primary Keys](#primary-keys) |
+| Parameter | Description                                                        |
+| --------- | ------------------------------------------------------------------ |
+| `db`      | The database created by [`createDB()`](/docs/reference/createDB) . |
+| `name`    | Name of your table. For future usage.                              |
+
+| Option    | Description                                                                       |
+| --------- | --------------------------------------------------------------------------------- |
+| `primary` | The primary key of the entity. See [Primary Keys](#primary-keys)                  |
 | `indexes` | Fields of the entity on which an index should be created. See [Indexes](#indexes) |
 
 ## Valid Entities
@@ -34,16 +38,16 @@ interface ValidEntity {
   name: string;
   isDeleted: boolean;
   age: number;
-  surname: string|null;
-  likesPizza: boolean|undefined;
+  surname: string | null;
+  likesPizza: boolean | undefined;
   ageInMs: BigInt;
   createdAt: Date;
   nicknames: string[];
   some: {
     nested: {
       object: boolean;
-    }
-  },
+    };
+  };
 }
 ```
 
@@ -60,13 +64,13 @@ interface Task {
 }
 
 const userTable = createTable<Task>(db, "tasks")({
-  primary: "uuid"
+  primary: "uuid",
 });
 ```
 
 ## Indexes
 
-Indexes are a valuable type performance improvement for databases by reducing the amount of items scanned per query.
+Indexes are a valuable performance improvement for databases by reducing the amount of items scanned per query.
 To use them effectively, specify properties here that are often used in filters when you call `first()` / `one()` / `many()` / `watch()` -
 This will increase speed for queries drastically, with only a small performance hit on writes.
 
@@ -83,6 +87,6 @@ interface User {
 
 const userTable = createTable<Task>(db, "tasks")({
   primary: "uuid",
-  indexes: ["email"]
+  indexes: ["email"],
 });
 ```
