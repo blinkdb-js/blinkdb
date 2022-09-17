@@ -8,15 +8,15 @@ title: "CRUD"
 Just like any other database, BlinkDB gives you the ability to **C**reate, **R**ead, **U**pdate and **D**elete
 items in a table.
 
-- You can add entities to the table (with `insert()` ),
-- query entities within it (with `first()`, `many()` & `one()` ),
-- update database entities (with `update()` ),
-- and delete them (with `remove()` ).
+- You can add entities to the table (with [`insert()`](/docs/reference/insert) ),
+- query entities within it (with [`first()`](/docs/reference/first), [`many()`](/docs/reference/many) & [`one()`](/docs/reference/one) ),
+- update database entities (with [`update()`](/docs/reference/update) ),
+- and delete them (with [`remove()`](/docs/reference/remove) ).
 
 ## Creating entities
 
 The first step you want to do will probably be inserting entities inside the table.
-You can do so with `insert()`:
+You can do so with [`insert()`](/docs/reference/insert):
 
 ```ts
 import { createDB, createTable, insert } from 'blinkdb';
@@ -29,7 +29,7 @@ await insert(userTable, { id: 'some-uuid', name: 'Alice', age: 24 });
 ### Generating an UUID
 
 If your entities are using strings as primary keys, you're probably hoping to use UUIDs - universally unique
-identifiers. BlinkDB automatically supplies you with `uuid()`, a blazing fast method for generating them.
+identifiers. BlinkDB automatically supplies you with [`uuid()`](/docs/reference/uuid), a blazing fast method for generating them.
 
 ```ts
 await insert(userTable, { id: uuid(), name: 'Bob', age: 21 });
@@ -40,7 +40,7 @@ await insert(userTable, { id: uuid(), name: 'Bob', age: 21 });
 ## Querying entities
 
 Now that you have items in your table, it's time to retrieve them! Of course, you can always
-retrieve *all* items from a table with `many()`:
+retrieve *all* items from a table with [`many()`](/docs/reference/many):
 
 ```ts
 const users = await many(userTable);
@@ -65,7 +65,7 @@ BlinkDB allows you to filter, sort, and limit items - see more on [Filters](/doc
 
 ### Retrieving one entity
 
-In case you only need the first item of a query result, you can use `first()`.
+In case you only need the first item of a query result, you can use [`first()`](/docs/reference/first).
 
 ```ts
 const youngestUser = await first(userTable, {
@@ -77,7 +77,7 @@ const youngestUser = await first(userTable, {
 ```
 
 On the other hand, if you want to make sure that the query you're using will only ever return one item,
-you can use `one()` - It will throw an exception if there isn't exactly one entity matching the filter.
+you can use [`one()`](/docs/reference/one) - It will throw an exception if there isn't exactly one entity matching the filter.
 
 ```ts
 const alice = await one(userTable, {
@@ -91,8 +91,8 @@ const alice = await one(userTable, {
 
 ## Updating entities
 
-To update entities, simply call `update()`, and provide the primary key of the entity. While you *can* provide the entire
-object to the `update()` method, you don't have to - you can only update selected properties as well.
+To update entities, simply call [`update()`](/docs/reference/update), and provide the primary key of the entity. While you *can* provide the entire
+object to the [`update()`](/docs/reference/update) method, you don't have to - you can only update selected properties as well.
 
 ```ts
 const userTable = createTable<User>(db, "users")();
@@ -105,7 +105,7 @@ await update(userTable, { id: userId, age: 16 });
 
 ## Deleting entities
 
-You can delete entities by calling `remove()` with the primary key of the entity that should be deleted.
+You can delete entities by calling [`remove()`](/docs/reference/remove) with the primary key of the entity that should be deleted.
 
 ```ts
 const userTable = createTable<User>(db, "users")();
