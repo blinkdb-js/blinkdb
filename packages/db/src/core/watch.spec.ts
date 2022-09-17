@@ -34,6 +34,27 @@ it("should allow registering a watcher", async () => {
   });
 });
 
+it("should work with filter", async () => {
+  const fn = jest.fn();
+  await watch(userTable, { where: { id: { $gt: 0 } } }, fn);
+
+  expect(fn.mock.calls[0][0]).toStrictEqual([bob, charlie]);
+});
+
+it("should work with sort", async () => {
+  const fn = jest.fn();
+  await watch(userTable, { where: { id: { $gt: 0 } }, sort: { key: 'age', order: 'asc' } }, fn);
+
+  expect(fn.mock.calls[0][0]).toStrictEqual([charlie, bob]);
+});
+
+it("should work with limit", async () => {
+  const fn = jest.fn();
+  await watch(userTable, { where: { id: { $gt: 0 } }, limit: { take: 1 } }, fn);
+
+  expect(fn.mock.calls[0][0]).toStrictEqual([bob]);
+});
+
 describe("without filter", () => {
 
   it("should call the callback immediately after registering", async () => {
