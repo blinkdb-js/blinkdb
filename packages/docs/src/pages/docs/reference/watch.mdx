@@ -28,3 +28,15 @@ watch(userTable, { where: { age: { $lt: 3 } } }, (babies) => {
 | `table`    | The table created by [`createTable()`](/docs/reference/createTable) .                        |
 | `filter`   | Optional. If present, `callback` will only be called when a changed item matches the filter. |
 | `callback` | The function which will be called whenever an item is inserted/updated/deleted.              |
+
+## Stop observing changes
+
+If you want to stop watching for changes, call `stop()` on the object returned by `watch()`.
+
+```ts
+const watcher = watch(userTable, (users) => {
+  console.log("All users: ", users);
+});
+
+watcher.stop();
+```
