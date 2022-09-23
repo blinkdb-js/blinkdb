@@ -1,5 +1,7 @@
 import { BlinkKey, Table } from "../../core";
-import { And } from "../types";
+import { analyzeOr } from "../analyze/or";
+import { analyzeWhere } from "../analyze/where";
+import { And, Or, Where } from "../types";
 import { selectOrFilterItems } from "./or";
 import { selectWhereFilterItems } from "./where";
 
@@ -10,37 +12,26 @@ import { selectWhereFilterItems } from "./where";
  */
 export async function selectAndFilterItems<T, P extends keyof T>(
   table: Table<T, P>,
-  filter: And<T>
+  and: And<T>
 ): Promise<T[] | null> {
-  if (filter.$and.length === 0) {
+  if (and.$and.length === 0) {
     return [];
   }
 
-  if (filter.$and.length === 1) {
-    const childFilter = filter.$and[0];
-    return "$or" in childFilter
-      ? await selectOrFilterItems(table, childFilter)
-      : await selectWhereFilterItems(table, childFilter);
+  let minComplexity = Number.MAX_SAFE_INTEGER;
+  let bestFilter!: Where<T> | Or<T>;
+
+  for (const key in and.$and) {
+    const filter = and.$and[key];
+    const complexity =
+      "$or" in filter ? analyzeOr(table, filter) : analyzeWhere(table, filter);
+    if (complexity < minComplexity) {
+      minComplexity = complexity;
+      bestFilter = filter;
+    }
   }
 
-  // Fill array with items of first filter
-  const firstChildFilter = filter.$and[0];
-  let filterItems =
-    "$or" in firstChildFilter
-      ? await selectOrFilterItems(table, firstChildFilter)
-      : await selectWhereFilterItems(table, firstChildFilter);
-
-  if (filterItems !== null) return filterItems;
-
-  // Iterate over all items from the other filters and delete from map
-  for (let childFilter of filter.$and.slice(1)) {
-    filterItems =
-      "$or" in childFilter
-        ? await selectOrFilterItems(table, childFilter)
-        : await selectWhereFilterItems(table, childFilter);
-
-    if (filterItems !== null) return filterItems;
-  }
-
-  return filterItems;
+  return "$or" in bestFilter
+    ? await selectOrFilterItems(table, bestFilter)
+    : await selectWhereFilterItems(table, bestFilter);
 }
