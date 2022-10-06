@@ -16,6 +16,7 @@ import { matchesLteMatcher } from "./lte";
 import { matchesLtMatcher } from "./lt";
 import { matchesContainsMatcher } from "./contains";
 import { matchesInMatcher } from "./in";
+import { matchesBetweenMatcher } from "./between";
 
 /**
  * @returns whether `property` matches `matcher`.
@@ -45,7 +46,7 @@ export function matchesMatcher<T, P extends keyof T>(
     } else if ("$in" in matcher) {
       return matchesInMatcher(property, matcher as InMatcher<T[P]>);
     } else if ("$between" in matcher) {
-      return matchesBetweenMatcher(property, matcher as BetweenMatcher<T[P]>);
+      return matchesBetweenMatcher(property as any, matcher as BetweenMatcher<T[P]>);
     } else {
       return matchesSubWhereMatcher(property, matcher as SubWhere<T[P]>);
     }
@@ -60,8 +61,4 @@ function matchesSubWhereMatcher<T>(property: T, matcher: SubWhere<T>): boolean {
     matches = matches && matchesMatcher(property[propKey], matcher[propKey]);
   }
   return matches;
-}
-
-function matchesBetweenMatcher<T>(property: T, matcher: BetweenMatcher<T>): boolean {
-  return property >= matcher.$between[0] && property <= matcher.$between[1];
 }
