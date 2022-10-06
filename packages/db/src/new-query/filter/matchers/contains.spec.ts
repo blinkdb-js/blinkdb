@@ -41,6 +41,8 @@ it("should work with object arrays", () => {
 
 it("should work with nested arrays", () => {
   expect(matchesContainsMatcher([[1]], { $contains: [1] })).toBe(true);
+  expect(matchesContainsMatcher([[10, 20]], { $contains: [10, 20] })).toBe(true);
+  expect(matchesContainsMatcher([[20, 10]], { $contains: [10, 20] })).toBe(true);
   expect(matchesContainsMatcher([[1], [2], [3]], { $contains: [2] })).toBe(true);
   expect(matchesContainsMatcher([], { $contains: [2] })).toBe(false);
   expect(matchesContainsMatcher([[5]], { $contains: [2] })).toBe(false);

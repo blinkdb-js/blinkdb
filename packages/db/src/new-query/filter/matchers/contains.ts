@@ -1,9 +1,9 @@
-import equal from "fast-deep-equal";
 import { ContainsMatcher } from "../../types";
+import { matchesEqMatcher } from "./eq";
 
 export function matchesContainsMatcher<T>(
   value: T[],
   matcher: ContainsMatcher<T>
 ): boolean {
-  return value.some((v) => equal(matcher.$contains, v));
+  return value.some((v) => matchesEqMatcher(v, matcher.$contains));
 }
