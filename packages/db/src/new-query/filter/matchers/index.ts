@@ -15,6 +15,7 @@ import { matchesGtMatcher } from "./gt";
 import { matchesLteMatcher } from "./lte";
 import { matchesLtMatcher } from "./lt";
 import { matchesContainsMatcher } from "./contains";
+import { matchesInMatcher } from "./in";
 
 /**
  * @returns whether `property` matches `matcher`.
@@ -51,15 +52,6 @@ export function matchesMatcher<T, P extends keyof T>(
   } else {
     return matchesEqMatcher(property, matcher as T[P]);
   }
-}
-
-function matchesInMatcher<T>(property: T, matcher: InMatcher<T>): boolean {
-  if (property instanceof Date) {
-    return (matcher.$in as unknown as Date[])
-      .map((x) => x.getTime())
-      .includes(property.getTime());
-  }
-  return matcher.$in.includes(property);
 }
 
 function matchesSubWhereMatcher<T>(property: T, matcher: SubWhere<T>): boolean {
