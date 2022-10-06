@@ -14,6 +14,7 @@ import { matchesGteMatcher } from "./gte";
 import { matchesGtMatcher } from "./gt";
 import { matchesLteMatcher } from "./lte";
 import { matchesLtMatcher } from "./lt";
+import { matchesContainsMatcher } from "./contains";
 
 /**
  * @returns whether `property` matches `matcher`.
@@ -50,13 +51,6 @@ export function matchesMatcher<T, P extends keyof T>(
   } else {
     return matchesEqMatcher(property, matcher as T[P]);
   }
-}
-
-function matchesContainsMatcher<T>(
-  property: Array<T>,
-  matcher: ContainsMatcher<T>
-): boolean {
-  return property.includes(matcher.$contains);
 }
 
 function matchesInMatcher<T>(property: T, matcher: InMatcher<T>): boolean {
