@@ -1,6 +1,6 @@
 import equal from "fast-deep-equal";
 
-export function matchesEqMatcher<T>(value: T, matcher: T): boolean {
+export function matchesEq<T>(value: T, matcher: T): boolean {
   if (value instanceof Date && matcher instanceof Date) {
     return value.getTime() === matcher.getTime();
   }

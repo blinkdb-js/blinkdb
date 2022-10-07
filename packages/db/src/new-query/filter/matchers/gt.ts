@@ -1,6 +1,6 @@
 import { GtMatcher } from "../../types";
 
-export function matchesGtMatcher<T extends number | string | Date | BigInt | null | undefined>(
+export function matchesGt<T extends number | string | Date | BigInt | null | undefined>(
   value: T,
   matcher: GtMatcher<T>
 ): boolean {
