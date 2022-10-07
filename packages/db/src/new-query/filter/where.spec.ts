@@ -7,6 +7,7 @@ it("should return true if no matchers exist", () => {
 it("should work if a matcher is given", () => {
   expect(matchesWhere({ a: 3 }, { a: 3 })).toBe(true);
   expect(matchesWhere({ a: 2 }, { a: 3 })).toBe(false);
+  expect(matchesWhere({ a: 2 }, { a: 0 })).toBe(false);
 });
 
 it("should work if multiple matchers are given", () => {

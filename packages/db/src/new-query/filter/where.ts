@@ -7,7 +7,7 @@ import { matches } from "./matchers";
 export function matchesWhere<T>(item: T, where: Where<T>): boolean {
   for (const property in where) {
     const matcher = where[property];
-    if (matcher && !matches(item[property], matcher)) {
+    if (matcher !== undefined && !matches(item[property], matcher)) {
       return false;
     }
   }
