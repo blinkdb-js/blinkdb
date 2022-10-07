@@ -17,6 +17,7 @@ import { matchesLtMatcher } from "./lt";
 import { matchesContainsMatcher } from "./contains";
 import { matchesInMatcher } from "./in";
 import { matchesBetweenMatcher } from "./between";
+import { matchesSubWhereMatcher } from "./sub";
 
 /**
  * @returns whether `property` matches `matcher`.
@@ -53,12 +54,4 @@ export function matchesMatcher<T, P extends keyof T>(
   } else {
     return matchesEqMatcher(property, matcher as T[P]);
   }
-}
-
-function matchesSubWhereMatcher<T>(property: T, matcher: SubWhere<T>): boolean {
-  let matches = true;
-  for (const propKey in matcher) {
-    matches = matches && matchesMatcher(property[propKey], matcher[propKey]);
-  }
-  return matches;
 }
