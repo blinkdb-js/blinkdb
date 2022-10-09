@@ -20,30 +20,30 @@ import { selectForLte } from "./lte";
 /**
  * Selects all items from `btree` that could possibly match the given `matcher`.
  */
-export function selectForMatcher<T, P extends keyof T>(
-  btree: BTree<T[P], T>,
-  matcher: Matchers<T[P]>,
-  cb: SelectCallback<T>
+export function selectForMatcher<K, E>(
+  btree: BTree<K, E>,
+  matcher: Matchers<K>,
+  cb: SelectCallback<E>
 ): void {
   if (matcher === null) return;
 
   if (typeof matcher === "object" && "$equals" in matcher) {
-    selectForEq(btree, (matcher as { $equals: T[P] }).$equals, cb);
+    return selectForEq(btree, (matcher as { $equals: K }).$equals, cb);
   } else if (typeof matcher === "object" && "$gte" in matcher) {
-    selectForGte(btree, matcher as GteMatcher<T[P]>, cb);
+    return selectForGte(btree, matcher as GteMatcher<K>, cb);
   } else if (typeof matcher === "object" && "$gt" in matcher) {
-    selectForGt(btree, matcher as GtMatcher<T[P]>, cb);
+    return selectForGt(btree, matcher as GtMatcher<K>, cb);
   } else if (typeof matcher === "object" && "$lte" in matcher) {
-    selectForLte(btree, matcher as LteMatcher<T[P]>, cb);
+    return selectForLte(btree, matcher as LteMatcher<K>, cb);
   } else if (typeof matcher === "object" && "$lt" in matcher) {
-    selectForLt(btree, matcher as LtMatcher<T[P]>, cb);
+    return selectForLt(btree, matcher as LtMatcher<K>, cb);
   } else if (typeof matcher === "object" && "$contains" in matcher) {
     return;
   } else if (typeof matcher === "object" && "$in" in matcher) {
-    selectForIn(btree, matcher as InMatcher<T[P]>, cb);
+    return selectForIn(btree, matcher as InMatcher<K>, cb);
   } else if (typeof matcher === "object" && "$between" in matcher) {
-    selectForBetween(btree, matcher as BetweenMatcher<T[P]>, cb);
+    return selectForBetween(btree, matcher as BetweenMatcher<K>, cb);
   } else if (typeof matcher !== "object") {
-    selectForEq(btree, matcher as T[P], cb);
+    return selectForEq(btree, matcher as K, cb);
   }
 }

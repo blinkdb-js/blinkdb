@@ -17,16 +17,22 @@ beforeEach(() => {
 });
 
 it("should return nothing if the btree is empty", () => {
-  expect(collect<Data>(fn => selectForEq<Data, "a">(new BTree(), "1", fn))).toStrictEqual([]);
+  expect(collect<Data>((fn) => selectForEq(new BTree(), "1", fn))).toStrictEqual([]);
 });
 
 it("should return the item if matched by eq", () => {
-  expect(collect<Data>(fn => selectForEq<Data, "a">(btree, "0", fn))).toStrictEqual([{ a: "Hello" }]);
-  expect(collect<Data>(fn => selectForEq<Data, "a">(btree, "1", fn))).toStrictEqual([{ a: "There" }]);
-  expect(collect<Data>(fn => selectForEq<Data, "a">(btree, "2", fn))).toStrictEqual([{ a: "World" }]);
+  expect(collect<Data>((fn) => selectForEq(btree, "0", fn))).toStrictEqual([
+    { a: "Hello" },
+  ]);
+  expect(collect<Data>((fn) => selectForEq(btree, "1", fn))).toStrictEqual([
+    { a: "There" },
+  ]);
+  expect(collect<Data>((fn) => selectForEq(btree, "2", fn))).toStrictEqual([
+    { a: "World" },
+  ]);
 });
 
 it("should return nothing if the key doesnt exist", () => {
-  expect(collect<Data>(fn => selectForEq<Data, "a">(btree, "3", fn))).toStrictEqual([]);
-  expect(collect<Data>(fn => selectForEq<Data, "a">(btree, "364", fn))).toStrictEqual([]);
+  expect(collect<Data>((fn) => selectForEq(btree, "3", fn))).toStrictEqual([]);
+  expect(collect<Data>((fn) => selectForEq(btree, "364", fn))).toStrictEqual([]);
 });
