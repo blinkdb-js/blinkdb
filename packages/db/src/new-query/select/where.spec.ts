@@ -25,30 +25,30 @@ beforeEach(async () => {
 
 it("should use the primary index for queries containing the primary index", () => {
   expect(selectForWhere(userTable, { id: "0" }, jest.fn())).toStrictEqual({
-    rowScanned: "id",
+    rowsScanned: ["id"],
     fullTableScan: false,
   });
   expect(selectForWhere(userTable, { id: { $in: ["0", "1"] } }, jest.fn())).toStrictEqual(
     {
-      rowScanned: "id",
+      rowsScanned: ["id"],
       fullTableScan: false,
     }
   );
   expect(selectForWhere(userTable, { id: "0", age: 40 }, jest.fn())).toStrictEqual({
-    rowScanned: "id",
+    rowsScanned: ["id"],
     fullTableScan: false,
   });
 });
 
 it("should use other indexes for queries containing that particular index", () => {
   expect(selectForWhere(userTable, { age: 40 }, jest.fn())).toStrictEqual({
-    rowScanned: "age",
+    rowsScanned: ["age"],
     fullTableScan: false,
   });
   expect(
     selectForWhere(userTable, { age: { $between: [0, 10] } }, jest.fn())
   ).toStrictEqual({
-    rowScanned: "age",
+    rowsScanned: ["age"],
     fullTableScan: false,
   });
 });

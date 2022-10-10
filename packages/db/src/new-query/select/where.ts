@@ -26,7 +26,7 @@ export function selectForWhere<T, P extends keyof T>(
     const btree = table[BlinkKey].storage.primary;
     const matcher = filter[primaryKeyProperty]!;
     selectForMatcher(btree, matcher, cb);
-    return { rowScanned: primaryKeyProperty, fullTableScan: false };
+    return { rowsScanned: [primaryKeyProperty], fullTableScan: false };
   }
 
   // Check if any other index is available to select
@@ -40,7 +40,7 @@ export function selectForWhere<T, P extends keyof T>(
         }
       });
       return {
-        rowScanned: property,
+        rowsScanned: [property],
         fullTableScan: false,
       };
     }

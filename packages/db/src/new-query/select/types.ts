@@ -11,7 +11,7 @@ export type SelectCallback<T> = (item: T) => void | { cancel: true };
  */
 export interface SelectResult<T> {
   /** The row where items where selected from. */
-  rowScanned?: keyof T;
+  rowsScanned?: (keyof T)[];
   /** If true, a full table scan was performed. */
   fullTableScan: boolean;
 }
