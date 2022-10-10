@@ -23,6 +23,11 @@ beforeEach(async () => {
   await insert(userTable, { id: "2", name: "Charlie", age: 60 });
 });
 
+it("should return no rows if where contains no matchers", () => {
+  expect(selectForWhere(userTable, {}, jest.fn())).toStrictEqual({
+    fullTableScan: false,
+  });
+});
 it("should use the primary index for queries containing the primary index", () => {
   expect(selectForWhere(userTable, { id: "0" }, jest.fn())).toStrictEqual({
     rowsScanned: ["id"],
