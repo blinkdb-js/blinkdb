@@ -1,8 +1,7 @@
-import BTree from "sorted-btree";
 import { BlinkKey, Table } from "../../core";
-import { Matchers, Where } from "../types";
+import { Where } from "../types";
 import { selectForMatcher } from "./matchers";
-import { SelectCallback } from "./types";
+import { SelectCallback, SelectResult } from "./types";
 
 /**
  * Select all items for `filter`.
@@ -50,11 +49,4 @@ export function selectForWhere<T, P extends keyof T>(
   // Otherwise, we need a full table scan
   table[BlinkKey].storage.primary.valuesArray().forEach((v) => cb(v));
   return { fullTableScan: true };
-}
-
-export interface SelectResult<T> {
-  /** The row where items where selected from. */
-  rowScanned?: keyof T;
-  /** If true, a full table scan was performed. */
-  fullTableScan: boolean;
 }
