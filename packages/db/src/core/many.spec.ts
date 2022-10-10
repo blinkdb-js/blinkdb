@@ -26,7 +26,7 @@ beforeEach(() => {
     "users"
   )({
     primary: "id",
-    indexes: ["age", "date"],
+    indexes: ["name"],
   });
 });
 
@@ -465,7 +465,7 @@ describe("filter", () => {
     });
 
     describe("dates", () => {
-      it("should match items by equality (simple)", async () => {
+      it.only("should match items by equality (simple)", async () => {
         const items = await many(userTable, {
           where: {
             date: new Date("2000-01-03T00:00:00"),

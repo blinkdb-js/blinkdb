@@ -1,22 +1,15 @@
-import { Matchers, Where } from "../types";
-import { matchesMatcher } from "./matchers";
+import { Where } from "../types";
+import { matches } from "./matchers";
 
 /**
- * @returns all items from `items` that match the given `filter`.
+ * @returns whether the given `item` matches all matchers in `where`.
  */
-export function filterWhereItems<T>(items: T[], filter: Where<T>): T[] {
-  if (items.length === 0) {
-    return [];
-  }
-
-  return items.filter((item) => {
-    for (const property in filter) {
-      if (
-        !matchesMatcher(item[property], filter[property] as Matchers<T[typeof property]>)
-      ) {
-        return false;
-      }
+export function matchesWhere<T>(item: T, where: Where<T>): boolean {
+  for (const property in where) {
+    const matcher = where[property];
+    if (matcher !== undefined && matcher !== null && !matches(item[property], matcher)) {
+      return false;
     }
-    return true;
-  });
+  }
+  return true;
 }

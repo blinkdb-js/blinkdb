@@ -1,40 +1,21 @@
-import { Table } from "../../core";
-import { And, Or, Where } from "../types";
-import { filterAndItems } from "./and";
-import { filterWhereItems } from "./where";
+import { Or } from "../types";
+import { matchesAnd } from "./and";
+import { matchesWhere } from "./where";
 
-export function filterOrItems<T, P extends keyof T>(
-  table: Table<T, P>,
-  items: T[],
-  filter: Or<T>
-): T[] {
-  if (items.length === 0 || filter.$or.length === 0) {
-    return [];
-  }
+/**
+ * @returns whether the given `item` matches `or`.
+ */
+export function matchesOr<T>(item: T, or: Or<T>): boolean {
+  if (or.$or.length === 0) return true;
 
-  if (filter.$or.length === 1) {
-    const childFilter = filter.$or[0];
-    return "$and" in childFilter
-      ? filterAndItems(table, items, childFilter)
-      : filterWhereItems(items, childFilter);
-  }
-
-  const returnItems: T[] = [];
-
-  for (let item of items) {
-    const itemInFilter = (childFilter: Where<T> | And<T>) => {
-      const resultItems =
-        "$and" in childFilter
-          ? filterAndItems(table, [item], childFilter)
-          : filterWhereItems([item], childFilter);
-      return resultItems.length > 0;
-    };
-    if (filter.$or.some(itemInFilter)) {
-      returnItems.push(item);
-    } else {
-      continue;
+  for (const childFilter of or.$or) {
+    const matches =
+      "$and" in childFilter
+        ? matchesAnd(item, childFilter)
+        : matchesWhere(item, childFilter);
+    if (matches) {
+      return true;
     }
   }
-
-  return returnItems;
+  return false;
 }

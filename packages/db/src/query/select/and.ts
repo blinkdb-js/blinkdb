@@ -1,28 +1,29 @@
-import { BlinkKey, Table } from "../../core";
+import { Table } from "../../core";
 import { analyzeOr } from "../analyze/or";
 import { analyzeWhere } from "../analyze/where";
 import { And, Or, Where } from "../types";
-import { selectOrFilterItems } from "./or";
-import { selectWhereFilterItems } from "./where";
+import { selectForOr } from "./or";
+import { SelectCallback, SelectResult } from "./types";
+import { selectForWhere } from "./where";
 
 /**
  * Select all items for `filter`.
  *
  * @returns the selected items from the database, or `null` in case a full table scan is required.
  */
-export async function selectAndFilterItems<T, P extends keyof T>(
+export function selectForAnd<T, P extends keyof T>(
   table: Table<T, P>,
-  and: And<T>
-): Promise<T[] | null> {
+  and: And<T>,
+  cb: SelectCallback<T>
+): SelectResult<T> {
   if (and.$and.length === 0) {
-    return [];
+    return { fullTableScan: false };
   }
 
   let minComplexity = Number.MAX_SAFE_INTEGER;
-  let bestFilter!: Where<T> | Or<T>;
+  let bestFilter = and.$and[0];
 
-  for (const key in and.$and) {
-    const filter = and.$and[key];
+  for (const filter of and.$and) {
     const complexity =
       "$or" in filter ? analyzeOr(table, filter) : analyzeWhere(table, filter);
     if (complexity < minComplexity) {
@@ -32,6 +33,6 @@ export async function selectAndFilterItems<T, P extends keyof T>(
   }
 
   return "$or" in bestFilter
-    ? await selectOrFilterItems(table, bestFilter)
-    : await selectWhereFilterItems(table, bestFilter);
+    ? selectForOr(table, bestFilter, cb)
+    : selectForWhere(table, bestFilter, cb);
 }

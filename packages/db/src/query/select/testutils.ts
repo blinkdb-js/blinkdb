@@ -6,7 +6,7 @@ import { SelectCallback } from "./types";
 export function collect<T>(select: (fn: SelectCallback<T>) => void): T[] {
   const items: T[] = [];
   const fn: SelectCallback<T> = (i) => {
-    items.push(i)
+    items.push(i);
   };
   select(fn);
   return items;

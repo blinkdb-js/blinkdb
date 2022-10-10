@@ -1,4 +1,4 @@
-import { filterItems } from "../query/filter";
+import { matches } from "../query/filter";
 import { limitItems } from "../query/limit";
 import { sortItems } from "../query/sort";
 import { Filter } from "../query/types";
@@ -81,9 +81,7 @@ export async function watch<T, P extends keyof T>(
 
   let initialEntities = await many(table, filter);
   cb(
-    table[BlinkKey].db[BlinkKey].options.clone
-      ? clone(initialEntities)
-      : initialEntities
+    table[BlinkKey].db[BlinkKey].options.clone ? clone(initialEntities) : initialEntities
   );
 
   let entities: Map<T[P], T> = new Map();
@@ -94,7 +92,7 @@ export async function watch<T, P extends keyof T>(
   }
 
   const removeOnInsertCb = table[BlinkKey].events.onInsert.register(({ entity }) => {
-    if (filter?.where && filterItems(table, [entity], filter.where).length === 0) {
+    if (filter?.where && !matches(entity, filter.where)) {
       return;
     }
 
@@ -108,19 +106,13 @@ export async function watch<T, P extends keyof T>(
       entityList = limitItems(table, entityList, filter.limit);
     }
 
-    cb(
-      table[BlinkKey].db[BlinkKey].options.clone
-        ? clone(entityList)
-        : entityList
-    );
+    cb(table[BlinkKey].db[BlinkKey].options.clone ? clone(entityList) : entityList);
   });
 
   const removeOnUpdateCb = table[BlinkKey].events.onUpdate.register(
     ({ oldEntity, newEntity }) => {
-      const matchesOldEntity =
-        !filter?.where || filterItems(table, [oldEntity], filter.where).length !== 0;
-      const matchesNewEntity =
-        !filter?.where || filterItems(table, [newEntity], filter.where).length !== 0;
+      const matchesOldEntity = !filter?.where || matches(oldEntity, filter.where);
+      const matchesNewEntity = !filter?.where || matches(newEntity, filter.where);
       if (!matchesOldEntity && !matchesNewEntity) {
         return;
       } else if (matchesOldEntity && !matchesNewEntity) {
@@ -144,11 +136,7 @@ export async function watch<T, P extends keyof T>(
         entityList = limitItems(table, entityList, filter.limit);
       }
 
-      cb(
-        table[BlinkKey].db[BlinkKey].options.clone
-          ? clone(entityList)
-          : entityList
-      );
+      cb(table[BlinkKey].db[BlinkKey].options.clone ? clone(entityList) : entityList);
     }
   );
 
@@ -163,11 +151,7 @@ export async function watch<T, P extends keyof T>(
       if (filter?.limit) {
         entityList = limitItems(table, entityList, filter.limit);
       }
-      cb(
-        table[BlinkKey].db[BlinkKey].options.clone
-          ? clone(entityList)
-          : entityList
-      );
+      cb(table[BlinkKey].db[BlinkKey].options.clone ? clone(entityList) : entityList);
     }
   });
 

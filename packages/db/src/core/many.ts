@@ -1,7 +1,4 @@
-import { filterItems } from "../query/filter";
-import { limitItems } from "../query/limit";
-import { selectItems } from "../query/select";
-import { sortItems } from "../query/sort";
+import { get } from "../query";
 import { Filter } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
@@ -50,27 +47,7 @@ export async function many<T, P extends keyof T>(
     return table[BlinkKey].db[BlinkKey].options.clone ? clone(allItems) : allItems;
   }
 
-  let items: T[] = [];
-
-  if (filter.where) {
-    // Select items from the db
-    items = await selectItems(table, filter.where);
-
-    // Filter items
-    items = filterItems(table, items, filter.where);
-  } else {
-    items = table[BlinkKey].storage.primary.valuesArray();
-  }
-
-  if (filter.sort) {
-    // Sort items
-    items = sortItems(items, filter.sort);
-  }
-
-  if (filter.limit) {
-    // Limit items
-    items = limitItems(table, items, filter.limit);
-  }
+  const items = get(table, filter);
 
   return table[BlinkKey].db[BlinkKey].options.clone ? clone(items) : items;
 }
