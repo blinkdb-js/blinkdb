@@ -53,6 +53,10 @@ export async function insert<T, P extends keyof T>(
  */
 export type ValidEntity<T> = T extends Function | Symbol
   ? never
+  : T extends Date
+  ? T
+  : T extends BigInt
+  ? T
   : T extends object
   ? { [K in keyof T]: ValidEntity<T[K]> }
   : T;

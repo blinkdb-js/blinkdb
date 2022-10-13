@@ -1,6 +1,6 @@
 import { defaultComparator } from "sorted-btree";
 import { Table, BlinkKey } from "../../core";
-import { Filter } from "../types";
+import { Filter, Limit } from "../types";
 
 /**
  * @returns all items from `items` limited according to the given `limit` object.
@@ -8,7 +8,7 @@ import { Filter } from "../types";
 export function limitItems<T, P extends keyof T>(
   table: Table<T, P>,
   items: T[],
-  limit: NonNullable<Filter<T, P>["limit"]>
+  limit: Limit<T, P>
 ): T[] {
   if (items.length === 0) {
     return [];

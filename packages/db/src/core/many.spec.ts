@@ -26,7 +26,7 @@ beforeEach(() => {
     "users"
   )({
     primary: "id",
-    indexes: ["age", "date"],
+    indexes: ["name"],
   });
 });
 
