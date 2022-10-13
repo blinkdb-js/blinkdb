@@ -465,7 +465,7 @@ describe("filter", () => {
     });
 
     describe("dates", () => {
-      it.only("should match items by equality (simple)", async () => {
+      it("should match items by equality (simple)", async () => {
         const items = await many(userTable, {
           where: {
             date: new Date("2000-01-03T00:00:00"),
