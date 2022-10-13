@@ -5,5 +5,5 @@
     "declaration": true,
     "exactOptionalPropertyTypes": true
   },
-  "exclude": ["**/*.spec.ts", "dist/"]
+  "include": ["**/src/*.ts"],
 }
