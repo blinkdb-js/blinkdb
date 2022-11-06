@@ -79,7 +79,7 @@ export type Limit<T, P extends keyof T> = {
  * the property filtered by.
  */
 export type Matchers<T, K extends keyof T> = T[K] extends (infer R)[] | undefined
-  ? ArrMatchers<R> | EqMatchers<T[K]>
+  ? ArrMatchers<R> | EqMatchers<T[K]> | T[K]
   : T[K] extends OrdProps & EqProps & SimpleEqProps
   ? OrdMatchers<T[K]> | EqMatchers<T[K]> | T[K]
   : T[K] extends OrdProps & EqProps
