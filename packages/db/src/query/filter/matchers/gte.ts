@@ -1,8 +1,8 @@
-import { GteMatcher } from "../../types";
+import { GteMatcher, OrdProps } from "../../types";
 
-export function matchesGte<T extends number | string | Date | BigInt | null | undefined>(
+export function matchesGte<T extends OrdProps>(
   value: T,
   matcher: GteMatcher<T>
 ): boolean {
-  return value! >= matcher.$gte!;
+  return value! >= matcher.gte!;
 }

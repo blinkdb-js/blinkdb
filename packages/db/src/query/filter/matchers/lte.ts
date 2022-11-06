@@ -1,8 +1,8 @@
-import { LteMatcher } from "../../types";
+import { LteMatcher, OrdProps } from "../../types";
 
-export function matchesLte<T extends number | string | Date | BigInt | null | undefined>(
+export function matchesLte<T extends OrdProps>(
   value: T,
   matcher: LteMatcher<T>
 ): boolean {
-  return value! <= matcher.$lte!;
+  return value! <= matcher.lte!;
 }

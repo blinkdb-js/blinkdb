@@ -11,6 +11,6 @@ it("should work if a matcher is given", () => {
 });
 
 it("should work if multiple matchers are given", () => {
-  expect(matchesWhere({ a: 3, b: 3 }, { a: 3, b: { $gte: 3 } })).toBe(true);
-  expect(matchesWhere({ a: 3, b: 3 }, { a: 1, b: { $gte: 3 } })).toBe(false);
+  expect(matchesWhere({ a: 3, b: 3 }, { a: 3, b: { gte: 3 } })).toBe(true);
+  expect(matchesWhere({ a: 3, b: 3 }, { a: 1, b: { gte: 3 } })).toBe(false);
 });

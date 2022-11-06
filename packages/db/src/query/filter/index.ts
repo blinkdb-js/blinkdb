@@ -7,9 +7,9 @@ import { matchesWhere } from "./where";
  * @returns whether the given `item` matches the filter.
  */
 export function matches<T>(item: T, filter: Where<T> | And<T> | Or<T>): boolean {
-  if ("$and" in filter) {
+  if ("AND" in filter) {
     return matchesAnd(item, filter);
-  } else if ("$or" in filter) {
+  } else if ("OR" in filter) {
     return matchesOr(item, filter);
   } else {
     return matchesWhere(item, filter);

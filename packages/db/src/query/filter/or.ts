@@ -6,11 +6,11 @@ import { matchesWhere } from "./where";
  * @returns whether the given `item` matches `or`.
  */
 export function matchesOr<T>(item: T, or: Or<T>): boolean {
-  if (or.$or.length === 0) return true;
+  if (or.OR.length === 0) return true;
 
-  for (const childFilter of or.$or) {
+  for (const childFilter of or.OR) {
     const matches =
-      "$and" in childFilter
+      "AND" in childFilter
         ? matchesAnd(item, childFilter)
         : matchesWhere(item, childFilter);
     if (matches) {

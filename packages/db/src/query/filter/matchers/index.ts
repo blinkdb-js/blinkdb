@@ -29,21 +29,21 @@ export function matches<T>(value: T, matcher: Matchers<T>): boolean {
   if ((matcher as any) instanceof Date && (value as any) instanceof Date) {
     return matchesEq(value, matcher as any);
   } else if (typeof matcher === "object") {
-    if ("$equals" in matcher) {
-      return matchesEq(value, (matcher as { $equals: T }).$equals);
-    } else if ("$gte" in matcher) {
+    if ("eq" in matcher) {
+      return matchesEq(value, (matcher as { eq: T }).eq);
+    } else if ("gte" in matcher) {
       return matchesGte(value as any, matcher as GteMatcher<T>);
-    } else if ("$gt" in matcher) {
+    } else if ("gt" in matcher) {
       return matchesGt(value as any, matcher as GtMatcher<T>);
-    } else if ("$lte" in matcher) {
+    } else if ("lte" in matcher) {
       return matchesLte(value as any, matcher as LteMatcher<T>);
-    } else if ("$lt" in matcher) {
+    } else if ("lt" in matcher) {
       return matchesLt(value as any, matcher as LtMatcher<T>);
-    } else if ("$contains" in matcher && Array.isArray(value)) {
+    } else if ("contains" in matcher && Array.isArray(value)) {
       return matchesContains(value, matcher as ContainsMatcher<T>);
-    } else if ("$in" in matcher) {
+    } else if ("in" in matcher) {
       return matchesIn(value, matcher as InMatcher<T>);
-    } else if ("$between" in matcher) {
+    } else if ("between" in matcher) {
       return matchesBetween(value as any, matcher as BetweenMatcher<T>);
     } else {
       return matchesSubWhere(value, matcher as SubWhere<T>);

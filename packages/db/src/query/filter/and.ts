@@ -6,9 +6,9 @@ import { matchesWhere } from "./where";
  * @returns whether the given `item` matches `and`.
  */
 export function matchesAnd<T>(item: T, and: And<T>): boolean {
-  for (const childFilter of and.$and) {
+  for (const childFilter of and.AND) {
     const matches =
-      "$or" in childFilter
+      "OR" in childFilter
         ? matchesOr(item, childFilter)
         : matchesWhere(item, childFilter);
     if (!matches) {

@@ -1,8 +1,5 @@
-import { GtMatcher } from "../../types";
+import { GtMatcher, OrdProps } from "../../types";
 
-export function matchesGt<T extends number | string | Date | BigInt | null | undefined>(
-  value: T,
-  matcher: GtMatcher<T>
-): boolean {
-  return value! > matcher.$gt!;
+export function matchesGt<T extends OrdProps>(value: T, matcher: GtMatcher<T>): boolean {
+  return value! > matcher.gt!;
 }

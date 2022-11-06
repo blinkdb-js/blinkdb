@@ -1,9 +1,9 @@
 import { matches } from ".";
-import { SubWhere } from "../../types";
+import { ObjMatchers } from "../../types";
 
-export function matchesSubWhere<T>(value: T, matcher: SubWhere<T>): boolean {
-  for (const propKey in matcher) {
-    if (!matches(value[propKey], matcher[propKey])) {
+export function matchesSubWhere<T>(value: T, matcher: ObjMatchers<T>): boolean {
+  for (const propKey in matcher.where) {
+    if (!matches(value[propKey], matcher.where[propKey])) {
       return false;
     }
   }
