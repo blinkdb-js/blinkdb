@@ -29,34 +29,35 @@ beforeEach(async () => {
 });
 
 it("should allow registering a watcher", async () => {
-  await watch(userTable, () => {
-
-  });
+  await watch(userTable, () => {});
 });
 
 it("should work with filter", async () => {
   const fn = jest.fn();
-  await watch(userTable, { where: { id: { $gt: 0 } } }, fn);
+  await watch(userTable, { where: { id: { gt: 0 } } }, fn);
 
   expect(fn.mock.calls[0][0]).toStrictEqual([bob, charlie]);
 });
 
 it("should work with sort", async () => {
   const fn = jest.fn();
-  await watch(userTable, { where: { id: { $gt: 0 } }, sort: { key: 'age', order: 'asc' } }, fn);
+  await watch(
+    userTable,
+    { where: { id: { gt: 0 } }, sort: { key: "age", order: "asc" } },
+    fn
+  );
 
   expect(fn.mock.calls[0][0]).toStrictEqual([charlie, bob]);
 });
 
 it("should work with limit", async () => {
   const fn = jest.fn();
-  await watch(userTable, { where: { id: { $gt: 0 } }, limit: { take: 1 } }, fn);
+  await watch(userTable, { where: { id: { gt: 0 } }, limit: { take: 1 } }, fn);
 
   expect(fn.mock.calls[0][0]).toStrictEqual([bob]);
 });
 
 describe("without filter", () => {
-
   it("should call the callback immediately after registering", async () => {
     const fn = jest.fn();
     await watch(userTable, fn);
@@ -81,7 +82,11 @@ describe("without filter", () => {
     update(userTable, { id: 0, name: "Alice the II." });
 
     expect(fn.mock.calls.length).toBe(2);
-    expect(fn.mock.calls[1][0]).toStrictEqual([{ ...alice, name: "Alice the II." }, bob, charlie]);
+    expect(fn.mock.calls[1][0]).toStrictEqual([
+      { ...alice, name: "Alice the II." },
+      bob,
+      charlie,
+    ]);
   });
 
   it("should call the callback when an entity is removed", async () => {
@@ -101,14 +106,12 @@ describe("without filter", () => {
     expect(fn.mock.calls.length).toBe(2);
     expect(fn.mock.calls[1][0]).toStrictEqual([]);
   });
-
 });
 
 describe("with filter", () => {
-
   it("should call the callback immediately after registering", async () => {
     const fn = jest.fn();
-    await watch(userTable, { where: { age: { $gt: 5 } } }, fn);
+    await watch(userTable, { where: { age: { gt: 5 } } }, fn);
 
     expect(fn.mock.calls.length).toBe(1);
     expect(fn.mock.calls[0][0]).toStrictEqual([alice, charlie]);
@@ -116,7 +119,7 @@ describe("with filter", () => {
 
   it("should call the callback when an entity matching the filter is inserted", async () => {
     const fn = jest.fn();
-    await watch(userTable, { where: { age: { $gt: 5 } } }, fn);
+    await watch(userTable, { where: { age: { gt: 5 } } }, fn);
     const eve: User = { id: 3, name: "Eve", age: 6 };
     await insert(userTable, eve);
 
@@ -126,7 +129,7 @@ describe("with filter", () => {
 
   it("should not call the callback when an entity not matching the filter is inserted", async () => {
     const fn = jest.fn();
-    await watch(userTable, { where: { age: { $gt: 5 } } }, fn);
+    await watch(userTable, { where: { age: { gt: 5 } } }, fn);
     const eve: User = { id: 3, name: "Eve", age: 3 };
     await insert(userTable, eve);
 
@@ -135,16 +138,19 @@ describe("with filter", () => {
 
   it("should call the callback when an entity matching the filter is updated (and still matches)", async () => {
     const fn = jest.fn();
-    await watch(userTable, { where: { age: { $gt: 5 } } }, fn);
+    await watch(userTable, { where: { age: { gt: 5 } } }, fn);
     update(userTable, { id: 0, name: "Alice the II." });
 
     expect(fn.mock.calls.length).toBe(2);
-    expect(fn.mock.calls[1][0]).toStrictEqual([{ ...alice, name: "Alice the II." }, charlie]);
+    expect(fn.mock.calls[1][0]).toStrictEqual([
+      { ...alice, name: "Alice the II." },
+      charlie,
+    ]);
   });
 
   it("should not call the callback when an entity not matching the filter is updated (and still doesn't match)", async () => {
     const fn = jest.fn();
-    await watch(userTable, { where: { age: { $gt: 5 } } }, fn);
+    await watch(userTable, { where: { age: { gt: 5 } } }, fn);
     update(userTable, { id: 1, name: "Bob the II." });
 
     expect(fn.mock.calls.length).toBe(1);
@@ -152,7 +158,7 @@ describe("with filter", () => {
 
   it("should call the callback when an entity matching the filter is updated (and now doesn't match)", async () => {
     const fn = jest.fn();
-    await watch(userTable, { where: { age: { $gt: 5 } } }, fn);
+    await watch(userTable, { where: { age: { gt: 5 } } }, fn);
     update(userTable, { id: 0, age: 2 });
 
     expect(fn.mock.calls.length).toBe(2);
@@ -161,7 +167,7 @@ describe("with filter", () => {
 
   it("should call the callback when an entity not matching the filter is updated (and now matches)", async () => {
     const fn = jest.fn();
-    await watch(userTable, { where: { age: { $gt: 5 } } }, fn);
+    await watch(userTable, { where: { age: { gt: 5 } } }, fn);
     update(userTable, { id: 1, age: 11 });
 
     expect(fn.mock.calls.length).toBe(2);
@@ -170,7 +176,7 @@ describe("with filter", () => {
 
   it("should call the callback when an entity matching the filter is removed", async () => {
     const fn = jest.fn();
-    await watch(userTable, { where: { age: { $gt: 5 } } }, fn);
+    await watch(userTable, { where: { age: { gt: 5 } } }, fn);
     remove(userTable, { id: 0 });
 
     expect(fn.mock.calls.length).toBe(2);
@@ -179,7 +185,7 @@ describe("with filter", () => {
 
   it("should not call the callback when an entity not matching the filter is removed", async () => {
     const fn = jest.fn();
-    await watch(userTable, { where: { age: { $gt: 5 } } }, fn);
+    await watch(userTable, { where: { age: { gt: 5 } } }, fn);
     remove(userTable, { id: 1 });
 
     expect(fn.mock.calls.length).toBe(1);
@@ -187,11 +193,10 @@ describe("with filter", () => {
 
   it("should call the callback when the table is cleared", async () => {
     const fn = jest.fn();
-    await watch(userTable, { where: { age: { $gt: 5 } } }, fn);
+    await watch(userTable, { where: { age: { gt: 5 } } }, fn);
     clear(userTable);
 
     expect(fn.mock.calls.length).toBe(2);
     expect(fn.mock.calls[1][0]).toStrictEqual([]);
   });
-
 });

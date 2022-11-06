@@ -1,5 +1,6 @@
 import BTree from "sorted-btree";
 import { Dispatcher } from "../events/Dispatcher";
+import { OrdProps } from "../query/types";
 import { Database, BlinkKey } from "./createDB";
 
 /**
@@ -68,10 +69,10 @@ export function createTable<T extends { id: string | number }>(
 export function createTable<T>(
   db: Database,
   tableName: string
-): <P extends NonNullableKeys<T>>(options: TableOptions<T, P>) => Table<T, P>;
+): <P extends keyof T>(options: TableOptions<T, P>) => Table<T, P>;
 
 export function createTable<T>(db: Database, tableName: string) {
-  return <P extends NonNullableKeys<T>>(options?: TableOptions<T, P>): Table<T, P> => {
+  return <P extends keyof T>(options?: TableOptions<T, P>): Table<T, P> => {
     return {
       [BlinkKey]: {
         db,
@@ -100,13 +101,6 @@ export function createTable<T>(db: Database, tableName: string) {
   };
 }
 
-/**
- * Only allow properties of an object where the type doesn't include null/undefined.
- */
-type NonNullableKeys<T> = {
-  [K in keyof T]-? :  Extract<T[K], null | undefined> extends never ? K : never
-}[keyof T]
-
 export interface TableOptions<T, P extends keyof T> {
   /**
    * The primary key of the entity.
@@ -120,7 +114,7 @@ export interface TableOptions<T, P extends keyof T> {
    * Indexes drastically increase query performance when you specify properties often used in filters,
    * but decrease write performance a bit.
    */
-  indexes?: (Exclude<NonNullableKeys<T>, P>)[];
+  indexes?: Exclude<keyof T, P>[];
 }
 
 export interface Table<T, P extends keyof T> {
@@ -128,7 +122,7 @@ export interface Table<T, P extends keyof T> {
     db: Database;
     tableName: string;
     storage: {
-      primary: BTree<T[P], T>;
+      primary: BTree<T[P] & OrdProps, T>;
       indexes: IndexStorage<T>;
     };
     events: {
@@ -142,5 +136,5 @@ export interface Table<T, P extends keyof T> {
 }
 
 type IndexStorage<T> = {
-  [Key in keyof T]?: BTree<T[keyof T], T[]>;
+  [Key in keyof T]?: BTree<T[Key] & OrdProps, T[]>;
 };

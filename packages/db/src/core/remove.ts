@@ -1,4 +1,5 @@
 import BTree from "sorted-btree";
+import { OrdProps } from "../query/types";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 
@@ -19,16 +20,16 @@ export async function remove<T, P extends keyof T>(
   entity: Ids<T, P>
 ): Promise<boolean> {
   const primaryKeyProperty = table[BlinkKey].options.primary;
-  const primaryKey = entity[primaryKeyProperty];
-  
+  const primaryKey = entity[primaryKeyProperty] as T[P] & OrdProps;
+
   const indexes = table[BlinkKey].storage.indexes;
-  if(Object.keys(indexes).length > 0) {
+  if (Object.keys(indexes).length > 0) {
     const item = table[BlinkKey].storage.primary.get(primaryKey);
-    if(!item) return false;
-    for(const property in indexes) {
+    if (!item) return false;
+    for (const property in indexes) {
       const btree = indexes[property]!;
-      const key = item[property];
-      if(key === null || key === undefined) continue;
+      const key = item[property] as T[typeof property] & OrdProps;
+      if (key === null || key === undefined) continue;
 
       const items = btree.get(key)!;
       const deleteIndex = items.indexOf(item);
@@ -46,4 +47,4 @@ export async function remove<T, P extends keyof T>(
   return table[BlinkKey].storage.primary.delete(primaryKey);
 }
 
-export type Ids<T, P extends keyof T> = { [K in P]-?: T[P]; };
+export type Ids<T, P extends keyof T> = { [K in P]-?: T[P] };

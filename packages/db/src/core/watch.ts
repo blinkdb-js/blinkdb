@@ -1,7 +1,7 @@
 import { matches } from "../query/filter";
 import { limitItems } from "../query/limit";
 import { sortItems } from "../query/sort";
-import { Filter } from "../query/types";
+import { Query } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
@@ -58,28 +58,28 @@ export async function watch<T, P extends keyof T>(
  */
 export async function watch<T, P extends keyof T>(
   table: Table<T, P>,
-  filter: Filter<T, P>,
+  query: Query<T, P>,
   callback: (entities: T[]) => Promise<void> | void
 ): Promise<{ stop: () => void }>;
 
 export async function watch<T, P extends keyof T>(
   table: Table<T, P>,
-  filterOrCallback: Filter<T, P> | ((entities: T[]) => Promise<void> | void),
+  queryOrCallback: Query<T, P> | ((entities: T[]) => Promise<void> | void),
   callback?: (entities: T[]) => Promise<void> | void
 ): Promise<{ stop: () => void }> {
-  let filter: Filter<T, P> | undefined;
+  let query: Query<T, P> | undefined;
   let cb: (entities: T[]) => Promise<void> | void;
-  if (typeof filterOrCallback === "object") {
-    filter = filterOrCallback;
+  if (typeof queryOrCallback === "object") {
+    query = queryOrCallback;
     cb = callback!;
   } else {
-    filter = undefined;
-    cb = filterOrCallback;
+    query = undefined;
+    cb = queryOrCallback;
   }
 
   const primaryKeyProperty = table[BlinkKey].options.primary;
 
-  let initialEntities = await many(table, filter);
+  let initialEntities = await many(table, query);
   cb(
     table[BlinkKey].db[BlinkKey].options.clone ? clone(initialEntities) : initialEntities
   );
@@ -92,18 +92,18 @@ export async function watch<T, P extends keyof T>(
   }
 
   const removeOnInsertCb = table[BlinkKey].events.onInsert.register(({ entity }) => {
-    if (filter?.where && !matches(entity, filter.where)) {
+    if (query?.where && !matches(entity, query.where)) {
       return;
     }
 
     const primaryKey = entity[primaryKeyProperty];
     entities.set(primaryKey, entity);
     entityList.push(entity);
-    if (filter?.sort) {
-      entityList = sortItems(entityList, filter.sort);
+    if (query?.sort) {
+      entityList = sortItems(entityList, query.sort);
     }
-    if (filter?.limit) {
-      entityList = limitItems(table, entityList, filter.limit);
+    if (query?.limit) {
+      entityList = limitItems(table, entityList, query.limit);
     }
 
     cb(table[BlinkKey].db[BlinkKey].options.clone ? clone(entityList) : entityList);
@@ -111,8 +111,8 @@ export async function watch<T, P extends keyof T>(
 
   const removeOnUpdateCb = table[BlinkKey].events.onUpdate.register(
     ({ oldEntity, newEntity }) => {
-      const matchesOldEntity = !filter?.where || matches(oldEntity, filter.where);
-      const matchesNewEntity = !filter?.where || matches(newEntity, filter.where);
+      const matchesOldEntity = !query?.where || matches(oldEntity, query.where);
+      const matchesNewEntity = !query?.where || matches(newEntity, query.where);
       if (!matchesOldEntity && !matchesNewEntity) {
         return;
       } else if (matchesOldEntity && !matchesNewEntity) {
@@ -129,11 +129,11 @@ export async function watch<T, P extends keyof T>(
         entityList = Array.from(entities.values());
       }
 
-      if (filter?.sort) {
-        entityList = sortItems(entityList, filter.sort);
+      if (query?.sort) {
+        entityList = sortItems(entityList, query.sort);
       }
-      if (filter?.limit) {
-        entityList = limitItems(table, entityList, filter.limit);
+      if (query?.limit) {
+        entityList = limitItems(table, entityList, query.limit);
       }
 
       cb(table[BlinkKey].db[BlinkKey].options.clone ? clone(entityList) : entityList);
@@ -145,11 +145,11 @@ export async function watch<T, P extends keyof T>(
     const deleted = entities.delete(primaryKey);
     if (deleted) {
       entityList = Array.from(entities.values());
-      if (filter?.sort) {
-        entityList = sortItems(entityList, filter.sort);
+      if (query?.sort) {
+        entityList = sortItems(entityList, query.sort);
       }
-      if (filter?.limit) {
-        entityList = limitItems(table, entityList, filter.limit);
+      if (query?.limit) {
+        entityList = limitItems(table, entityList, query.limit);
       }
       cb(table[BlinkKey].db[BlinkKey].options.clone ? clone(entityList) : entityList);
     }

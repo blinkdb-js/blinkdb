@@ -46,7 +46,7 @@ it("should return the first item if there's more than more match", async () => {
   const user2 = { id: 1 };
   await insert(userTable, user1);
   await insert(userTable, user2);
-  const item = await first(userTable, { where: { id: { $gte: 0 } } });
+  const item = await first(userTable, { where: { id: { gte: 0 } } });
 
   expect(item).toStrictEqual(user1);
 });

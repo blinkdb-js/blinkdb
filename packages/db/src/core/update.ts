@@ -1,3 +1,4 @@
+import { OrdProps } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
@@ -19,7 +20,7 @@ export async function update<T extends object, P extends keyof T>(
   diff: Diff<T, P>
 ): Promise<void> {
   const primaryKeyProperty = table[BlinkKey].options.primary;
-  const primaryKey = diff[primaryKeyProperty];
+  const primaryKey = diff[primaryKeyProperty] as T[P] & OrdProps;
 
   if (primaryKey === undefined || primaryKey === null) {
     throw new Error(`"${primaryKey}" is an invalid primary key value.`);
@@ -38,20 +39,20 @@ export async function update<T extends object, P extends keyof T>(
     if (key !== primaryKeyProperty) {
       item[key] = diff[key];
       if (oldItem[key] !== item[key]) {
-        const btree = table[BlinkKey].storage.indexes[key];
+        const btree = table[BlinkKey].storage.indexes[key as keyof T];
         if (btree !== undefined) {
-          let oldIndexItems = btree.get(oldItem[key])!;
+          let oldIndexItems = btree.get(oldItem[key] as T[typeof key] & OrdProps)!;
           const arrayIndex = oldIndexItems.indexOf(item);
           // This condition is only false if clone is disabled and the user changed the indexed property without calling update
           if (arrayIndex !== -1) {
             oldIndexItems.splice(arrayIndex, 1);
           }
 
-          const newIndexItems = btree.get(item[key]);
+          const newIndexItems = btree.get(item[key] as T[typeof key] & OrdProps);
           if (newIndexItems !== undefined) {
             newIndexItems.push(item);
           } else {
-            btree.set(item[key], [item]);
+            btree.set(item[key] as T[typeof key] & OrdProps, [item]);
           }
         }
       }

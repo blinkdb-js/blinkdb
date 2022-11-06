@@ -24,7 +24,7 @@ it("should throw if no items have been found", async () => {
 });
 
 it("should throw if more than one item has been found", async () => {
-  expect(one(userTable, { where: { id: { $gt: 0 } } })).rejects.toThrow(
+  expect(one(userTable, { where: { id: { gt: 0 } } })).rejects.toThrow(
     /More than one item found/
   );
 });

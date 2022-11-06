@@ -1,4 +1,4 @@
-import { Filter } from "../query/types";
+import { Query } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { many } from "./many";
@@ -17,9 +17,9 @@ import { Table } from "./createTable";
  */
 export async function one<T, P extends keyof T>(
   table: Table<T, P>,
-  filter: Filter<T, P>
+  query: Query<T, P>
 ): Promise<T> {
-  const res = await many(table, filter);
+  const res = await many(table, query);
   if (res.length === 0) {
     throw new Error("No items found for the given query.");
   } else if (res.length > 1) {

@@ -1,4 +1,4 @@
-import { Filter } from "../query/types";
+import { Query } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { many } from "./many";
@@ -26,20 +26,20 @@ export async function first<T, P extends keyof T>(table: Table<T, P>): Promise<T
  */
 export async function first<T, P extends keyof T>(
   table: Table<T, P>,
-  filter: Filter<T, P>
+  query: Query<T, P>
 ): Promise<T | null>;
 
 export async function first<T, P extends keyof T>(
   table: Table<T, P>,
-  filter?: Filter<T, P>
+  query?: Query<T, P>
 ): Promise<T | null> {
-  if (filter === undefined) {
+  if (query === undefined) {
     const btree = table[BlinkKey].storage.primary;
     const minKey = btree.minKey();
     return minKey ? btree.get(minKey) ?? null : null;
   }
 
-  const res = await many(table, filter);
+  const res = await many(table, query);
   const entity = table[BlinkKey].db[BlinkKey].options.clone ? clone(res[0]) : res[0];
   return entity ?? null;
 }

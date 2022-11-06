@@ -1,5 +1,5 @@
 import { get } from "../query";
-import { Filter } from "../query/types";
+import { Query } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
@@ -29,25 +29,25 @@ export async function many<T, P extends keyof T>(table: Table<T, P>): Promise<T[
  * // All users aged 25 and up
  * const allUsersOlderThan25 = await many(userTable, {
  *   where: {
- *     age: { $gt: 25 }
+ *     age: { gt: 25 }
  *   }
  * });
  */
 export async function many<T, P extends keyof T>(
   table: Table<T, P>,
-  filter?: Filter<T, P>
+  query?: Query<T, P>
 ): Promise<T[]>;
 
 export async function many<T, P extends keyof T>(
   table: Table<T, P>,
-  filter?: Filter<T, P>
+  query?: Query<T, P>
 ): Promise<T[]> {
-  if (filter === undefined) {
+  if (query === undefined) {
     const allItems = table[BlinkKey].storage.primary.valuesArray();
     return table[BlinkKey].db[BlinkKey].options.clone ? clone(allItems) : allItems;
   }
 
-  const items = get(table, filter);
+  const items = get(table, query);
 
   return table[BlinkKey].db[BlinkKey].options.clone ? clone(items) : items;
 }

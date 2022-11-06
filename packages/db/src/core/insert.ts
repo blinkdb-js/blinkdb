@@ -1,4 +1,5 @@
 import BTree from "sorted-btree";
+import { OrdProps } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
@@ -21,7 +22,7 @@ export async function insert<T, P extends keyof T>(
 ): Promise<T[P]> {
   const validEntity = entity as Create<T, P>;
   const primaryKeyProperty = table[BlinkKey].options.primary;
-  const primaryKey = validEntity[primaryKeyProperty];
+  const primaryKey = validEntity[primaryKeyProperty] as T[P] & OrdProps;
 
   if (table[BlinkKey].storage.primary.has(primaryKey)) {
     throw new Error(`Primary key ${primaryKey} already in use.`);
@@ -34,7 +35,7 @@ export async function insert<T, P extends keyof T>(
   table[BlinkKey].storage.primary.set(primaryKey, storageEntity);
   for (const property in table[BlinkKey].storage.indexes) {
     const btree = table[BlinkKey].storage.indexes[property]!;
-    const key = validEntity[property];
+    const key = validEntity[property] as T[typeof property] & OrdProps;
     if (key === null || key === undefined) continue;
 
     const items = btree.get(key);
