@@ -1,6 +1,6 @@
-import { defaultComparator } from "sorted-btree";
 import { Table, BlinkKey } from "../../core";
-import { Filter, Limit } from "../types";
+import { compare } from "../compare";
+import { Limit, OrdProps } from "../types";
 
 /**
  * @returns all items from `items` limited according to the given `limit` object.
@@ -20,11 +20,7 @@ export function limitItems<T, P extends keyof T>(
 
   if (limit.from !== undefined) {
     fromIndex = items.findIndex(
-      (item) =>
-        defaultComparator(
-          item[primaryKeyProperty] as unknown as string | number,
-          limit.from as unknown as string | number
-        ) >= 0
+      (item) => compare(item[primaryKeyProperty] as OrdProps, limit.from as OrdProps) >= 0
     );
   }
 
