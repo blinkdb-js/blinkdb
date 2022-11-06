@@ -3,7 +3,7 @@ import { ObjMatchers } from "../../types";
 
 export function matchesSubWhere<T>(value: T, matcher: ObjMatchers<T>): boolean {
   for (const propKey in matcher.where) {
-    if (!matches(value[propKey], matcher.where[propKey])) {
+    if (!matches(value[propKey], matcher.where[propKey] as any)) {
       return false;
     }
   }
