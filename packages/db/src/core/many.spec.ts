@@ -328,7 +328,7 @@ describe("filter", () => {
           },
         });
 
-        expect(new Set(items)).toStrictEqual(new Set([{ ...charlie, someIds: [2, 4] }]));
+        expect(new Set(items)).toStrictEqual(new Set([charlie]));
       });
 
       it("should match items by equality regardless of array item order", async () => {
@@ -338,7 +338,7 @@ describe("filter", () => {
           },
         });
 
-        expect(new Set(items)).toStrictEqual(new Set([{ ...charlie, someIds: [2, 4] }]));
+        expect(new Set(items)).toStrictEqual(new Set([charlie]));
       });
 
       it("should match items with contains", async () => {
@@ -357,8 +357,10 @@ describe("filter", () => {
         const items = await many(userTable, {
           where: {
             some: {
-              nested: {
-                object: 5,
+              eq: {
+                nested: {
+                  object: 5,
+                },
               },
             },
           },
@@ -371,9 +373,11 @@ describe("filter", () => {
         const items = await many(userTable, {
           where: {
             some: {
-              nested: {
-                object: {
-                  eq: 0,
+              where: {
+                nested: {
+                  where: {
+                    object: { eq: 0 },
+                  },
                 },
               },
             },
@@ -387,9 +391,11 @@ describe("filter", () => {
         const items = await many(userTable, {
           where: {
             some: {
-              nested: {
-                object: {
-                  gte: 0,
+              where: {
+                nested: {
+                  where: {
+                    object: { gte: 0 },
+                  },
                 },
               },
             },
@@ -403,9 +409,11 @@ describe("filter", () => {
         const items = await many(userTable, {
           where: {
             some: {
-              nested: {
-                object: {
-                  gt: 0,
+              where: {
+                nested: {
+                  where: {
+                    object: { gt: 0 },
+                  },
                 },
               },
             },
@@ -419,9 +427,11 @@ describe("filter", () => {
         const items = await many(userTable, {
           where: {
             some: {
-              nested: {
-                object: {
-                  lte: 5,
+              where: {
+                nested: {
+                  where: {
+                    object: { lte: 5 },
+                  },
                 },
               },
             },
@@ -435,9 +445,11 @@ describe("filter", () => {
         const items = await many(userTable, {
           where: {
             some: {
-              nested: {
-                object: {
-                  lt: 5,
+              where: {
+                nested: {
+                  where: {
+                    object: { lt: 5 },
+                  },
                 },
               },
             },
@@ -451,9 +463,11 @@ describe("filter", () => {
         const items = await many(userTable, {
           where: {
             some: {
-              nested: {
-                object: {
-                  in: [0, 10],
+              where: {
+                nested: {
+                  where: {
+                    object: { in: [0, 10] },
+                  },
                 },
               },
             },

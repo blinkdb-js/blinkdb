@@ -163,4 +163,4 @@ export type EqProps = ValidProps;
 /**
  * Only some properties are comparable by simple equality with `a === b`.
  */
-export type SimpleEqProps = string | boolean | number | null | undefined;
+export type SimpleEqProps = string | boolean | number | null | undefined | Date;

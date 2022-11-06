@@ -5,12 +5,15 @@ export function matchesEq<T>(value: T, matcher: T): boolean {
     return value.getTime() === matcher.getTime();
   }
 
+  let newVal = value;
+  let newMatcher = matcher;
+
   if (Array.isArray(value)) {
-    value.sort();
+    newVal = [...value].sort() as T;
   }
   if (Array.isArray(matcher)) {
-    matcher.sort();
+    newMatcher = [...matcher].sort() as T;
   }
 
-  return equal(value, matcher);
+  return equal(newVal, newMatcher);
 }
