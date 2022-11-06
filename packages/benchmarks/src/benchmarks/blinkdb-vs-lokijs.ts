@@ -76,46 +76,46 @@ interface User {
     },
   });
 
-  await compare("filter with $gt", {
+  await compare("filter with gt", {
     lokijs: async () => {
       const x = lokiUserTable.find({ id: { $gt: 8000 } });
     },
     blinkdb: async () => {
       const x = await many(blinkUserTable, {
-        where: { id: { $gt: 8000 } },
+        where: { id: { gt: 8000 } },
       });
     },
   });
 
-  await compare("filter with $gte", {
+  await compare("filter with gte", {
     lokijs: async () => {
       const x = lokiUserTable.find({ id: { $gte: 8000 } });
     },
     blinkdb: async () => {
       const x = await many(blinkUserTable, {
-        where: { id: { $gte: 8000 } },
+        where: { id: { gte: 8000 } },
       });
     },
   });
 
-  await compare("filter with $lte", {
+  await compare("filter with lte", {
     lokijs: async () => {
       const x = lokiUserTable.find({ id: { $lte: 2000 } });
     },
     blinkdb: async () => {
       const x = await many(blinkUserTable, {
-        where: { id: { $lte: 2000 } },
+        where: { id: { lte: 2000 } },
       });
     },
   });
 
-  await compare("filter with $lt", {
+  await compare("filter with lt", {
     lokijs: async () => {
       const x = lokiUserTable.find({ id: { $lt: 2000 } });
     },
     blinkdb: async () => {
       const x = await many(blinkUserTable, {
-        where: { id: { $lt: 2000 } },
+        where: { id: { lt: 2000 } },
       });
     },
   });
@@ -128,7 +128,7 @@ interface User {
     },
     blinkdb: async () => {
       const x = await many(blinkUserTable, {
-        where: { $and: [{ id: { $gt: 1000 } }, { age: { $gt: 5 } }] },
+        where: { AND: [{ id: { gt: 1000 } }, { age: { gt: 5 } }] },
       });
     },
   });
@@ -141,7 +141,7 @@ interface User {
     },
     blinkdb: async () => {
       const x = await many(blinkUserTable, {
-        where: { $and: [{ id: { $lte: 10 } }, { age: { $lt: 5 } }] },
+        where: { AND: [{ id: { lte: 10 } }, { age: { lt: 5 } }] },
       });
     },
   });
@@ -154,29 +154,29 @@ interface User {
     },
     blinkdb: async () => {
       const x = await many(blinkUserTable, {
-        where: { $or: [{ id: 10 }, { id: 50 }] },
+        where: { OR: [{ id: 10 }, { id: 50 }] },
       });
     },
   });
 
-  await compare("filter with $in", {
+  await compare("filter with in", {
     lokijs: async () => {
       const x = lokiUserTable.find({ id: { $in: [10, 50, 100] } });
     },
     blinkdb: async () => {
       const x = await many(blinkUserTable, {
-        where: { id: { $in: [10, 50, 100] } },
+        where: { id: { in: [10, 50, 100] } },
       });
     },
   });
 
-  await compare("filter with $between", {
+  await compare("filter with between", {
     lokijs: async () => {
       const x = lokiUserTable.find({ id: { $between: [90, 100] } });
     },
     blinkdb: async () => {
       const x = await many(blinkUserTable, {
-        where: { id: { $between: [90, 100] } },
+        where: { id: { between: [90, 100] } },
       });
     },
   });
