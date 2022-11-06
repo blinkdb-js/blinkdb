@@ -1,6 +1,5 @@
-import BTree from "sorted-btree";
 import { BlinkKey, Table } from "../../core";
-import { Where } from "../types";
+import { AllMatchers, Matchers, OrdProps, Where } from "../types";
 import { analyzeMatcher } from "./matchers";
 
 export function analyzeWhere<T, P extends keyof T>(
@@ -14,17 +13,21 @@ export function analyzeWhere<T, P extends keyof T>(
 
   for (const key in where) {
     const matcher = where[key];
-    let btree: BTree<T[keyof T], T[]> | undefined;
+    let complexity: number | undefined;
     if ((key as string) === primaryKeyProperty) {
-      btree = table[BlinkKey].storage.primary as any;
+      const btree = table[BlinkKey].storage.primary;
+      complexity = analyzeMatcher(btree, matcher as AllMatchers<T[P] & OrdProps>);
     } else {
-      btree = table[BlinkKey].storage.indexes[key];
-    }
-    if (btree) {
-      const complexity = analyzeMatcher(btree, matcher as any);
-      if (complexity < minComplexity) {
-        minComplexity = complexity;
+      const btree = table[BlinkKey].storage.indexes[key];
+      if (btree) {
+        complexity = analyzeMatcher(
+          btree,
+          matcher as AllMatchers<T[typeof key] & OrdProps>
+        );
       }
+    }
+    if (complexity && complexity < minComplexity) {
+      minComplexity = complexity;
     }
   }
 

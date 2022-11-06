@@ -1,43 +1,36 @@
-import BTree, { DefaultComparable, defaultComparator } from "sorted-btree";
-import {
-  BetweenMatcher,
-  GteMatcher,
-  GtMatcher,
-  InMatcher,
-  LteMatcher,
-  LtMatcher,
-  Matchers,
-} from "../types";
+import BTree from "sorted-btree";
+import { compare } from "../compare";
+import { AllMatchers, Matchers, OrdProps } from "../types";
 
 /**
  * Returns the theoretical complexity of a given matcher,
  * e.g. how many items will need to be evaluated approximately.
  */
-export function analyzeMatcher<T extends DefaultComparable>(
+export function analyzeMatcher<T extends OrdProps>(
   btree: BTree<T, unknown>,
-  matcher: Matchers<T>
+  matcher: AllMatchers<T>
 ): number {
   if (typeof matcher !== "object" || matcher === null) {
     return 1; // Simple Equals matcher
   } else {
-    if ("$equals" in matcher) {
+    if ("eq" in matcher) {
       return 1; // Complex Equals matcher
-    } else if ("$in" in matcher) {
-      return (matcher as InMatcher<T>).$in.length;
-    } else if ("$gt" in matcher) {
-      const key = (matcher as GtMatcher<T>).$gt;
+    } else if ("in" in matcher) {
+      return matcher.in.length;
+    } else if ("gt" in matcher) {
+      const key = matcher.gt;
       return analyzeGtMatcher(key, btree);
-    } else if ("$gte" in matcher) {
-      const key = (matcher as GteMatcher<T>).$gte;
+    } else if ("gte" in matcher) {
+      const key = matcher.gte;
       return analyzeGtMatcher(key, btree);
-    } else if ("$lt" in matcher) {
-      const key = (matcher as LtMatcher<T>).$lt;
+    } else if ("lt" in matcher) {
+      const key = matcher.lt;
       return analyzeLtMatcher(key, btree);
-    } else if ("$lte" in matcher) {
-      const key = (matcher as LteMatcher<T>).$lte;
+    } else if ("lte" in matcher) {
+      const key = matcher.lte;
       return analyzeLtMatcher(key, btree);
-    } else if ("$between" in matcher) {
-      const keys = (matcher as BetweenMatcher<T>).$between;
+    } else if ("between" in matcher) {
+      const keys = matcher.between;
       return analyzeBetweenMatcher(keys[0], keys[1], btree);
     }
   }
@@ -48,15 +41,12 @@ export function analyzeMatcher<T extends DefaultComparable>(
 /**
  * returns the theoretical complexity of a gt/gte matcher.
  */
-function analyzeGtMatcher<K extends DefaultComparable>(
-  key: K,
-  btree: BTree<K, unknown>
-): number {
+function analyzeGtMatcher<K extends OrdProps>(key: K, btree: BTree<K, unknown>): number {
   let num = 1;
   const rootKeys = btree["_root"].keys as K[];
   if (rootKeys.length === 0) return 0;
   for (let i = rootKeys.length - 1; i >= 0; i--) {
-    if (defaultComparator(rootKeys[i], key) >= 0) {
+    if (compare(rootKeys[i], key) >= 0) {
       num++;
     } else {
       break;
@@ -68,15 +58,12 @@ function analyzeGtMatcher<K extends DefaultComparable>(
 /**
  * returns the theoretical complexity of a lt/lte matcher.
  */
-function analyzeLtMatcher<K extends DefaultComparable>(
-  key: K,
-  btree: BTree<K, unknown>
-): number {
+function analyzeLtMatcher<K extends OrdProps>(key: K, btree: BTree<K, unknown>): number {
   let num = 1;
   const rootKeys = btree["_root"].keys as K[];
   if (rootKeys.length === 0) return 0;
   for (let i = 0; i < rootKeys.length; i++) {
-    if (defaultComparator(rootKeys[i], key) <= 0) {
+    if (compare(rootKeys[i], key) <= 0) {
       num++;
     } else {
       break;
@@ -88,7 +75,7 @@ function analyzeLtMatcher<K extends DefaultComparable>(
 /**
  * returns the theoretical complexity of a between matcher.
  */
-function analyzeBetweenMatcher<K extends DefaultComparable>(
+function analyzeBetweenMatcher<K extends OrdProps>(
   min: K,
   max: K,
   btree: BTree<K, unknown>
@@ -97,7 +84,7 @@ function analyzeBetweenMatcher<K extends DefaultComparable>(
   const rootKeys = btree["_root"].keys as K[];
   if (rootKeys.length === 0) return 0;
   for (let i = 0; i < rootKeys.length; i++) {
-    const c = defaultComparator;
+    const c = compare;
     const key = rootKeys[i];
     if (c(key, min) >= 0 && c(key, max) <= 0) {
       num++;

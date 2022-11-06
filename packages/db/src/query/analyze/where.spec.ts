@@ -29,31 +29,33 @@ it("should return 0 if where is empty", () => {
 });
 
 it("should return the complexity of the matcher if only one is specified (primary)", () => {
-  const whereResult = analyzeWhere(table, { id: { $gt: "abc" } });
-  const matcherResult = analyzeMatcher(table[BlinkKey].storage.primary, { $gt: "abc" });
+  const whereResult = analyzeWhere(table, { id: { gt: "abc" } });
+  const matcherResult = analyzeMatcher(table[BlinkKey].storage.primary, {
+    gt: "abc",
+  });
   expect(whereResult).toBe(matcherResult);
 });
 
 it("should return the complexity of the matcher if only one is specified (index)", () => {
-  const whereResult = analyzeWhere(table, { age: { $gt: 2 } });
+  const whereResult = analyzeWhere(table, { age: { gt: 2 } });
   const matcherResult = analyzeMatcher(table[BlinkKey].storage.indexes["age"]!, {
-    $gt: 2,
+    gt: 2,
   });
   expect(whereResult).toBe(matcherResult);
 });
 
 it("should return Number.MAX_SAFE_INTEGER if a key without index is specified", () => {
-  const whereResult = analyzeWhere(table, { name: { $gt: "abc" } });
+  const whereResult = analyzeWhere(table, { name: { gt: "abc" } });
   expect(whereResult).toBe(Number.MAX_SAFE_INTEGER);
 });
 
 it("should return the better matcher if more than one is specified", () => {
   const whereResult = analyzeWhere(table, {
-    id: { $lt: "10" },
-    age: { $lt: 0 },
+    id: { lt: "10" },
+    age: { lt: 0 },
   });
   const matcherResult = analyzeMatcher(table[BlinkKey].storage.indexes["age"]!, {
-    $lt: 0,
+    lt: 0,
   });
   expect(whereResult).toBe(matcherResult);
 });

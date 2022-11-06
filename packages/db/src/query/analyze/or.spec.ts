@@ -25,37 +25,39 @@ beforeAll(async () => {
 });
 
 it("should return 0 if and is empty", () => {
-  expect(analyzeOr(table, { $or: [] })).toBe(0);
+  expect(analyzeOr(table, { OR: [] })).toBe(0);
 });
 
 it("should return the complexity of the matcher if only one is specified (primary)", () => {
-  const andResult = analyzeOr(table, { $or: [{ id: { $gt: "abc" } }] });
-  const matcherResult = analyzeMatcher(table[BlinkKey].storage.primary, { $gt: "abc" });
+  const andResult = analyzeOr(table, { OR: [{ id: { gt: "abc" } }] });
+  const matcherResult = analyzeMatcher(table[BlinkKey].storage.primary, {
+    gt: "abc",
+  });
   expect(andResult).toBe(matcherResult);
 });
 
 it("should return the complexity of the matcher if only one is specified (index)", () => {
-  const andResult = analyzeOr(table, { $or: [{ age: { $gt: 2 } }] });
+  const andResult = analyzeOr(table, { OR: [{ age: { gt: 2 } }] });
   const matcherResult = analyzeMatcher(table[BlinkKey].storage.indexes["age"]!, {
-    $gt: 2,
+    gt: 2,
   });
   expect(andResult).toBe(matcherResult);
 });
 
 it("should return Number.MAX_SAFE_INTEGER if a key without index is specified", () => {
-  const andResult = analyzeOr(table, { $or: [{ name: { $gt: "abc" } }] });
+  const andResult = analyzeOr(table, { OR: [{ name: { gt: "abc" } }] });
   expect(andResult).toBe(Number.MAX_SAFE_INTEGER);
 });
 
 it("should return the sum of all matchers if more than one is specified", () => {
   const andResult = analyzeOr(table, {
-    $or: [{ id: { $lt: "10" } }, { age: { $lt: 0 } }],
+    OR: [{ id: { lt: "10" } }, { age: { lt: 0 } }],
   });
   const matcherResult1 = analyzeMatcher(table[BlinkKey].storage.primary, {
-    $lt: "10",
+    lt: "10",
   });
   const matcherResult2 = analyzeMatcher(table[BlinkKey].storage.indexes["age"]!, {
-    $lt: 0,
+    lt: 0,
   });
   expect(andResult).toBe(matcherResult1 + matcherResult2);
 });

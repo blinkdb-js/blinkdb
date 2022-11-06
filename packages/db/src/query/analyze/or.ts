@@ -6,10 +6,10 @@ import { analyzeWhere } from "./where";
 export function analyzeOr<T, P extends keyof T>(table: Table<T, P>, or: Or<T>): number {
   let complexity = 0;
 
-  for (const key in or.$or) {
-    const filter = or.$or[key];
+  for (const key in or.OR) {
+    const filter = or.OR[key];
     const filterComplexity =
-      "$and" in filter ? analyzeAnd(table, filter) : analyzeWhere(table, filter);
+      "AND" in filter ? analyzeAnd(table, filter) : analyzeWhere(table, filter);
     complexity += filterComplexity;
   }
 

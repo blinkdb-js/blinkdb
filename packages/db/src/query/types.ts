@@ -93,6 +93,11 @@ export type Matchers<T, K extends keyof T> = T[K] extends (infer R)[] | undefine
   : never;
 
 /**
+ * Used when there's no object to supply to `Matchers<T, K>`.
+ */
+export type AllMatchers<T> = Matchers<{ t: T }, "t">;
+
+/**
  * With a orderable property, one can use
  * gt, gte, lt, lte, and between matchers.
  */
