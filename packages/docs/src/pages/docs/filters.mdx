@@ -12,9 +12,9 @@ const userTable = createTable<User>(db, 'users')();
 
 const users = await many(userTable, {
   where: {
-    age: { $gt: 16 },
-    name: { $in: 'Alice', 'Bob' },
-    todoCount: { $between: [0, 10] }
+    age: { gt: 16 },
+    name: { in: 'Alice', 'Bob' },
+    todoCount: { between: [0, 10] }
   },
   sort: {
     key: 'age',
@@ -66,88 +66,88 @@ If you're matching based on equality, you can also use a so-called
 // Retrieves all users called Alice who are 16 years old
 const users = await many(userTable, {
   where: {
-    age: { $equals: 16 },
-    name: { $equals: 'Alice' }
+    age: { eq: 16 },
+    name: { eq: 'Alice' }
   }
 });
 ```
 
-That might look unnecessary, but `$equals` is not the only matcher available - 
+That might look unnecessary, but `eq` is not the only matcher available - 
 There are many more below.
 
-### `$in`
+### `in`
 
-`$in` matches all entities where the set property is one of the
+`in` matches all entities where the set property is one of the
 supplied values.
 
 ```ts
 // Match all users called Alice, Bob, or Vance
 const users = await many(userTable, {
   where: {
-    name: { $in: ['Alice', 'Bob', 'Vance'] }
+    name: { in: ['Alice', 'Bob', 'Vance'] }
   }
 });
 ```
 
-### `$gt`
+### `gt`
 
-`$gt` matches all entities where the set property is greater than
+`gt` matches all entities where the set property is greater than
 the supplied value (either a string, number, or Date).
 
 ```ts
 // Match all users older than 43yrs
 const users = await many(userTable, {
   where: {
-    age: { $gt: 43 }
+    age: { gt: 43 }
   }
 });
 ```
 
-### `$gte`
+### `gte`
 
-`$gte` matches all entities where the set property is equal to
+`gte` matches all entities where the set property is equal to
 or greater than the supplied value (either a string, number, or Date).
 
 ```ts
 // Match all users who are 87yrs old or older
 const users = await many(userTable, {
   where: {
-    age: { $gte: 87 }
+    age: { gte: 87 }
   }
 });
 ```
 
-### `$lt`
+### `lt`
 
-`$lt` matches all entities where the set property is less than
+`lt` matches all entities where the set property is less than
 the supplied value (either a string, number, or Date).
 
 ```ts
 // Match all users younger than 20yrs
 const users = await many(userTable, {
   where: {
-    age: { $lt: 20 }
+    age: { lt: 20 }
   }
 });
 ```
 
-### `$lte`
+### `lte`
 
-`$lte` matches all entities where the set property is equal to
+`lte` matches all entities where the set property is equal to
 or less than the supplied value (either a string, number, or Date).
 
 ```ts
 // Match all users who are 31yrs old or younger
 const users = await many(userTable, {
   where: {
-    age: { $lte: 31 }
+    age: { lte: 31 }
   }
 });
 ```
 
-### `$between`
+### `between`
 
-`$between` matches all entities where the set property is between
+`between` matches all entities where the set property is between
 the first supplied value (inclusive) and the second supplied value (inclusive).
 The property to check against can be of type string, number, or Date.
 
@@ -155,14 +155,14 @@ The property to check against can be of type string, number, or Date.
 // Match all users who are between 40yrs and 50yrs old
 const users = await many(userTable, {
   where: {
-    age: { $between: [40, 50] }
+    age: { between: [40, 50] }
   }
 });
 ```
 
-### `$contains`
+### `contains`
 
-`$contains` matches all entities where the set array property
+`contains` matches all entities where the set array property
 includes the given value.
 
 ```ts
@@ -173,21 +173,21 @@ interface Users {
 // Match all users who have 'Big Nick' as a nickname
 const users = await many(userTable, {
   where: {
-    nicknames: { $contains: 'Big Nick' }
+    nicknames: { contains: 'Big Nick' }
   }
 });
 ```
 
-### `$and`
+### `AND`
 
-`$and` matches all entities which match all
+`AND` matches all entities which match all
 of the supplied matchers.
 
 ```ts
 // Match all users called Alice who are 26yrs old
 const users = await many(userTable, {
   where: {
-    $and: [
+    AND: [
       {
         age: 26
       },
@@ -211,9 +211,9 @@ const users = await many(userTable, {
 });
 ```
 
-### `$or`
+### `OR`
 
-`$or` matches all entities which match at least one
+`OR` matches all entities which match at least one
 of the supplied matchers.
 
 ```ts
@@ -221,12 +221,12 @@ of the supplied matchers.
 // or older than 50yrs
 const users = await many(userTable, {
   where: {
-    $or: [
+    OR: [
       {
-        age: { $lt: 40 }
+        age: { lt: 40 }
       },
       {
-        age: { $gt: 50 }
+        age: { gt: 50 }
       }
     ]
   }

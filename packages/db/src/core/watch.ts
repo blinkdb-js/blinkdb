@@ -46,7 +46,7 @@ export async function watch<T, P extends keyof T>(
  * const db = createDB();
  * const userTable = createTable<User>(db, "users")();
  * // This will output 'List of all babies: []'
- * watch(userTable, { age: { $lt: 3 } }, (users) => {
+ * watch(userTable, { age: { lt: 3 } }, (users) => {
  *   console.log('List of all babies: ', users);
  * });
  * // This will output 'List of all babies: [{ id: "some-uuid", name: "Alice" }]'

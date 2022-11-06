@@ -23,7 +23,7 @@ Only retrieving certain items from the table is also possible - just provide a [
 and your callback will only be called if items matching the filter are inserted/updated/deleted.
 
 ```ts
-const watcher = watch(userTable, { where: { age: { $lt: 3 } } }, babies => {
+const watcher = watch(userTable, { where: { age: { lt: 3 } } }, babies => {
   console.log('All babies: ', babies);
 });
 ```

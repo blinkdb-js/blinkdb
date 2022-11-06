@@ -14,8 +14,8 @@ import { many } from 'blinkdb';
 
 const items = await many(userTable, {
   where: {
-    name: { $in: ['Alice', 'Charlie'] },
-    age: { $gt: 24 }
+    name: { in: ['Alice', 'Charlie'] },
+    age: { gt: 24 }
   },
 });
 ```

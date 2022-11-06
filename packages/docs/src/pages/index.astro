@@ -22,8 +22,8 @@ import { Code } from "astro/components";
 // with an age greater than 24
 const items = await many(userTable, {
   where: {
-    name: { $in: ['Alice', 'Charlie'] },
-    age: { $gt: 24 }
+    name: { in: ['Alice', 'Charlie'] },
+    age: { gt: 24 }
   },
 });`}
           lang="ts"
