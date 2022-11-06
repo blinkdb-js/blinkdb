@@ -1,4 +1,4 @@
-import BTree, { defaultComparator } from "sorted-btree";
+import BTree from "sorted-btree";
 import {
   GteMatcher,
   GtMatcher,
@@ -7,6 +7,8 @@ import {
   Matchers,
   InMatcher,
   BetweenMatcher,
+  OrdProps,
+  AllMatchers,
 } from "../../types";
 import { SelectCallback } from "../types";
 import { selectForBetween } from "./between";
@@ -20,30 +22,30 @@ import { selectForLte } from "./lte";
 /**
  * Selects all items from `btree` that could possibly match the given `matcher`.
  */
-export function selectForMatcher<K, E>(
+export function selectForMatcher<K extends OrdProps, E>(
   btree: BTree<K, E>,
-  matcher: Matchers<K>,
+  matcher: AllMatchers<K>,
   cb: SelectCallback<E>
 ): void {
   if (matcher === null) return;
 
-  if (typeof matcher === "object" && "$equals" in matcher) {
-    return selectForEq(btree, (matcher as { $equals: K }).$equals, cb);
-  } else if (typeof matcher === "object" && "$gte" in matcher) {
-    return selectForGte(btree, matcher as GteMatcher<K>, cb);
-  } else if (typeof matcher === "object" && "$gt" in matcher) {
-    return selectForGt(btree, matcher as GtMatcher<K>, cb);
-  } else if (typeof matcher === "object" && "$lte" in matcher) {
-    return selectForLte(btree, matcher as LteMatcher<K>, cb);
-  } else if (typeof matcher === "object" && "$lt" in matcher) {
-    return selectForLt(btree, matcher as LtMatcher<K>, cb);
-  } else if (typeof matcher === "object" && "$contains" in matcher) {
-    return;
-  } else if (typeof matcher === "object" && "$in" in matcher) {
-    return selectForIn(btree, matcher as InMatcher<K>, cb);
-  } else if (typeof matcher === "object" && "$between" in matcher) {
-    return selectForBetween(btree, matcher as BetweenMatcher<K>, cb);
-  } else if (typeof matcher !== "object") {
-    return selectForEq(btree, matcher as K, cb);
+  if (typeof matcher === "object") {
+    if ("gt" in matcher) {
+      return selectForGt(btree, matcher, cb);
+    } else if ("gte" in matcher) {
+      return selectForGte(btree, matcher, cb);
+    } else if ("lt" in matcher) {
+      return selectForLt(btree, matcher, cb);
+    } else if ("lte" in matcher) {
+      return selectForLte(btree, matcher, cb);
+    } else if ("between" in matcher) {
+      return selectForBetween(btree, matcher, cb);
+    } else if ("eq" in matcher) {
+      return selectForEq(btree, matcher.eq, cb);
+    } else if ("in" in matcher) {
+      return selectForIn(btree, matcher, cb);
+    }
   }
+
+  return selectForEq(btree, matcher as any, cb);
 }

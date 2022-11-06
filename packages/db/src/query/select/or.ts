@@ -16,14 +16,14 @@ export function selectForOr<T, P extends keyof T>(
   or: Or<T>,
   cb: SelectCallback<T>
 ): SelectResult<T> {
-  if (or.$or.length === 0) {
+  if (or.OR.length === 0) {
     return { fullTableScan: false };
   }
 
   // If any of the queries require a full table scan, do a full table scan
-  for (const filter of or.$or) {
+  for (const filter of or.OR) {
     const complexity =
-      "$and" in filter ? analyzeAnd(table, filter) : analyzeWhere(table, filter);
+      "AND" in filter ? analyzeAnd(table, filter) : analyzeWhere(table, filter);
     if (complexity === Number.MAX_SAFE_INTEGER) {
       table[BlinkKey].storage.primary.valuesArray().forEach((v) => cb(v));
       return { fullTableScan: true };
@@ -33,14 +33,14 @@ export function selectForOr<T, P extends keyof T>(
   // Otherwise, emit for every item once
   let itemsMap: Map<T[P], T> = new Map();
   const selectResult: SelectResult<T> = { rowsScanned: [], fullTableScan: false };
-  for (const filter of or.$or) {
+  for (const filter of or.OR) {
     const childCb: SelectCallback<T> = (item) => {
       const primaryKeyProperty = table[BlinkKey].options.primary;
       const primaryKey = item[primaryKeyProperty];
       itemsMap.set(primaryKey, item);
     };
     const result =
-      "$and" in filter
+      "AND" in filter
         ? selectForAnd(table, filter, childCb)
         : selectForWhere(table, filter, childCb);
     if (result.rowsScanned) {

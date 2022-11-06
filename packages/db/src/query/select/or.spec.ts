@@ -24,30 +24,30 @@ beforeEach(async () => {
   await insert(userTable, { id: "2", name: "Charlie", age: 60 });
 });
 
-it("should return no rows for an empty $or", () => {
-  expect(selectForOr(userTable, { $or: [] }, jest.fn())).toStrictEqual({
+it("should return no rows for an empty OR", () => {
+  expect(selectForOr(userTable, { OR: [] }, jest.fn())).toStrictEqual({
     fullTableScan: false,
   });
 });
 
 it("should use that query if only one query exists", () => {
-  expect(selectForOr(userTable, { $or: [{ id: "0" }] }, jest.fn())).toStrictEqual(
+  expect(selectForOr(userTable, { OR: [{ id: "0" }] }, jest.fn())).toStrictEqual(
     selectForWhere(userTable, { id: "0" }, jest.fn())
   );
   expect(
-    selectForOr(userTable, { $or: [{ age: { $between: [0, 2] } }] }, jest.fn())
-  ).toStrictEqual(selectForWhere(userTable, { age: { $between: [0, 2] } }, jest.fn()));
+    selectForOr(userTable, { OR: [{ age: { between: [0, 2] } }] }, jest.fn())
+  ).toStrictEqual(selectForWhere(userTable, { age: { between: [0, 2] } }, jest.fn()));
 });
 
 it("should use all queries if multiple queries exist", () => {
   expect(
-    selectForOr(userTable, { $or: [{ id: "0" }, { age: { $gt: 40 } }] }, jest.fn())
+    selectForOr(userTable, { OR: [{ id: "0" }, { age: { gt: 40 } }] }, jest.fn())
   ).toStrictEqual({
     rowsScanned: ["id", "age"],
     fullTableScan: false,
   });
   expect(
-    selectForOr(userTable, { $or: [{ age: 40 }, { id: { $gt: "0" } }] }, jest.fn())
+    selectForOr(userTable, { OR: [{ age: 40 }, { id: { gt: "0" } }] }, jest.fn())
   ).toStrictEqual({
     rowsScanned: ["age", "id"],
     fullTableScan: false,
@@ -56,12 +56,12 @@ it("should use all queries if multiple queries exist", () => {
 
 it("should use a full table scan if one of the queries is a full table scan", () => {
   expect(
-    selectForOr(userTable, { $or: [{ age: 40 }, { name: "Alice" }] }, jest.fn())
+    selectForOr(userTable, { OR: [{ age: 40 }, { name: "Alice" }] }, jest.fn())
   ).toStrictEqual({
     fullTableScan: true,
   });
   expect(
-    selectForOr(userTable, { $or: [{ id: { $gte: "0" } }, { name: "Alice" }] }, jest.fn())
+    selectForOr(userTable, { OR: [{ id: { gte: "0" } }, { name: "Alice" }] }, jest.fn())
   ).toStrictEqual({
     fullTableScan: true,
   });

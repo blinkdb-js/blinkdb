@@ -15,9 +15,9 @@ export function select<T, P extends keyof T>(
   where: Where<T> | Or<T> | And<T>,
   cb: SelectCallback<T>
 ): SelectResult<T> {
-  if ("$and" in where) {
+  if ("AND" in where) {
     return selectForAnd(table, where, cb);
-  } else if ("$or" in where) {
+  } else if ("OR" in where) {
     return selectForOr(table, where, cb);
   } else {
     return selectForWhere(table, where, cb);

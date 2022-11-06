@@ -33,12 +33,10 @@ it("should use the primary index for queries containing the primary index", () =
     rowsScanned: ["id"],
     fullTableScan: false,
   });
-  expect(selectForWhere(userTable, { id: { $in: ["0", "1"] } }, jest.fn())).toStrictEqual(
-    {
-      rowsScanned: ["id"],
-      fullTableScan: false,
-    }
-  );
+  expect(selectForWhere(userTable, { id: { in: ["0", "1"] } }, jest.fn())).toStrictEqual({
+    rowsScanned: ["id"],
+    fullTableScan: false,
+  });
   expect(selectForWhere(userTable, { id: "0", age: 40 }, jest.fn())).toStrictEqual({
     rowsScanned: ["id"],
     fullTableScan: false,
@@ -51,7 +49,7 @@ it("should use other indexes for queries containing that particular index", () =
     fullTableScan: false,
   });
   expect(
-    selectForWhere(userTable, { age: { $between: [0, 10] } }, jest.fn())
+    selectForWhere(userTable, { age: { between: [0, 10] } }, jest.fn())
   ).toStrictEqual({
     rowsScanned: ["age"],
     fullTableScan: false,
@@ -62,7 +60,7 @@ it("should use a full table scan if no indexes are used in the query", () => {
   expect(selectForWhere(userTable, { name: "Alice" }, jest.fn())).toStrictEqual({
     fullTableScan: true,
   });
-  expect(selectForWhere(userTable, { name: { $gt: "A" } }, jest.fn())).toStrictEqual({
+  expect(selectForWhere(userTable, { name: { gt: "A" } }, jest.fn())).toStrictEqual({
     fullTableScan: true,
   });
 });

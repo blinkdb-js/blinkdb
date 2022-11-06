@@ -16,23 +16,23 @@ export function selectForAnd<T, P extends keyof T>(
   and: And<T>,
   cb: SelectCallback<T>
 ): SelectResult<T> {
-  if (and.$and.length === 0) {
+  if (and.AND.length === 0) {
     return { fullTableScan: false };
   }
 
   let minComplexity = Number.MAX_SAFE_INTEGER;
-  let bestFilter = and.$and[0];
+  let bestFilter = and.AND[0];
 
-  for (const filter of and.$and) {
+  for (const filter of and.AND) {
     const complexity =
-      "$or" in filter ? analyzeOr(table, filter) : analyzeWhere(table, filter);
+      "OR" in filter ? analyzeOr(table, filter) : analyzeWhere(table, filter);
     if (complexity < minComplexity) {
       minComplexity = complexity;
       bestFilter = filter;
     }
   }
 
-  return "$or" in bestFilter
+  return "OR" in bestFilter
     ? selectForOr(table, bestFilter, cb)
     : selectForWhere(table, bestFilter, cb);
 }

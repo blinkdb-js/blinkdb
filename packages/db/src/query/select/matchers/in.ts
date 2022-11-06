@@ -8,8 +8,8 @@ export function selectForIn<K, E>(
   matcher: InMatcher<K>,
   cb: SelectCallback<E>
 ): void {
-  if (matcher.$in.length === 1) {
-    const key = matcher.$in[0];
+  if (matcher.in.length === 1) {
+    const key = matcher.in[0];
     const item = btree.get(key);
     if (item) cb(item);
     return;
@@ -29,7 +29,7 @@ export function selectForIn<K, E>(
 }
 
 function getSortedMatcherItems<T>(matcher: InMatcher<T>): T[] {
-  const items = [...matcher.$in];
+  const items = [...matcher.in];
 
   if (
     typeof items[0] === "number" ||

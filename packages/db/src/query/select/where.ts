@@ -1,5 +1,5 @@
 import { BlinkKey, Table } from "../../core";
-import { Where } from "../types";
+import { AllMatchers, OrdProps, Where } from "../types";
 import { selectForMatcher } from "./matchers";
 import { SelectCallback, SelectResult } from "./types";
 
@@ -24,8 +24,8 @@ export function selectForWhere<T, P extends keyof T>(
   // analyzing
   if (primaryKeyProperty in filter) {
     const btree = table[BlinkKey].storage.primary;
-    const matcher = filter[primaryKeyProperty]!;
-    selectForMatcher(btree, matcher, cb);
+    const matcher = filter[primaryKeyProperty];
+    selectForMatcher(btree, matcher as AllMatchers<T[P] & OrdProps>, cb);
     return { rowsScanned: [primaryKeyProperty], fullTableScan: false };
   }
 
@@ -33,12 +33,16 @@ export function selectForWhere<T, P extends keyof T>(
   for (const property in table[BlinkKey].storage.indexes) {
     const btree = table[BlinkKey].storage.indexes[property]!;
     if (property in filter) {
-      const matcher = filter[property]!;
-      selectForMatcher(btree, matcher, (items) => {
-        for (const item of items) {
-          cb(item);
+      const matcher = filter[property];
+      selectForMatcher(
+        btree,
+        matcher as AllMatchers<T[typeof property] & OrdProps>,
+        (items) => {
+          for (const item of items) {
+            cb(item);
+          }
         }
-      });
+      );
       return {
         rowsScanned: [property],
         fullTableScan: false,

@@ -1,14 +1,14 @@
 import BTree from "sorted-btree";
-import { LtMatcher } from "../../types";
+import { LtMatcher, OrdProps } from "../../types";
 import { SelectCallback } from "../types";
 
-export function selectForLt<K, E>(
+export function selectForLt<K extends OrdProps, E>(
   btree: BTree<K, E>,
   matcher: LtMatcher<K>,
   cb: SelectCallback<E>
 ): void {
   const minKey = btree.minKey();
-  const maxKey = matcher.$lt;
+  const maxKey = matcher.lt;
   if (minKey !== undefined) {
     btree.editRange(minKey, maxKey, false, (_, v) => {
       const ret = cb(v);
