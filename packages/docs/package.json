@@ -1,7 +1,7 @@
 {
   "name": "@blinkdb/docs",
-  "version": "1.0.0",
   "private": true,
+  "description": "blinkDB documentation website",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",

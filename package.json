@@ -1,6 +1,7 @@
 {
   "name": "@blinkdb/workspace",
   "private": true,
+  "description": "workspace for blinkDB",
   "workspaces": [
     "packages/*"
   ],

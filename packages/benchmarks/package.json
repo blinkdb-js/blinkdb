@@ -1,25 +1,21 @@
 {
   "name": "@blinkdb/benchmarks",
-  "version": "1.0.0",
-  "description": "benchmarks for blinkdb",
-  "main": "index.js",
-  "author": "",
-  "license": "MIT",
   "private": true,
+  "description": "blinkDB benchmarks & comparisons",
   "scripts": {
     "start-prof": "node -r ts-node/register --prof src/benchmarks/index.ts",
     "start": "ts-node src/benchmarks/index.ts"
-  },
-  "devDependencies": {
-    "@types/clone": "^2.1.1",
-    "@types/lokijs": "^1.5.7",
-    "sorted-btree": "^1.8.0",
-    "ts-node": "^10.9.1"
   },
   "dependencies": {
     "@ngneat/falso": "^6.1.0",
     "blinkdb": "^0.6.0",
     "clone": "^2.1.2",
-    "lokijs": "^1.5.12"
+    "lokijs": "^1.5.12",
+    "sorted-btree": "^1.8.0"
+  },
+  "devDependencies": {
+    "@types/clone": "^2.1.1",
+    "@types/lokijs": "^1.5.7",
+    "ts-node": "^10.9.1"
   }
 }
