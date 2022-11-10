@@ -91,30 +91,39 @@ export async function watch<T, P extends keyof T>(
     entities.set(primaryKey, entity);
   }
 
-  const removeOnInsertCb = table[BlinkKey].events.onInsert.register(({ entity }) => {
-    if (query?.where && !matches(entity, query.where)) {
-      return;
+  const removeOnInsertCb = table[BlinkKey].events.onInsert.register((changes) => {
+    let entitiesHaveChanged = false;
+    for (const change of changes) {
+      const entity = change.entity;
+      if (query?.where && !matches(entity, query.where)) {
+        continue;
+      }
+      const primaryKey = entity[primaryKeyProperty];
+      entities.set(primaryKey, entity);
+      entityList.push(entity);
+      entitiesHaveChanged = true;
     }
+    if (entitiesHaveChanged) {
+      if (query?.sort) {
+        entityList = sortItems(entityList, query.sort);
+      }
+      if (query?.limit) {
+        entityList = limitItems(table, entityList, query.limit);
+      }
 
-    const primaryKey = entity[primaryKeyProperty];
-    entities.set(primaryKey, entity);
-    entityList.push(entity);
-    if (query?.sort) {
-      entityList = sortItems(entityList, query.sort);
+      cb(table[BlinkKey].db[BlinkKey].options.clone ? clone(entityList) : entityList);
     }
-    if (query?.limit) {
-      entityList = limitItems(table, entityList, query.limit);
-    }
-
-    cb(table[BlinkKey].db[BlinkKey].options.clone ? clone(entityList) : entityList);
   });
 
-  const removeOnUpdateCb = table[BlinkKey].events.onUpdate.register(
-    ({ oldEntity, newEntity }) => {
+  const removeOnUpdateCb = table[BlinkKey].events.onUpdate.register((changes) => {
+    let entitiesHaveChanged = false;
+    for (const change of changes) {
+      const oldEntity = change.oldEntity;
+      const newEntity = change.newEntity;
       const matchesOldEntity = !query?.where || matches(oldEntity, query.where);
       const matchesNewEntity = !query?.where || matches(newEntity, query.where);
       if (!matchesOldEntity && !matchesNewEntity) {
-        return;
+        continue;
       } else if (matchesOldEntity && !matchesNewEntity) {
         const primaryKey = oldEntity[primaryKeyProperty];
         entities.delete(primaryKey);
@@ -128,7 +137,10 @@ export async function watch<T, P extends keyof T>(
         entities.set(primaryKey, newEntity);
         entityList = Array.from(entities.values());
       }
+      entitiesHaveChanged = true;
+    }
 
+    if (entitiesHaveChanged) {
       if (query?.sort) {
         entityList = sortItems(entityList, query.sort);
       }
@@ -138,12 +150,16 @@ export async function watch<T, P extends keyof T>(
 
       cb(table[BlinkKey].db[BlinkKey].options.clone ? clone(entityList) : entityList);
     }
-  );
+  });
 
-  const removeOnRemoveCb = table[BlinkKey].events.onRemove.register(({ entity }) => {
-    const primaryKey = entity[primaryKeyProperty];
-    const deleted = entities.delete(primaryKey);
-    if (deleted) {
+  const removeOnRemoveCb = table[BlinkKey].events.onRemove.register((changes) => {
+    let entitiesHaveChanged = false;
+    for (const change of changes) {
+      const entity = change.entity;
+      const primaryKey = entity[primaryKeyProperty];
+      entitiesHaveChanged = entitiesHaveChanged || entities.delete(primaryKey);
+    }
+    if (entitiesHaveChanged) {
       entityList = Array.from(entities.values());
       if (query?.sort) {
         entityList = sortItems(entityList, query.sort);

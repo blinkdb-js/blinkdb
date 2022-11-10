@@ -43,7 +43,7 @@ export async function remove<T, P extends keyof T>(
     }
   }
 
-  table[BlinkKey].events.onRemove.dispatch({ entity: entity as unknown as T });
+  table[BlinkKey].events.onRemove.dispatch([{ entity: entity as unknown as T }]);
   return table[BlinkKey].storage.primary.delete(primaryKey);
 }
 

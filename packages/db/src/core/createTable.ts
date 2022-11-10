@@ -126,9 +126,9 @@ export interface Table<T, P extends keyof T> {
       indexes: IndexStorage<T>;
     };
     events: {
-      onInsert: Dispatcher<{ entity: T }>;
-      onUpdate: Dispatcher<{ oldEntity: T; newEntity: T }>;
-      onRemove: Dispatcher<{ entity: T }>;
+      onInsert: Dispatcher<{ entity: T }[]>;
+      onUpdate: Dispatcher<{ oldEntity: T; newEntity: T }[]>;
+      onRemove: Dispatcher<{ entity: T }[]>;
       onClear: Dispatcher;
     };
     options: Required<TableOptions<T, P>>;

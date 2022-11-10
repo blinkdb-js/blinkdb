@@ -45,7 +45,7 @@ export async function insert<T, P extends keyof T>(
       btree.set(key, [storageEntity]);
     }
   }
-  table[BlinkKey].events.onInsert.dispatch({ entity: storageEntity });
+  table[BlinkKey].events.onInsert.dispatch([{ entity: storageEntity }]);
   return primaryKey;
 }
 

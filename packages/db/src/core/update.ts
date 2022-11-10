@@ -59,7 +59,7 @@ export async function update<T extends object, P extends keyof T>(
     }
   }
 
-  table[BlinkKey].events.onUpdate.dispatch({ oldEntity: oldItem, newEntity: item });
+  table[BlinkKey].events.onUpdate.dispatch([{ oldEntity: oldItem, newEntity: item }]);
 }
 
 export type Diff<T extends object, P extends keyof T> = Partial<T> & {
