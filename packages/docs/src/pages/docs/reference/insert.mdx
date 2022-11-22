@@ -11,11 +11,11 @@ An exception is thrown if the given primary key already exists within the table.
 
 ```ts
 const aliceId = await insert(userTable, { id: uuid(), name: "Alice", age: 23 });
-const bobId = await insert(userTable, { id: uuid(), name: "Bob", age: 45 });
-const charlieId = await insert(userTable, { id: uuid(), name: "Charlie", age: 34 });
 ```
 
 | Parameter | Description                                                           |
 | --------- | --------------------------------------------------------------------- |
 | `table`   | The table created by [`createTable()`](/docs/reference/createTable) . |
 | `item`    | The item to insert into the table.                                    |
+
+Consider [`insertMany()`](/docs/reference/insertMany) if you want to insert many items in parallel.

@@ -1,0 +1,23 @@
+---
+layout: "../../../layouts/DocsLayout.astro"
+title: "insertMany()"
+---
+
+# insertMany()
+
+Inserts new entities into a table, and returns the primary keys of the inserted entities.
+
+An exception is thrown if a given primary key already exists within the table.
+
+```ts
+const [aliceId, bobId, charlieId] = await insertMany(userTable, [
+  { id: uuid(), name: "Alice", age: 23 },
+  { id: uuid(), name: "Bob", age: 45 },
+  { id: uuid(), name: "Charlie", age: 34 }
+]);
+```
+
+| Parameter  | Description                                                           |
+| ---------- | --------------------------------------------------------------------- |
+| `table`    | The table created by [`createTable()`](/docs/reference/createTable) . |
+| `items`    | The items to insert into the table.                                    |

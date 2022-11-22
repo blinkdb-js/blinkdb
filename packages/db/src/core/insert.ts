@@ -1,8 +1,5 @@
-import BTree from "sorted-btree";
-import { OrdProps } from "../query/types";
-import { clone } from "./clone";
-import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
+import { insertMany } from "./insertMany";
 
 /**
  * Inserts a new entity into `table`.
@@ -20,33 +17,8 @@ export async function insert<T, P extends keyof T>(
   table: Table<T, P>,
   entity: ValidEntity<Create<T, P>>
 ): Promise<T[P]> {
-  const validEntity = entity as Create<T, P>;
-  const primaryKeyProperty = table[BlinkKey].options.primary;
-  const primaryKey = validEntity[primaryKeyProperty] as T[P] & OrdProps;
-
-  if (table[BlinkKey].storage.primary.has(primaryKey)) {
-    throw new Error(`Primary key ${primaryKey} already in use.`);
-  }
-
-  const storageEntity = table[BlinkKey].db[BlinkKey].options.clone
-    ? clone(validEntity)
-    : validEntity;
-
-  table[BlinkKey].storage.primary.set(primaryKey, storageEntity);
-  for (const property in table[BlinkKey].storage.indexes) {
-    const btree = table[BlinkKey].storage.indexes[property]!;
-    const key = validEntity[property] as T[typeof property] & OrdProps;
-    if (key === null || key === undefined) continue;
-
-    const items = btree.get(key);
-    if (items !== undefined) {
-      items.push(storageEntity);
-    } else {
-      btree.set(key, [storageEntity]);
-    }
-  }
-  table[BlinkKey].events.onInsert.dispatch([{ entity: storageEntity }]);
-  return primaryKey;
+  const ids = await insertMany(table, [entity]);
+  return ids[0];
 }
 
 /**

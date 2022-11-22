@@ -1,5 +1,5 @@
 import loki from "lokijs";
-import { clear, insert, createDB, many, createTable, one } from "blinkdb";
+import { clear, insertMany, createDB, many, createTable, one } from "blinkdb";
 import { randFirstName } from "@ngneat/falso";
 import { compare } from "../framework";
 
@@ -39,9 +39,7 @@ interface User {
         lokiUserTable.insert(users);
       },
       blinkdb: async () => {
-        for (let user of users) {
-          await insert(blinkUserTable, user);
-        }
+        await insertMany(blinkUserTable, users);
       },
     },
     {

@@ -5,6 +5,7 @@ import { watch } from "./watch";
 import { update } from "./update";
 import { remove } from "./remove";
 import { clear } from "./clear";
+import { insertMany } from "./insertMany";
 
 interface User {
   id: number;
@@ -76,6 +77,17 @@ describe("without filter", () => {
     expect(fn.mock.calls[1][0]).toStrictEqual([alice, bob, charlie, eve]);
   });
 
+  it("should call the callback when entities are inserted", async () => {
+    const fn = jest.fn();
+    await watch(userTable, fn);
+    const eve: User = { id: 3, name: "Eve", age: 5 };
+    const frank: User = { id: 4, name: "Frank", age: 111 };
+    await insertMany(userTable, [eve, frank]);
+
+    expect(fn.mock.calls.length).toBe(2);
+    expect(fn.mock.calls[1][0]).toStrictEqual([alice, bob, charlie, eve, frank]);
+  });
+
   it("should call the callback when an entity is updated", async () => {
     const fn = jest.fn();
     await watch(userTable, fn);
@@ -125,6 +137,17 @@ describe("with filter", () => {
 
     expect(fn.mock.calls.length).toBe(2);
     expect(fn.mock.calls[1][0]).toStrictEqual([alice, charlie, eve]);
+  });
+
+  it("should call the callback when entities are inserted", async () => {
+    const fn = jest.fn();
+    await watch(userTable, { where: { age: { gt: 5 } } }, fn);
+    const eve: User = { id: 3, name: "Eve", age: 3 };
+    const frank: User = { id: 4, name: "Frank", age: 111 };
+    await insertMany(userTable, [eve, frank]);
+
+    expect(fn.mock.calls.length).toBe(2);
+    expect(fn.mock.calls[1][0]).toStrictEqual([alice, charlie, frank]);
   });
 
   it("should not call the callback when an entity not matching the filter is inserted", async () => {

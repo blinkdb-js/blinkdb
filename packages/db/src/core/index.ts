@@ -3,6 +3,7 @@ export * from "./createDB";
 export * from "./createTable";
 export * from "./first";
 export * from "./insert";
+export * from "./insertMany";
 export * from "./many";
 export * from "./one";
 export * from "./remove";
