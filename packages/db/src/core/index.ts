@@ -8,5 +8,6 @@ export * from "./many";
 export * from "./one";
 export * from "./remove";
 export * from "./update";
+export * from "./updateMany";
 export * from "./uuid";
 export * from "./watch";

@@ -6,6 +6,7 @@ import { update } from "./update";
 import { remove } from "./remove";
 import { clear } from "./clear";
 import { insertMany } from "./insertMany";
+import { updateMany } from "./updateMany";
 
 interface User {
   id: number;
@@ -98,6 +99,23 @@ describe("without filter", () => {
       { ...alice, name: "Alice the II." },
       bob,
       charlie,
+    ]);
+  });
+
+  it("should call the callback when entities are updated", async () => {
+    const fn = jest.fn();
+    await watch(userTable, fn);
+    updateMany(userTable, [
+      { id: 0, name: "Alice the II." },
+      { id: 1, name: "Bob the II." },
+      { id: 2, name: "Charlie the II." },
+    ]);
+
+    expect(fn.mock.calls.length).toBe(2);
+    expect(fn.mock.calls[1][0]).toStrictEqual([
+      { ...alice, name: "Alice the II." },
+      { ...bob, name: "Bob the II." },
+      { ...charlie, name: "Charlie the II." },
     ]);
   });
 
