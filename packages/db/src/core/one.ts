@@ -1,8 +1,8 @@
 import { Query } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
-import { many } from "./many";
 import { Table } from "./createTable";
+import { many } from "./many";
 
 /**
  * Retrieves the first entity from `table` matching the given `filter`.

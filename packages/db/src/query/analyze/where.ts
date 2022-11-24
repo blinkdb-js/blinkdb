@@ -1,5 +1,5 @@
 import { BlinkKey, Table } from "../../core";
-import { AllMatchers, Matchers, OrdProps, Where } from "../types";
+import { AllMatchers, OrdProps, Where } from "../types";
 import { analyzeMatcher } from "./matchers";
 
 export function analyzeWhere<T, P extends keyof T>(

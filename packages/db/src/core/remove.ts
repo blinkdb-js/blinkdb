@@ -1,6 +1,3 @@
-import BTree from "sorted-btree";
-import { OrdProps } from "../query/types";
-import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 import { removeMany } from "./removeMany";
 

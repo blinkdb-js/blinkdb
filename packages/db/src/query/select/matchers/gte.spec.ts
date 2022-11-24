@@ -1,6 +1,6 @@
 import BTree from "sorted-btree";
-import { selectForGte } from "./gte";
 import { collect } from "../testutils";
+import { selectForGte } from "./gte";
 
 interface Data {
   a: string;

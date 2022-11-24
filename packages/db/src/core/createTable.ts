@@ -1,7 +1,7 @@
 import BTree from "sorted-btree";
 import { Dispatcher } from "../events/Dispatcher";
 import { OrdProps } from "../query/types";
-import { Database, BlinkKey } from "./createDB";
+import { BlinkKey, Database } from "./createDB";
 
 /**
  * Creates a new table where entities can be inserted/updated/deleted/retrieved.

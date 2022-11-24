@@ -1,12 +1,12 @@
 import { AllMatchers } from "../../types";
-import { matchesEq } from "./eq";
-import { matchesGte } from "./gte";
-import { matchesGt } from "./gt";
-import { matchesLte } from "./lte";
-import { matchesLt } from "./lt";
-import { matchesContains } from "./contains";
-import { matchesIn } from "./in";
 import { matchesBetween } from "./between";
+import { matchesContains } from "./contains";
+import { matchesEq } from "./eq";
+import { matchesGt } from "./gt";
+import { matchesGte } from "./gte";
+import { matchesIn } from "./in";
+import { matchesLt } from "./lt";
+import { matchesLte } from "./lte";
 import { matchesSubWhere } from "./sub";
 
 /**

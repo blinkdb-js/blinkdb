@@ -1,8 +1,8 @@
-import { insert } from "./insert";
 import { createDB, Database } from "./createDB";
-import { Table, createTable } from "./createTable";
-import { remove } from "./remove";
+import { createTable, Table } from "./createTable";
 import { first } from "./first";
+import { insert } from "./insert";
+import { remove } from "./remove";
 
 interface User {
   id: number;

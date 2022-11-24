@@ -1,5 +1,5 @@
-import { compare } from "../framework";
 import BTree from "sorted-btree";
+import { compare } from "../framework";
 
 (async () => {
   const map = new Map<number, number>();

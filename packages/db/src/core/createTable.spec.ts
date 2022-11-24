@@ -39,7 +39,7 @@ it("should create a table with a different primary key", () => {
     db,
     "user"
   )({
-    primary: "some"
+    primary: "some",
   });
 });
 

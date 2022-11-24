@@ -1,4 +1,4 @@
-import { Table, BlinkKey } from "../../core";
+import { BlinkKey, Table } from "../../core";
 import { compare } from "../compare";
 import { Limit, OrdProps } from "../types";
 

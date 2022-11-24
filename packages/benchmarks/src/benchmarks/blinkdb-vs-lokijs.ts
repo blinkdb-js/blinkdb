@@ -1,6 +1,6 @@
-import loki from "lokijs";
-import { clear, insertMany, createDB, many, createTable, one } from "blinkdb";
 import { randFirstName } from "@ngneat/falso";
+import { clear, createDB, createTable, insertMany, many, one } from "blinkdb";
+import loki from "lokijs";
 import { compare } from "../framework";
 
 interface User {

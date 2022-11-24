@@ -1,6 +1,6 @@
 import BTree from "sorted-btree";
 import { compare } from "../compare";
-import { AllMatchers, Matchers, OrdProps } from "../types";
+import { AllMatchers, OrdProps } from "../types";
 
 /**
  * Returns the theoretical complexity of a given matcher,

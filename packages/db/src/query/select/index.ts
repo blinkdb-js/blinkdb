@@ -1,4 +1,4 @@
-import { BlinkKey, Table } from "../../core";
+import { Table } from "../../core";
 import { And, Or, Where } from "../types";
 import { selectForAnd } from "./and";
 import { selectForOr } from "./or";

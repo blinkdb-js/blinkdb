@@ -1,9 +1,8 @@
-import BTree from "sorted-btree";
 import { OrdProps } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
-import { ValidEntity, Create } from "./insert";
+import { Create, ValidEntity } from "./insert";
 
 /**
  * Inserts new entities into `table`.

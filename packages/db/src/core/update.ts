@@ -1,6 +1,3 @@
-import { OrdProps } from "../query/types";
-import { clone } from "./clone";
-import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 import { updateMany } from "./updateMany";
 

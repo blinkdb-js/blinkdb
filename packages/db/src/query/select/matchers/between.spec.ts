@@ -1,6 +1,6 @@
 import BTree from "sorted-btree";
-import { selectForBetween } from "./between";
 import { collect } from "../testutils";
+import { selectForBetween } from "./between";
 
 interface Data {
   a: string;

@@ -1,6 +1,6 @@
 import { BlinkKey, createDB, createTable, insert, Table } from "../../core";
-import { analyzeOr } from "./or";
 import { analyzeMatcher } from "./matchers";
+import { analyzeOr } from "./or";
 
 interface User {
   id: string;

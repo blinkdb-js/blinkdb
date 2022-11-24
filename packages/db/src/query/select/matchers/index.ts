@@ -1,15 +1,5 @@
 import BTree from "sorted-btree";
-import {
-  GteMatcher,
-  GtMatcher,
-  LteMatcher,
-  LtMatcher,
-  Matchers,
-  InMatcher,
-  BetweenMatcher,
-  OrdProps,
-  AllMatchers,
-} from "../../types";
+import { AllMatchers, OrdProps } from "../../types";
 import { SelectCallback } from "../types";
 import { selectForBetween } from "./between";
 import { selectForEq } from "./eq";

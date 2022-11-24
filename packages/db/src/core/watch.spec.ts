@@ -1,13 +1,13 @@
-import { insert } from "./insert";
-import { createDB, Database } from "./createDB";
-import { Table, createTable } from "./createTable";
-import { watch } from "./watch";
-import { update } from "./update";
-import { remove } from "./remove";
 import { clear } from "./clear";
+import { createDB, Database } from "./createDB";
+import { createTable, Table } from "./createTable";
+import { insert } from "./insert";
 import { insertMany } from "./insertMany";
-import { updateMany } from "./updateMany";
+import { remove } from "./remove";
 import { removeMany } from "./removeMany";
+import { update } from "./update";
+import { updateMany } from "./updateMany";
+import { watch } from "./watch";
 
 interface User {
   id: number;

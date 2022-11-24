@@ -1,6 +1,6 @@
 import BTree from "sorted-btree";
-import { selectForLte } from "./lte";
 import { collect } from "../testutils";
+import { selectForLte } from "./lte";
 
 interface Data {
   a: string;

@@ -7,14 +7,14 @@ export class Dispatcher<T = void> {
 
   /**
    * register a function to be called when the event emits.
-   * 
+   *
    * @returns a function that can be called to remove the registered callback.
    */
   public register(cb: Callback<T>): () => void {
     this.callbacks.add(cb);
     return () => {
       this.callbacks.delete(cb);
-    }
+    };
   }
 
   /**

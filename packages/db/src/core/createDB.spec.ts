@@ -1,8 +1,8 @@
 import { createDB } from "./createDB";
-import { uuid } from "./uuid";
 import { createTable } from "./createTable";
 import { insert } from "./insert";
 import { one } from "./one";
+import { uuid } from "./uuid";
 
 test("should create a db without options", () => {
   createDB();

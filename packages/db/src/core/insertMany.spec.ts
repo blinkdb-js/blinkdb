@@ -1,6 +1,6 @@
-import { insertMany } from "./insertMany";
 import { createDB, Database } from "./createDB";
-import { Table, createTable } from "./createTable";
+import { createTable, Table } from "./createTable";
+import { insertMany } from "./insertMany";
 import { one } from "./one";
 
 interface User {

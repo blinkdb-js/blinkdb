@@ -1,6 +1,6 @@
 import BTree from "sorted-btree";
-import { selectForEq } from "./eq";
 import { collect } from "../testutils";
+import { selectForEq } from "./eq";
 
 interface Data {
   a: string;

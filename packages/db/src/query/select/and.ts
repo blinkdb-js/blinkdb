@@ -1,7 +1,7 @@
 import { Table } from "../../core";
 import { analyzeOr } from "../analyze/or";
 import { analyzeWhere } from "../analyze/where";
-import { And, Or, Where } from "../types";
+import { And } from "../types";
 import { selectForOr } from "./or";
 import { SelectCallback, SelectResult } from "./types";
 import { selectForWhere } from "./where";
