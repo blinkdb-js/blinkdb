@@ -157,7 +157,8 @@ export async function watch<T, P extends keyof T>(
     for (const change of changes) {
       const entity = change.entity;
       const primaryKey = entity[primaryKeyProperty];
-      entitiesHaveChanged = entitiesHaveChanged || entities.delete(primaryKey);
+      const deleted = entities.delete(primaryKey);
+      entitiesHaveChanged = entitiesHaveChanged || deleted;
     }
     if (entitiesHaveChanged) {
       entityList = Array.from(entities.values());

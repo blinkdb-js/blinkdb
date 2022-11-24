@@ -7,6 +7,7 @@ export * from "./insertMany";
 export * from "./many";
 export * from "./one";
 export * from "./remove";
+export * from "./removeMany";
 export * from "./update";
 export * from "./updateMany";
 export * from "./uuid";

@@ -7,6 +7,7 @@ import { remove } from "./remove";
 import { clear } from "./clear";
 import { insertMany } from "./insertMany";
 import { updateMany } from "./updateMany";
+import { removeMany } from "./removeMany";
 
 interface User {
   id: number;
@@ -126,6 +127,15 @@ describe("without filter", () => {
 
     expect(fn.mock.calls.length).toBe(2);
     expect(fn.mock.calls[1][0]).toStrictEqual([bob, charlie]);
+  });
+
+  it("should call the callback when entities is removed", async () => {
+    const fn = jest.fn();
+    await watch(userTable, fn);
+    removeMany(userTable, [{ id: 0 }, { id: 1 }]);
+
+    expect(fn.mock.calls.length).toBe(2);
+    expect(fn.mock.calls[1][0]).toStrictEqual([charlie]);
   });
 
   it("should call the callback when the table is cleared", async () => {
