@@ -11,7 +11,7 @@ export interface Props {
 const props: Props = Astro.props;
 ---
 
-<div class:list={["fixed top-0 left-0 w-full backdrop-blur bg-white/75", props.condensed && "border-b", props.class]}>
+<div class:list={["fixed top-0 left-0 h-16 w-full backdrop-blur bg-white/75", props.condensed && "border-b", props.class]}>
   <navbar class:list={["flex justify-between items-center px-3 py-2", props.condensed && "mx-auto sm:max-w-7xl"]}>
     <a href="/" class="flex items-center gap-1">
       <Logo class="h-12 w-12" />

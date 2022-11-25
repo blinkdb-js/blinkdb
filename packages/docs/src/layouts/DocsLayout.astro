@@ -16,14 +16,16 @@ const { frontmatter, headings } = Astro.props;
 ---
 
 <BaseLayout title={frontmatter?.title} condensed={true}>
-  <div class="mx-auto flex flex-col-reverse md:flex-row max-w-7xl justify-between gap-5 h-full">
+  <div
+    class="mx-auto flex flex-col-reverse md:flex-row max-w-7xl justify-between gap-5 h-full"
+  >
     <Sidebar
-      class="whitespace-nowrap md:sticky px-8 md:px-4 bg-white md:bg-none border-t-2 w-full md:w-fit"
+      class="whitespace-nowrap md:sticky px-8 md:px-4 bg-white md:bg-none border-t w-full md:w-fit flex-shrink-0"
     >
       <NavMenu class="md:w-44" />
     </Sidebar>
     <div class="p-2 sm:p-4 flex-auto max-w-[80ch] markdown"><slot /></div>
-    <Sidebar class="hidden lg:block w-44 sticky">
+    <Sidebar class="hidden lg:block w-44 sticky flex-shrink-0">
       {
         headings.length > 3 &&
           headings.map((h) => (
