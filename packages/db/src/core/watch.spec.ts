@@ -1,3 +1,4 @@
+import { updateWhere } from ".";
 import { clear } from "./clear";
 import { createDB, Database } from "./createDB";
 import { createTable, Table } from "./createTable";
@@ -111,6 +112,21 @@ describe("without filter", () => {
       { id: 1, name: "Bob the II." },
       { id: 2, name: "Charlie the II." },
     ]);
+
+    expect(fn.mock.calls.length).toBe(2);
+    expect(fn.mock.calls[1][0]).toStrictEqual([
+      { ...alice, name: "Alice the II." },
+      { ...bob, name: "Bob the II." },
+      { ...charlie, name: "Charlie the II." },
+    ]);
+  });
+
+  it("should call the callback when entities are updated with with updateWhere", async () => {
+    const fn = jest.fn();
+    await watch(userTable, fn);
+    await updateWhere(userTable, { where: { id: { gte: 0 } } }, (user) => {
+      return { ...user, name: user.name + " the II." };
+    });
 
     expect(fn.mock.calls.length).toBe(2);
     expect(fn.mock.calls[1][0]).toStrictEqual([

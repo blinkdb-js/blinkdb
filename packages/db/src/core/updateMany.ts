@@ -68,6 +68,5 @@ export async function updateMany<T extends object, P extends keyof T>(
     }
     events.push({ oldEntity: oldItem, newEntity: item });
   }
-
   table[BlinkKey].events.onUpdate.dispatch(events);
 }
