@@ -129,7 +129,7 @@ describe("without filter", () => {
     expect(fn.mock.calls[1][0]).toStrictEqual([bob, charlie]);
   });
 
-  it("should call the callback when entities is removed", async () => {
+  it("should call the callback when entities are removed", async () => {
     const fn = jest.fn();
     await watch(userTable, fn);
     removeMany(userTable, [{ id: 0 }, { id: 1 }]);
