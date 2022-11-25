@@ -1,4 +1,3 @@
-import { updateWhere } from ".";
 import { clear } from "./clear";
 import { createDB, Database } from "./createDB";
 import { createTable, Table } from "./createTable";
@@ -6,8 +5,10 @@ import { insert } from "./insert";
 import { insertMany } from "./insertMany";
 import { remove } from "./remove";
 import { removeMany } from "./removeMany";
+import { removeWhere } from "./removeWhere";
 import { update } from "./update";
 import { updateMany } from "./updateMany";
+import { updateWhere } from "./updateWhere";
 import { watch } from "./watch";
 
 interface User {
@@ -152,6 +153,15 @@ describe("without filter", () => {
 
     expect(fn.mock.calls.length).toBe(2);
     expect(fn.mock.calls[1][0]).toStrictEqual([charlie]);
+  });
+
+  it("should call the callback when entities are removed with removeWhere", async () => {
+    const fn = jest.fn();
+    await watch(userTable, fn);
+    await removeWhere(userTable, { where: { OR: [{ id: 0 }, { id: 2 }] } });
+
+    expect(fn.mock.calls.length).toBe(2);
+    expect(fn.mock.calls[1][0]).toStrictEqual([bob]);
   });
 
   it("should call the callback when the table is cleared", async () => {

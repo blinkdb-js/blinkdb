@@ -8,6 +8,7 @@ export * from "./many";
 export * from "./one";
 export * from "./remove";
 export * from "./removeMany";
+export * from "./removeWhere";
 export * from "./update";
 export * from "./updateMany";
 export * from "./updateWhere";
