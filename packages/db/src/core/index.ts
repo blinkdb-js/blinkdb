@@ -1,4 +1,5 @@
 export * from "./clear";
+export * from "./count";
 export * from "./createDB";
 export * from "./createTable";
 export * from "./first";
