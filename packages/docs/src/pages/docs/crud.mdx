@@ -8,10 +8,10 @@ title: "CRUD"
 Just like any other database, BlinkDB gives you the ability to **C**reate, **R**ead, **U**pdate and **D**elete
 items in a table.
 
-- You can add entities to the table (with [`insert()`](/docs/reference/insert) ),
-- query entities within it (with [`first()`](/docs/reference/first), [`many()`](/docs/reference/many) & [`one()`](/docs/reference/one) ),
-- update database entities (with [`update()`](/docs/reference/update) ),
-- and delete them (with [`remove()`](/docs/reference/remove) ).
+- You can add entities to the table (with [`insert()`](/docs/reference/insert) & [`insertMany()`](/docs/reference/insertMany)),
+- query entities within it (with [`first()`](/docs/reference/first), [`many()`](/docs/reference/many) & [`one()`](/docs/reference/one)),
+- update database entities (with [`update()`](/docs/reference/update), [`updateMany()`](/docs/reference/updateMany) & [`updateWhere()`](/docs/reference/updateWhere)),
+- and delete them (with [`remove()`](/docs/reference/remove), [`removeMany()`](/docs/reference/removeMany) & [`removeWhere()`](/docs/reference/removeWhere)).
 
 ## Creating entities
 
@@ -23,7 +23,7 @@ import { createDB, createTable, insert } from 'blinkdb';
 
 const db = createDB();
 const userTable = createTable<User>(db, "users")();
-await insert(userTable, { id: 'some-uuid', name: 'Alice', age: 24 });
+const aliceId = await insert(userTable, { id: 'some-uuid', name: 'Alice', age: 24 });
 ```
 
 ### Generating an UUID
@@ -32,7 +32,19 @@ If your entities are using strings as primary keys, you're probably hoping to us
 identifiers. BlinkDB automatically supplies you with [`uuid()`](/docs/reference/uuid), a blazing fast method for generating them.
 
 ```ts
-await insert(userTable, { id: uuid(), name: 'Bob', age: 21 });
+const bobId = await insert(userTable, { id: uuid(), name: 'Bob', age: 21 });
+```
+
+### Creating many entities at once
+
+If you are inserting many items in bulk, use the more performant [`insertMany()`](/docs/reference/insertMany) instead.
+
+```ts
+const [aliceId, bobId, charlieId] = await insertMany(userTable, [
+  { id: uuid(), name: "Alice", age: 23 },
+  { id: uuid(), name: "Bob", age: 45 },
+  { id: uuid(), name: "Charlie", age: 34 }
+]);
 ```
 
 <hr />
@@ -101,6 +113,51 @@ const userId = await insert(userTable, { id: uuid(), name: 'Alice', age: 15 });
 await update(userTable, { id: userId, age: 16 });
 ```
 
+### Updating many entities at once
+
+Updating many items at once can also be done with [`updateMany()`](/docs/reference/updateMany).
+
+```ts
+const userTable = createTable<User>(db, "users")();
+const [aliceId, bobId, charlieId] = await insertMany(userTable, [
+  { id: uuid(), name: "Alice", age: 23 },
+  { id: uuid(), name: "Bob", age: 45 },
+  { id: uuid(), name: "Charlie", age: 34 }
+]);
+// Set the age of those three users above to 10
+await updateMany(userTable, [
+  { id: aliceId, name: "Alice", age: 10 },
+  { id: bobId, name: "Bob", age: 10 },
+  { id: charlieId, name: "Charlie", age: 10 }
+]);
+```
+
+### Updating items that match a given filter
+
+What if you want to dynamically update entities that match a given filter? Of course, you could do this:
+
+```ts
+const someFilter: Query<User> = { ... };
+const users = await many(userTable, someFilter);
+
+// Modify the items somehow
+const newUsers = users.map(user => {
+  return doSomethingWithItem(user);
+};
+
+await updateMany(userTable, newUsers);
+```
+
+But there is a superior option that is also slightly more performant. Enter [`updateWhere()`](/docs/reference/remove):
+
+```ts
+const someFilter: Query<User> = { ... };
+// Update all items in userTable that match someFilter
+await updateWhere(userTable, someFilter, user => {
+  return doSomethingWithItem(user);
+});
+```
+
 <hr />
 
 ## Deleting entities
@@ -112,4 +169,45 @@ const userTable = createTable<User>(db, "users")();
 const userId = await insert(userTable, { id: uuid(), name: 'Alice', age: 15 });
 // Remove Alice from the table
 await remove(userTable, { id: userId });
+```
+
+### Deleting many entities at once
+
+Similar to bulk inserting and updating, you can also remove items in bulk with [`removeMany()`](/docs/reference/removeMany).
+
+```ts
+const userTable = createTable<User>(db, "users")();
+const [aliceId, bobId, charlieId] = await insertMany(userTable, [
+  { id: uuid(), name: "Alice", age: 23 },
+  { id: uuid(), name: "Bob", age: 45 },
+  { id: uuid(), name: "Charlie", age: 34 }
+]);
+// Remove Alice, Bob & Charlie from the table
+await removeMany(userTable, [
+  { id: aliceId },
+  { id: bobId },
+  { id: charlieId }
+]);
+```
+
+### Deleting items that match a given filter
+
+And removing all items that match a given filter can be done with [`removeWhere()`](/docs/reference/removeWhere).
+
+```ts
+// Remove all users named "Charlie"
+await removeWhere(userTable, {
+  where: {
+    name: "Charlie"
+  }
+});
+```
+
+### Deleting all items
+
+Finally, if you want to remove ALL items from a table, use [`clear()`](/docs/reference/clear).
+
+```ts
+// Remove ALL users
+await clear(userTable);
 ```

@@ -13,7 +13,7 @@ const userTable = createTable<User>(db, 'users')();
 const users = await many(userTable, {
   where: {
     age: { gt: 16 },
-    name: { in: 'Alice', 'Bob' },
+    name: { in: ['Alice', 'Bob'] },
     todoCount: { between: [0, 10] }
   },
   sort: {
