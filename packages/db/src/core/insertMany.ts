@@ -39,6 +39,7 @@ export async function insertMany<T, P extends keyof T>(
       : validEntity;
 
     table[BlinkKey].storage.primary.set(primaryKey, storageEntity);
+    table[BlinkKey].storage.primary.totalItemSize++;
     for (const property in table[BlinkKey].storage.indexes) {
       const btree = table[BlinkKey].storage.indexes[property]!;
       const key = validEntity[property] as T[typeof property] & OrdProps;
@@ -50,6 +51,7 @@ export async function insertMany<T, P extends keyof T>(
       } else {
         btree.set(key, [storageEntity]);
       }
+      btree.totalItemSize++;
     }
     primaryKeys.push(primaryKey);
     events.push({ entity: storageEntity });

@@ -20,10 +20,12 @@ export function analyzeWhere<T, P extends keyof T>(
     } else {
       const btree = table[BlinkKey].storage.indexes[key];
       if (btree) {
-        complexity = analyzeMatcher(
+        const matcherComplexity = analyzeMatcher(
           btree,
           matcher as AllMatchers<T[typeof key] & OrdProps>
         );
+        const itemsPerNode = btree.totalItemSize / btree.size;
+        complexity = Math.round(matcherComplexity * itemsPerNode);
       }
     }
     if (complexity && complexity < minComplexity) {

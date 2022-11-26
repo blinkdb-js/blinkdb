@@ -65,5 +65,5 @@ it("should return an estimated count if a filter is provided", async () => {
     { exact: false }
   );
 
-  expect(size).toBe(1);
+  expect(size).toBe(33);
 });

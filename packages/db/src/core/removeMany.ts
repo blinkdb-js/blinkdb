@@ -42,12 +42,16 @@ export async function removeMany<T, P extends keyof T>(
           } else {
             items.splice(deleteIndex, 1);
           }
+          btree.totalItemSize--;
         }
       }
     }
     events.push({ entity: entity as unknown as T });
-    allEntitiesRemoved =
-      allEntitiesRemoved && table[BlinkKey].storage.primary.delete(primaryKey);
+    const hasDeleted = table[BlinkKey].storage.primary.delete(primaryKey);
+    if (hasDeleted) {
+      table[BlinkKey].storage.primary.totalItemSize--;
+    }
+    allEntitiesRemoved = allEntitiesRemoved && hasDeleted;
   }
   table[BlinkKey].events.onRemove.dispatch(events);
   return allEntitiesRemoved;

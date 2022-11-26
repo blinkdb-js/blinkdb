@@ -73,16 +73,20 @@ export function createTable<T>(
 
 export function createTable<T>(db: Database, tableName: string) {
   return <P extends keyof T>(options?: TableOptions<T, P>): Table<T, P> => {
+    const primaryBTree = new BTree();
+    primaryBTree.totalItemSize = 0;
     return {
       [BlinkKey]: {
         db,
         tableName,
         storage: {
-          primary: new BTree(),
+          primary: primaryBTree,
           indexes: (options?.indexes ?? []).reduce<IndexStorage<T>>((prev, cur) => {
+            const btree = new BTree();
+            btree.totalItemSize = 0;
             return {
               ...prev,
-              [cur]: new BTree(),
+              [cur]: btree,
             };
           }, {}),
         },
