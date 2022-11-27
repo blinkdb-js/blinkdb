@@ -35,7 +35,7 @@ import { BlinkKey, Database } from "./createDB";
 export function createTable<T extends { id: string | number }>(
   db: Database,
   tableName: string
-): <P extends keyof T = "id">(options?: TableOptions<T, P>) => Table<T, P>;
+): <P extends keyof T = "id">(options?: TableOptions<T, P>) => Table<ValidEntity<T>, P>;
 
 /**
  * Creates a new table where entities can be inserted/updated/deleted/retrieved.
@@ -69,10 +69,10 @@ export function createTable<T extends { id: string | number }>(
 export function createTable<T>(
   db: Database,
   tableName: string
-): <P extends keyof T>(options: TableOptions<T, P>) => Table<T, P>;
+): <P extends keyof T>(options: TableOptions<T, P>) => Table<ValidEntity<T>, P>;
 
 export function createTable<T>(db: Database, tableName: string) {
-  return <P extends keyof T>(options?: TableOptions<T, P>): Table<T, P> => {
+  return <P extends keyof T>(options?: TableOptions<T, P>): Table<ValidEntity<T>, P> => {
     const primaryBTree = new BTree();
     primaryBTree.totalItemSize = 0;
     return {
@@ -81,14 +81,17 @@ export function createTable<T>(db: Database, tableName: string) {
         tableName,
         storage: {
           primary: primaryBTree,
-          indexes: (options?.indexes ?? []).reduce<IndexStorage<T>>((prev, cur) => {
-            const btree = new BTree();
-            btree.totalItemSize = 0;
-            return {
-              ...prev,
-              [cur]: btree,
-            };
-          }, {}),
+          indexes: (options?.indexes ?? []).reduce<IndexStorage<ValidEntity<T>>>(
+            (prev, cur) => {
+              const btree = new BTree();
+              btree.totalItemSize = 0;
+              return {
+                ...prev,
+                [cur]: btree,
+              };
+            },
+            {}
+          ),
         },
         events: {
           onClear: new Dispatcher(),
@@ -142,3 +145,17 @@ export interface Table<T, P extends keyof T> {
 type IndexStorage<T> = {
   [Key in keyof T]?: BTree<T[Key] & OrdProps, T[]>;
 };
+
+/**
+ * Returns type T if T only contains valid properties.
+ */
+type ValidEntity<T> = T extends ValidProperties<T> ? T : never;
+export type ValidProperties<T> = T extends Function | Symbol
+  ? never
+  : T extends Date
+  ? T
+  : T extends BigInt
+  ? T
+  : T extends object
+  ? { [K in keyof T]: ValidEntity<T[K]> }
+  : T;

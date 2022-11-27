@@ -15,24 +15,11 @@ import { insertMany } from "./insertMany";
  */
 export async function insert<T, P extends keyof T>(
   table: Table<T, P>,
-  entity: ValidEntity<Create<T, P>>
+  entity: Create<T, P>
 ): Promise<T[P]> {
   const ids = await insertMany(table, [entity]);
   return ids[0];
 }
-
-/**
- * The interfaces of entities are only valid if no property is of type Function or Symbol.
- */
-export type ValidEntity<T> = T extends Function | Symbol
-  ? never
-  : T extends Date
-  ? T
-  : T extends BigInt
-  ? T
-  : T extends object
-  ? { [K in keyof T]: ValidEntity<T[K]> }
-  : T;
 
 export type Create<T, P extends keyof T> = T & {
   [Key in P]-?: T[P];

@@ -2,7 +2,7 @@ import { OrdProps } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
-import { Create, ValidEntity } from "./insert";
+import { Create } from "./insert";
 
 /**
  * Inserts new entities into `table`.
@@ -21,28 +21,27 @@ import { Create, ValidEntity } from "./insert";
  */
 export async function insertMany<T, P extends keyof T>(
   table: Table<T, P>,
-  entities: ValidEntity<Create<T, P>>[]
+  entities: Create<T, P>[]
 ): Promise<T[P][]> {
   const primaryKeys: T[P][] = [];
   const events: { entity: T }[] = [];
   for (const entity of entities) {
-    const validEntity = entity as Create<T, P>;
     const primaryKeyProperty = table[BlinkKey].options.primary;
-    const primaryKey = validEntity[primaryKeyProperty] as T[P] & OrdProps;
+    const primaryKey = entity[primaryKeyProperty] as T[P] & OrdProps;
 
     if (table[BlinkKey].storage.primary.has(primaryKey)) {
       throw new Error(`Primary key ${primaryKey} already in use.`);
     }
 
     const storageEntity = table[BlinkKey].db[BlinkKey].options.clone
-      ? clone(validEntity)
-      : validEntity;
+      ? clone(entity)
+      : entity;
 
     table[BlinkKey].storage.primary.set(primaryKey, storageEntity);
     table[BlinkKey].storage.primary.totalItemSize++;
     for (const property in table[BlinkKey].storage.indexes) {
       const btree = table[BlinkKey].storage.indexes[property]!;
-      const key = validEntity[property] as T[typeof property] & OrdProps;
+      const key = entity[property] as T[typeof property] & OrdProps;
       if (key === null || key === undefined) continue;
 
       const items = btree.get(key);
