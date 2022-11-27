@@ -1,47 +1,30 @@
+import { analyze } from "../query/analyze";
+import { generateRandomUsers, User } from "../tests/utils";
 import { count } from "./count";
-import { createDB, Database } from "./createDB";
+import { createDB } from "./createDB";
 import { createTable, Table } from "./createTable";
 import { insertMany } from "./insertMany";
 
-interface User {
-  id: number;
-  name: string;
-  age: number;
-}
-
-let db: Database;
+let users: User[];
 let userTable: Table<User, "id">;
 
 beforeEach(async () => {
-  db = createDB();
-  userTable = createTable<User>(
-    db,
-    "users"
-  )({
-    primary: "id",
-    indexes: ["name"],
-  });
-  const users: User[] = [];
-  for (let i = 0; i < 100; i++) {
-    users.push({
-      id: i,
-      name: ["Alice", "Bob", "Charlie"][i % 3],
-      age: i,
-    });
-  }
+  users = generateRandomUsers();
+  const db = createDB();
+  userTable = createTable<User>(db, "users")();
   await insertMany(userTable, users);
 });
 
 it("should return the table size if no filter is provided", async () => {
   const size = await count(userTable);
 
-  expect(size).toBe(100);
+  expect(size).toBe(users.length);
 });
 
 it("should return the table size if an empty filter is provided", async () => {
   const size = await count(userTable, {});
 
-  expect(size).toBe(100);
+  expect(size).toBe(users.length);
 });
 
 it("should return the correct count if a filter is provided", async () => {
@@ -51,7 +34,7 @@ it("should return the correct count if a filter is provided", async () => {
     },
   });
 
-  expect(size).toBe(34);
+  expect(size).toBe(users.filter((u) => u.name === "Alice").length);
 });
 
 it("should return an estimated count if a filter is provided", async () => {
@@ -65,5 +48,6 @@ it("should return an estimated count if a filter is provided", async () => {
     { exact: false }
   );
 
-  expect(size).toBe(33);
+  // "name" isn't an index, so the size will be the table size
+  expect(size).toBe(users.length);
 });
