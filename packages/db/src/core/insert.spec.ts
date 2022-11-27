@@ -1,44 +1,54 @@
-import { createDB, Database } from "./createDB";
+import { generateRandomUsers, User } from "../tests/utils";
+import { createDB } from "./createDB";
 import { createTable, Table } from "./createTable";
 import { insert } from "./insert";
 import { one } from "./one";
 
-interface User {
-  id: number;
-  name: string;
-  age?: number;
-}
-
-let db: Database;
+let users: User[];
 let userTable: Table<User, "id">;
 
-beforeEach(() => {
-  db = createDB();
-  userTable = createTable<User>(db, "users")();
+beforeEach(async () => {
+  users = generateRandomUsers();
+  const db = createDB();
+  userTable = createTable<User>(
+    db,
+    "users"
+  )({
+    primary: "id",
+    indexes: ["name"],
+  });
 });
 
 it("should return the primary key of the inserted item", async () => {
-  const aliceId = await insert(userTable, { id: 0, name: "Alice", age: 32 });
-  expect(aliceId).toBe(0);
+  const aliceId = await insert(userTable, users[0]);
+
+  expect(aliceId).toBe(users[0].id);
 });
 
-it("should insert the exact item if db.clone is set to false", async () => {
-  db = createDB({
-    clone: false,
-  });
-  userTable = createTable<User>(db, "users")();
-  const user: User = { id: 0, name: "Alice" };
-  await insert(userTable, user);
-  const item = await one(userTable, { where: { id: 0 } });
+it("should insert items retrievable by primary key", async () => {
+  const aliceId = await insert(userTable, users[0]);
+  const user = await one(userTable, { where: { id: aliceId } });
 
-  expect(item).toBe(user);
+  expect(user).toStrictEqual(users[0]);
 });
 
-it("should clone the inserted item if db.clone is set to false", async () => {
-  const user: User = { id: 0, name: "Alice" };
-  await insert(userTable, user);
-  const item = await one(userTable, { where: { id: 0 } });
+it("should insert items retrievable by index", async () => {
+  const aliceId = await insert(userTable, users[0]);
+  const user = await one(userTable, { where: { name: users[0].name } });
 
-  expect(item).not.toBe(user);
-  expect(item).toStrictEqual(user);
+  expect(user).toStrictEqual(users[0]);
+});
+
+it("should insert items retrievable by property", async () => {
+  const aliceId = await insert(userTable, users[0]);
+  const user = await one(userTable, { where: { age: users[0].age } });
+
+  expect(user).toStrictEqual(users[0]);
+});
+
+it("should prevent duplicate primary keys", async () => {
+  const aliceId = await insert(userTable, users[0]);
+  const fn = async () => await insert(userTable, users[0]);
+
+  expect(fn).rejects.toThrow(`Primary key ${users[0].id} already in use`);
 });

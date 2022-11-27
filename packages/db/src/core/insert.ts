@@ -21,6 +21,9 @@ export async function insert<T, P extends keyof T>(
   return ids[0];
 }
 
+/**
+ * T with non-optional primary keys.
+ */
 export type Create<T, P extends keyof T> = T & {
   [Key in P]-?: T[P];
 };
