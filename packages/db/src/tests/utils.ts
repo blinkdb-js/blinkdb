@@ -2,7 +2,7 @@
  * An interface which can be used as the interface for a BlinkDB table instance.
  */
 export interface User {
-  id: number;
+  id: string;
   name: string;
   age?: number;
 }
@@ -17,7 +17,7 @@ export function generateRandomUsers(): User[] {
   const users: User[] = [];
   for (let id = 0; id < 100; id++) {
     users.push({
-      id,
+      id: `${id}`,
       name: ["Alice", "Bob", "Charlie", "Eve", "George"][id % 5],
       age: [undefined, random() % 100][id % 2],
     });
