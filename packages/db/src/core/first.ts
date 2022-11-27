@@ -1,8 +1,8 @@
+import { get } from "../query";
 import { Query } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
-import { many } from "./many";
 
 /**
  * Retrieves the first entity from `table`.
@@ -39,7 +39,7 @@ export async function first<T, P extends keyof T>(
     return minKey ? btree.get(minKey) ?? null : null;
   }
 
-  const res = await many(table, query);
+  const res = get(table, query);
   const entity = table[BlinkKey].db[BlinkKey].options.clone ? clone(res[0]) : res[0];
   return entity ?? null;
 }
