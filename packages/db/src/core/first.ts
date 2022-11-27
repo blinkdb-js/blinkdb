@@ -36,10 +36,15 @@ export async function first<T, P extends keyof T>(
   if (query === undefined) {
     const btree = table[BlinkKey].storage.primary;
     const minKey = btree.minKey();
-    return minKey ? btree.get(minKey) ?? null : null;
+    let entity = minKey ? btree.get(minKey) ?? null : null;
+    entity = table[BlinkKey].db[BlinkKey].options.clone ? clone(entity) : entity;
+    return entity;
   }
 
   const res = get(table, query);
+  if (!res[0]) {
+    return null;
+  }
   const entity = table[BlinkKey].db[BlinkKey].options.clone ? clone(res[0]) : res[0];
-  return entity ?? null;
+  return entity;
 }
