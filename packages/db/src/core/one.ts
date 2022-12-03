@@ -1,8 +1,8 @@
+import { get } from "../query";
 import { Query } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
-import { many } from "./many";
 
 /**
  * Retrieves the first entity from `table` matching the given `filter`.
@@ -19,7 +19,7 @@ export async function one<T, P extends keyof T>(
   table: Table<T, P>,
   query: Query<T, P>
 ): Promise<T> {
-  const res = await many(table, query);
+  const res = get(table, query);
   if (res.length === 0) {
     throw new Error("No items found for the given query.");
   } else if (res.length > 1) {
