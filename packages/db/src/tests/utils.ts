@@ -26,6 +26,13 @@ export function generateRandomUsers(): User[] {
 }
 
 /**
+ * Comparison function for sorting users.
+ */
+export function sortById(a: User, b: User): number {
+  return parseInt(b.id) - parseInt(a.id);
+}
+
+/**
  * Creates a function that generates pseudo-random numbers.
  *
  * Copied from https://javascript.info/task/pseudo-random-generator.
