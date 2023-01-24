@@ -1,68 +1,73 @@
-import { createDB, Database } from "./createDB";
+import { User, generateRandomUsers } from "../tests/utils";
+import { createDB } from "./createDB";
 import { createTable, Table } from "./createTable";
 import { first } from "./first";
-import { insert } from "./insert";
+import { insertMany } from "./insertMany";
 import { many } from "./many";
+import { one } from "./one";
 import { removeMany } from "./removeMany";
 
-interface User {
-  id: number;
-  name: string;
-  age?: number;
-}
-
-let db: Database;
+let users: User[];
 let userTable: Table<User, "id">;
 
 beforeEach(async () => {
-  db = createDB();
-  userTable = createTable<User>(db, "users")();
-
-  await insert(userTable, { id: 0, name: "Alice", age: 16 });
-  await insert(userTable, { id: 1, name: "Bob" });
-  await insert(userTable, { id: 2, name: "Charlie", age: 49 });
+  users = generateRandomUsers();
+  const db = createDB();
+  userTable = createTable<User>(
+    db,
+    "users"
+  )({
+    primary: "id",
+    indexes: ["name"],
+  });
+  await insertMany(userTable, users);
 });
 
 it("should return false if the primary key was not found", async () => {
-  const res = await removeMany(userTable, [{ id: 123 }]);
+  const res = await removeMany(userTable, [{ id: "1337" }]);
+
   expect(res).toBe(false);
 });
 
 it("should return false if one of the primary keys was not found", async () => {
-  const res = await removeMany(userTable, [{ id: 1 }, { id: 2 }, { id: 5 }]);
+  const res = await removeMany(userTable, [{ id: "1" }, { id: "2" }, { id: "1337" }]);
+
   expect(res).toBe(false);
 });
 
 it("should return true if the primary key was found", async () => {
-  const res = await removeMany(userTable, [{ id: 1 }]);
+  const res = await removeMany(userTable, [{ id: "1" }]);
+
   expect(res).toBe(true);
 });
 
 it("should return true if all of the primary keys were found", async () => {
-  const res = await removeMany(userTable, [{ id: 1 }, { id: 2 }, { id: 5 }]);
-  expect(res).toBe(false);
+  const res = await removeMany(userTable, [{ id: "1" }, { id: "2" }, { id: "5" }]);
+
+  expect(res).toBe(true);
 });
 
 it("should remove an entity", async () => {
-  await removeMany(userTable, [{ id: 1 }]);
-  const bob = await first(userTable, { where: { id: 1 } });
+  await removeMany(userTable, [{ id: "1" }]);
+  const bob = await first(userTable, { where: { id: "1" } });
+
   expect(bob).toBe(null);
 });
 
 it("should remove entities", async () => {
-  await removeMany(userTable, [{ id: 0 }, { id: 1 }]);
-  const results = await many(userTable, { where: { id: { between: [0, 1] } } });
+  await removeMany(userTable, [{ id: "0" }, { id: "1" }]);
+  const results = await many(userTable, { where: { id: { between: ["0", "1"] } } });
+
   expect(results).toStrictEqual([]);
 });
 
 it("should correctly remove an entity from a table with index", async () => {
-  userTable = createTable<User>(db, "users")({ primary: "id", indexes: ["name"] });
+  const firstUser = await one(userTable, { where: { id: "30" } });
 
-  await insert(userTable, { id: 0, name: "Alice", age: 16 });
+  await removeMany(userTable, [firstUser]);
 
-  await removeMany(userTable, [{ id: 0 }]);
-  const alice = await first(userTable, { where: { id: 0 } });
-  expect(alice).toBe(null);
-  const alice2 = await first(userTable, { where: { name: "Alice" } });
-  expect(alice2).toBe(null);
+  const userWithIndex = await first(userTable, { where: { id: firstUser.id } });
+  expect(userWithIndex).not.toStrictEqual(firstUser);
+  const userWithName = await first(userTable, { where: { name: firstUser.name } });
+  expect(userWithName).not.toStrictEqual(firstUser);
 });
