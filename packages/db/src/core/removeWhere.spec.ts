@@ -1,41 +1,38 @@
-import { createDB, Database } from "./createDB";
+import { User, generateRandomUsers, sortById } from "../tests/utils";
+import { createDB } from "./createDB";
 import { createTable, Table } from "./createTable";
 import { insertMany } from "./insertMany";
 import { many } from "./many";
 import { removeWhere } from "./removeWhere";
 
-interface User {
-  id: number;
-  name: string;
-  age?: number;
-}
-
-let db: Database;
+let users: User[];
 let userTable: Table<User, "id">;
 
 beforeEach(async () => {
-  db = createDB();
-  userTable = createTable<User>(db, "users")();
-
-  await insertMany(userTable, [
-    { id: 0, name: "Alice", age: 16 },
-    { id: 1, name: "Bob" },
-    { id: 2, name: "Charlie", age: 49 },
-  ]);
+  users = generateRandomUsers();
+  const db = createDB();
+  userTable = createTable<User>(
+    db,
+    "users"
+  )({
+    primary: "id",
+    indexes: ["name"],
+  });
+  await insertMany(userTable, users);
 });
 
 it("should remove no items if no items match", async () => {
-  await removeWhere(userTable, { where: { age: 1 } });
+  await removeWhere(userTable, { where: { age: 1024 } });
+  const receivedUsers = await many(userTable);
 
-  expect(await many(userTable)).toStrictEqual([
-    { id: 0, name: "Alice", age: 16 },
-    { id: 1, name: "Bob" },
-    { id: 2, name: "Charlie", age: 49 },
-  ]);
+  expect(receivedUsers.sort(sortById)).toStrictEqual(users.sort(sortById));
 });
 
 it("should remove items", async () => {
-  await removeWhere(userTable, { where: { age: { gt: 0 } } });
+  await removeWhere(userTable, { where: { name: "Alice" } });
+  const receivedUsers = await many(userTable);
 
-  expect(await many(userTable)).toStrictEqual([{ id: 1, name: "Bob" }]);
+  expect(receivedUsers.sort(sortById)).toStrictEqual(
+    users.filter((u) => u.name !== "Alice").sort(sortById)
+  );
 });
