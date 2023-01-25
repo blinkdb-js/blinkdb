@@ -1,15 +1,12 @@
-import { createDB, createTable, insert, Table } from "../../core";
+import { createDB, createTable, insertMany, Table } from "../../core";
+import { generateRandomUsers, User } from "../../tests/utils";
 import { selectForWhere } from "./where";
 
-interface User {
-  id: string;
-  name: string;
-  age: number;
-}
-
+let users: User[];
 let userTable: Table<User, "id">;
 
 beforeEach(async () => {
+  users = generateRandomUsers();
   const db = createDB();
   userTable = createTable<User>(
     db,
@@ -18,9 +15,7 @@ beforeEach(async () => {
     primary: "id",
     indexes: ["age"],
   });
-  await insert(userTable, { id: "0", name: "Alice", age: 40 });
-  await insert(userTable, { id: "1", name: "Bob", age: 50 });
-  await insert(userTable, { id: "2", name: "Charlie", age: 60 });
+  await insertMany(userTable, users);
 });
 
 it("should return no rows if where contains no matchers", () => {
