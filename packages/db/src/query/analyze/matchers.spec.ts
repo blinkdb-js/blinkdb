@@ -4,10 +4,6 @@ import { analyzeMatcher } from "./matchers";
 let btree: BTree<number, number>;
 let emptyBtree: BTree<number, number>;
 
-interface User {
-  f: number;
-}
-
 beforeAll(() => {
   btree = new BTree();
   emptyBtree = new BTree();
