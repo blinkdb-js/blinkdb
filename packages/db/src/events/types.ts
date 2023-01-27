@@ -19,10 +19,7 @@ export type Hook<
   T extends object = any,
   P extends keyof T = keyof T,
   A extends HookAction = HookAction
-> = (
-  next: () => HookReturn<T, P, A> | Promise<HookReturn<T, P, A>>,
-  context: HookContext<T, P, A>
-) => HookReturn<T, P, A> | Promise<HookReturn<T, P, A>>;
+> = (context: HookContext<T, P, A>) => HookReturn<T, P, A> | Promise<HookReturn<T, P, A>>;
 
 export type HookContext<
   T extends object = any,
@@ -32,6 +29,7 @@ export type HookContext<
   action: A;
   table: string;
   params: HookParams<T, P, A>;
+  next: () => HookReturn<T, P, A> | Promise<HookReturn<T, P, A>>;
 };
 
 export type HookParams<
