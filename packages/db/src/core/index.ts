@@ -13,5 +13,6 @@ export * from "./removeWhere";
 export * from "./update";
 export * from "./updateMany";
 export * from "./updateWhere";
+export * from "./use";
 export * from "./uuid";
 export * from "./watch";

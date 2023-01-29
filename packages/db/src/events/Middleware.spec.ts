@@ -1,6 +1,7 @@
 import { executeHooks } from "./Middleware";
 import { Hook, HookAction, HookContext } from "./types";
 import { User } from "../tests/utils";
+import { isAction } from "../core/use";
 
 it("should work without hooks", async () => {
   const context = {} as HookContext<User, "id", "count">;
@@ -18,14 +19,6 @@ describe("hooks", () => {
 
     expect(result).toBe(123);
   });
-
-  function isAction<
-    T extends object = any,
-    P extends keyof T = keyof T,
-    A extends HookAction = HookAction
-  >(ctx: HookContext<T, P>, action: A): ctx is HookContext<T, P, A> {
-    return ctx.action === action;
-  }
 
   it("should be able to modify values", async () => {
     const context = {

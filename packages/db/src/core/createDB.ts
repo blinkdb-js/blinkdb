@@ -1,3 +1,5 @@
+import { Hook } from "../events/types";
+
 export const BlinkKey = Symbol("BlinkDB");
 
 /**
@@ -17,6 +19,7 @@ export function createDB(options?: Partial<DBOptions>): Database {
         clone: true,
         ...options,
       },
+      hooks: [],
     },
   };
 }
@@ -37,5 +40,6 @@ export interface DBOptions {
 export interface Database {
   [BlinkKey]: {
     options: Required<DBOptions>;
+    hooks: Hook<any, any>[];
   };
 }

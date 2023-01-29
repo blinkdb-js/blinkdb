@@ -1,7 +1,9 @@
 import BTree from "sorted-btree";
 import { Dispatcher } from "../events/Dispatcher";
+import { Hook } from "../events/types";
 import { OrdProps } from "../query/types";
 import { BlinkKey, Database } from "./createDB";
+import { executeHooks } from "../events/Middleware";
 
 /**
  * Creates a new table where entities can be inserted/updated/deleted/retrieved.
@@ -66,16 +68,16 @@ export function createTable<T extends { id: string | number }>(
  * const db = createDB();
  * const userTable = createTable<User>(db, "users")();
  */
-export function createTable<T>(
+export function createTable<T extends object>(
   db: Database,
   tableName: string
 ): <P extends keyof T>(options: TableOptions<T, P>) => Table<ValidEntity<T>, P>;
 
-export function createTable<T>(db: Database, tableName: string) {
+export function createTable<T extends object>(db: Database, tableName: string) {
   return <P extends keyof T>(options?: TableOptions<T, P>): Table<ValidEntity<T>, P> => {
     const primaryBTree = new BTree();
     primaryBTree.totalItemSize = 0;
-    return {
+    const table: Table<ValidEntity<T>, P> = {
       [BlinkKey]: {
         db,
         tableName,
@@ -99,12 +101,14 @@ export function createTable<T>(db: Database, tableName: string) {
           onRemove: new Dispatcher(),
           onUpdate: new Dispatcher(),
         },
+        hooks: [],
         options: {
           primary: options?.primary ?? ("id" as P),
           indexes: options?.indexes ?? [],
         },
       },
     };
+    return table;
   };
 }
 
@@ -124,7 +128,7 @@ export interface TableOptions<T, P extends keyof T> {
   indexes?: Exclude<keyof T, P>[];
 }
 
-export interface Table<T, P extends keyof T> {
+export interface Table<T extends object, P extends keyof T> {
   [BlinkKey]: {
     db: Database;
     tableName: string;
@@ -138,6 +142,7 @@ export interface Table<T, P extends keyof T> {
       onRemove: Dispatcher<{ entity: T }[]>;
       onClear: Dispatcher;
     };
+    hooks: Hook<T, P>[];
     options: Required<TableOptions<T, P>>;
   };
 }
