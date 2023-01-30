@@ -5,6 +5,7 @@ import { createTable, Table } from "./createTable";
 import { first } from "./first";
 import { insert } from "./insert";
 import { insertMany } from "./insertMany";
+import { use } from "./use";
 
 let users: User[];
 let userTable: Table<User, "id">;
@@ -61,4 +62,14 @@ describe("with filter", () => {
 
     expect(item).not.toBe(users[0]);
   });
+});
+
+it("should execute first hooks", async () => {
+  const fn = jest.fn();
+
+  use(userTable, (ctx) => fn(ctx.action));
+  await first(userTable);
+
+  expect(fn).toHaveBeenCalledTimes(1);
+  expect(fn).toHaveBeenCalledWith("first");
 });

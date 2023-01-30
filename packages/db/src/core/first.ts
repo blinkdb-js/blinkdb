@@ -1,3 +1,4 @@
+import { executeTableHooks } from "../events/Middleware";
 import { get } from "../query";
 import { Query } from "../query/types";
 import { clone } from "./clone";
@@ -13,7 +14,9 @@ import { Table } from "./createTable";
  * // Retrieve the first user
  * const firstUser = await first(userTable);
  */
-export async function first<T, P extends keyof T>(table: Table<T, P>): Promise<T | null>;
+export async function first<T extends object, P extends keyof T>(
+  table: Table<T, P>
+): Promise<T | null>;
 
 /**
  * Retrieves the first entity from `table` matching the given `filter`.
@@ -24,12 +27,21 @@ export async function first<T, P extends keyof T>(table: Table<T, P>): Promise<T
  * // Retrieve the first user named 'Alice'
  * const firstUser = await first(userTable, { where: { name: "Alice" } });
  */
-export async function first<T, P extends keyof T>(
+export async function first<T extends object, P extends keyof T>(
   table: Table<T, P>,
   query: Query<T, P>
 ): Promise<T | null>;
 
-export async function first<T, P extends keyof T>(
+export async function first<T extends object, P extends keyof T>(
+  table: Table<T, P>,
+  query?: Query<T, P>
+): Promise<T | null> {
+  return executeTableHooks(table, { action: "first", params: [table, query] }, () =>
+    internalFirst(table, query)
+  );
+}
+
+export async function internalFirst<T extends object, P extends keyof T>(
   table: Table<T, P>,
   query?: Query<T, P>
 ): Promise<T | null> {

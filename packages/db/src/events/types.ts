@@ -62,8 +62,12 @@ export type HookAction =
 
 export type HookMethods<T extends object = any, P extends keyof T = keyof T> = {
   clear: typeof clear<T, P>;
-  count: (table: Table<T, P>, filter?: Filter<T>, options?: { exact: boolean }) => number;
-  first: typeof first<T, P>;
+  count: (
+    table: Table<T, P>,
+    filter?: Filter<T>,
+    options?: { exact: boolean }
+  ) => Promise<number>;
+  first: (table: Table<T, P>, query?: Query<T, P>) => Promise<T | null>;
   insert: typeof insert<T, P>;
   insertMany: typeof insertMany<T, P>;
   many: typeof many<T, P>;
