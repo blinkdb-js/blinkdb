@@ -26,12 +26,9 @@ it("should clear the table", async () => {
 it("should execute clear hooks", async () => {
   const fn = jest.fn();
 
-  use(userTable, (ctx) => {
-    if (isAction(ctx, "clear")) {
-      fn();
-    }
-  });
+  use(userTable, (ctx) => fn(ctx.action));
   await clear(userTable);
 
   expect(fn).toHaveBeenCalledTimes(1);
+  expect(fn).toHaveBeenCalledWith("clear");
 });
