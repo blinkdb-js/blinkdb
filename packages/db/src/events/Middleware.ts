@@ -15,8 +15,8 @@ export function executeHooks<
 >(
   context: Omit<HookContext<T, P, A>, "next">,
   hooks: Hook<T, P, A>[],
-  impl: () => HookReturn<T, P, A> | Promise<HookReturn<T, P, A>>
-): HookReturn<T, P, A> | Promise<HookReturn<T, P, A>> {
+  impl: () => HookReturn<T, P, A> | Awaited<HookReturn<T, P, A>>
+): HookReturn<T, P, A> | Awaited<HookReturn<T, P, A>> {
   const [step, ...next] = hooks;
   return step
     ? step({
