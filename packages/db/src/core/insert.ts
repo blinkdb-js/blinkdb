@@ -1,6 +1,6 @@
 import { executeTableHooks } from "../events/Middleware";
 import { Table } from "./createTable";
-import { insertMany } from "./insertMany";
+import { internalInsertMany } from "./insertMany";
 
 /**
  * Inserts a new entity into `table`.
@@ -27,7 +27,7 @@ export async function internalInsert<T extends object, P extends keyof T>(
   table: Table<T, P>,
   entity: Create<T, P>
 ): Promise<T[P]> {
-  const ids = await insertMany(table, [entity]);
+  const ids = await internalInsertMany(table, [entity]);
   return ids[0];
 }
 

@@ -1,3 +1,4 @@
+import { executeTableHooks } from "../events/Middleware";
 import { OrdProps } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
@@ -19,7 +20,18 @@ import { Create } from "./insert";
  *   { id: uuid(), name: "Charlie", age: 34 }
  * ]);
  */
-export async function insertMany<T, P extends keyof T>(
+export async function insertMany<T extends object, P extends keyof T>(
+  table: Table<T, P>,
+  entities: Create<T, P>[]
+): Promise<T[P][]> {
+  return executeTableHooks(
+    table,
+    { action: "insertMany", params: [table, entities] },
+    () => internalInsertMany(table, entities)
+  );
+}
+
+export async function internalInsertMany<T extends object, P extends keyof T>(
   table: Table<T, P>,
   entities: Create<T, P>[]
 ): Promise<T[P][]> {

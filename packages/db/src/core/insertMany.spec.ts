@@ -3,6 +3,7 @@ import { createDB, Database } from "./createDB";
 import { createTable, Table } from "./createTable";
 import { insertMany } from "./insertMany";
 import { one } from "./one";
+import { use } from "./use";
 
 let users: User[];
 let userTable: Table<User, "id">;
@@ -48,4 +49,14 @@ it("should insert items retrievable by property", async () => {
 it("should prevent duplicate primary keys", async () => {
   const fn = async () => await insertMany(userTable, [users[0], users[0]]);
   expect(fn).rejects.toThrowError(`Primary key ${users[0].id} already in use`);
+});
+
+it("should execute insertMany hooks", async () => {
+  const fn = jest.fn();
+
+  use(userTable, (ctx) => fn(ctx.action));
+  await insertMany(userTable, [users[0], users[1]]);
+
+  expect(fn).toHaveBeenCalledTimes(1);
+  expect(fn).toHaveBeenCalledWith("insertMany");
 });
