@@ -5,7 +5,7 @@ export * from "./createTable";
 export { first } from "./first";
 export { Create, insert } from "./insert";
 export { insertMany } from "./insertMany";
-export * from "./many";
+export { many } from "./many";
 export * from "./one";
 export * from "./remove";
 export * from "./removeMany";

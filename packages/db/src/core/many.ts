@@ -1,3 +1,4 @@
+import { executeTableHooks } from "../events/Middleware";
 import { get } from "../query";
 import { Query } from "../query/types";
 import { clone } from "./clone";
@@ -12,7 +13,9 @@ import { Table } from "./createTable";
  * const userTable = createTable<User>(db, "users")();
  * const allUsers = await many(userTable);
  */
-export async function many<T, P extends keyof T>(table: Table<T, P>): Promise<T[]>;
+export async function many<T extends object, P extends keyof T>(
+  table: Table<T, P>
+): Promise<T[]>;
 
 /**
  * Retrieve all entities from `table` that match the given `filter`.
@@ -33,12 +36,21 @@ export async function many<T, P extends keyof T>(table: Table<T, P>): Promise<T[
  *   }
  * });
  */
-export async function many<T, P extends keyof T>(
+export async function many<T extends object, P extends keyof T>(
   table: Table<T, P>,
   query?: Query<T, P>
 ): Promise<T[]>;
 
-export async function many<T, P extends keyof T>(
+export async function many<T extends object, P extends keyof T>(
+  table: Table<T, P>,
+  query?: Query<T, P>
+): Promise<T[]> {
+  return executeTableHooks(table, { action: "many", params: [table, query] }, () =>
+    internalMany(table, query)
+  );
+}
+
+export async function internalMany<T extends object, P extends keyof T>(
   table: Table<T, P>,
   query?: Query<T, P>
 ): Promise<T[]> {

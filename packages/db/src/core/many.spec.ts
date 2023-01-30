@@ -4,6 +4,7 @@ import { createDB, Database } from "./createDB";
 import { createTable, Table } from "./createTable";
 import { many } from "./many";
 import { insertMany } from "./insertMany";
+import { use } from "./use";
 
 let users: User[];
 let userTable: Table<User, "id">;
@@ -54,4 +55,14 @@ describe("with filter", () => {
 
     expect(items).not.toBe(users.filter((u) => u.id === "0"));
   });
+});
+
+it("should execute many hooks", async () => {
+  const fn = jest.fn();
+
+  use(userTable, (ctx) => fn(ctx.action));
+  await many(userTable);
+
+  expect(fn).toHaveBeenCalledTimes(1);
+  expect(fn).toHaveBeenCalledWith("many");
 });
