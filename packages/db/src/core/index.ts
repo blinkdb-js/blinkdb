@@ -7,7 +7,7 @@ export { Create, insert } from "./insert";
 export { insertMany } from "./insertMany";
 export { many } from "./many";
 export { one } from "./one";
-export * from "./remove";
+export { Ids, remove } from "./remove";
 export * from "./removeMany";
 export * from "./removeWhere";
 export * from "./update";

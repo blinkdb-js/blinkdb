@@ -6,6 +6,7 @@ import { insert } from "./insert";
 import { remove } from "./remove";
 import { insertMany } from "./insertMany";
 import { one } from "./one";
+import { use } from "./use";
 
 let users: User[];
 let userTable: Table<User, "id">;
@@ -13,9 +14,12 @@ let userTable: Table<User, "id">;
 beforeEach(async () => {
   users = generateRandomUsers();
   const db = createDB();
-  userTable = createTable<User>(db, "users")({
+  userTable = createTable<User>(
+    db,
+    "users"
+  )({
     primary: "id",
-    indexes: ["name"]
+    indexes: ["name"],
   });
   await insertMany(userTable, users);
 });
@@ -40,12 +44,23 @@ it("should remove an entity", async () => {
 });
 
 it("should correctly remove an entity from a table with index", async () => {
-  const firstUser = await one(userTable, { where: { id: "30" }});
+  const firstUser = await one(userTable, { where: { id: "30" } });
 
   await remove(userTable, firstUser);
 
-  const userWithIndex = await first(userTable, { where: { id: firstUser.id }});
+  const userWithIndex = await first(userTable, { where: { id: firstUser.id } });
   expect(userWithIndex).not.toStrictEqual(firstUser);
-  const userWithName = await first(userTable, { where: { name: firstUser.name }});
+  const userWithName = await first(userTable, { where: { name: firstUser.name } });
   expect(userWithName).not.toStrictEqual(firstUser);
+});
+
+it("should execute remove hooks", async () => {
+  const firstUser = await one(userTable, { where: { id: "30" } });
+  const fn = jest.fn();
+
+  use(userTable, (ctx) => fn(ctx.action));
+  await remove(userTable, firstUser);
+
+  expect(fn).toHaveBeenCalledTimes(1);
+  expect(fn).toHaveBeenCalledWith("remove");
 });

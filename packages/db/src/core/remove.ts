@@ -1,3 +1,4 @@
+import { executeTableHooks } from "../events/Middleware";
 import { Table } from "./createTable";
 import { removeMany } from "./removeMany";
 
@@ -13,7 +14,16 @@ import { removeMany } from "./removeMany";
  * // Remove Alice from the table
  * await remove(userTable, { id: userId });
  */
-export async function remove<T, P extends keyof T>(
+export async function remove<T extends object, P extends keyof T>(
+  table: Table<T, P>,
+  entity: Ids<T, P>
+): Promise<boolean> {
+  return executeTableHooks(table, { action: "remove", params: [table, entity] }, () =>
+    internalRemove(table, entity)
+  );
+}
+
+export async function internalRemove<T extends object, P extends keyof T>(
   table: Table<T, P>,
   entity: Ids<T, P>
 ): Promise<boolean> {
