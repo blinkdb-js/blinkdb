@@ -1,3 +1,4 @@
+import { executeTableHooks } from "../events/Middleware";
 import { get } from "../query";
 import { Query } from "../query/types";
 import { clone } from "./clone";
@@ -15,7 +16,16 @@ import { Table } from "./createTable";
  * // Retrieve the user with id 10
  * const userWithId = await one(userTable, { where: { id: 10 } });
  */
-export async function one<T, P extends keyof T>(
+export async function one<T extends object, P extends keyof T>(
+  table: Table<T, P>,
+  query: Query<T, P>
+): Promise<T> {
+  return executeTableHooks(table, { action: "one", params: [table, query] }, () =>
+    internalOne(table, query)
+  );
+}
+
+export async function internalOne<T extends object, P extends keyof T>(
   table: Table<T, P>,
   query: Query<T, P>
 ): Promise<T> {
