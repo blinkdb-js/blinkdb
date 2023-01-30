@@ -1,4 +1,4 @@
-export * from "./clear";
+export { clear } from "./clear";
 export * from "./count";
 export * from "./createDB";
 export * from "./createTable";

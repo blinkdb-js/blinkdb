@@ -4,6 +4,7 @@ import { createDB } from "./createDB";
 import { createTable, Table } from "./createTable";
 import { insertMany } from "./insertMany";
 import { many } from "./many";
+import { isAction, use } from "./use";
 
 let users: User[];
 let userTable: Table<User, "id">;
@@ -20,4 +21,17 @@ it("should clear the table", async () => {
   const items = await many(userTable);
 
   expect(items).toHaveLength(0);
+});
+
+it("should execute clear hooks", async () => {
+  const fn = jest.fn();
+
+  use(userTable, (ctx) => {
+    if (isAction(ctx, "clear")) {
+      fn();
+    }
+  });
+  await clear(userTable);
+
+  expect(fn).toHaveBeenCalledTimes(1);
 });
