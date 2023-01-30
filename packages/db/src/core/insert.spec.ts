@@ -3,6 +3,7 @@ import { createDB } from "./createDB";
 import { createTable, Table } from "./createTable";
 import { insert } from "./insert";
 import { one } from "./one";
+import { use } from "./use";
 
 let users: User[];
 let userTable: Table<User, "id">;
@@ -51,4 +52,14 @@ it("should prevent duplicate primary keys", async () => {
   const fn = async () => await insert(userTable, users[0]);
 
   expect(fn).rejects.toThrow(`Primary key ${users[0].id} already in use`);
+});
+
+it("should execute insert hooks", async () => {
+  const fn = jest.fn();
+
+  use(userTable, (ctx) => fn(ctx.action));
+  await insert(userTable, users[0]);
+
+  expect(fn).toHaveBeenCalledTimes(1);
+  expect(fn).toHaveBeenCalledWith("insert");
 });

@@ -3,7 +3,7 @@ export { count } from "./count";
 export * from "./createDB";
 export * from "./createTable";
 export { first } from "./first";
-export * from "./insert";
+export { Create, insert } from "./insert";
 export * from "./insertMany";
 export * from "./many";
 export * from "./one";

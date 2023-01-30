@@ -1,3 +1,4 @@
+import { executeTableHooks } from "../events/Middleware";
 import { Table } from "./createTable";
 import { insertMany } from "./insertMany";
 
@@ -13,7 +14,16 @@ import { insertMany } from "./insertMany";
  * const bobId = await insert(userTable, { id: uuid(), name: "Bob", age: 45 });
  * const charlieId = await insert(userTable, { id: uuid(), name: "Charlie", age: 34 });
  */
-export async function insert<T, P extends keyof T>(
+export async function insert<T extends object, P extends keyof T>(
+  table: Table<T, P>,
+  entity: Create<T, P>
+): Promise<T[P]> {
+  return executeTableHooks(table, { action: "insert", params: [table, entity] }, () =>
+    internalInsert(table, entity)
+  );
+}
+
+export async function internalInsert<T extends object, P extends keyof T>(
   table: Table<T, P>,
   entity: Create<T, P>
 ): Promise<T[P]> {
