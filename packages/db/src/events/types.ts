@@ -8,12 +8,13 @@ import {
   remove,
   removeMany,
   removeWhere,
+  Table,
   update,
   updateMany,
   updateWhere,
   watch,
 } from "../core";
-import { count } from "../core/count";
+import { Filter } from "../query/types";
 
 export type Hook<
   T extends object = any,
@@ -61,7 +62,7 @@ export type HookAction =
 
 export type HookMethods<T extends object = any, P extends keyof T = keyof T> = {
   clear: typeof clear<T, P>;
-  count: typeof count<T, P>;
+  count: (table: Table<T, P>, filter?: Filter<T>, options?: { exact: boolean }) => number;
   first: typeof first<T, P>;
   insert: typeof insert<T, P>;
   insertMany: typeof insertMany<T, P>;

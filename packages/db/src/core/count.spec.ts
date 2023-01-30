@@ -4,6 +4,7 @@ import { count } from "./count";
 import { createDB } from "./createDB";
 import { createTable, Table } from "./createTable";
 import { insertMany } from "./insertMany";
+import { isAction, use } from "./use";
 
 let users: User[];
 let userTable: Table<User, "id">;
@@ -50,4 +51,17 @@ it("should return an estimated count if a filter is provided", async () => {
 
   // "name" isn't an index, so the size will be the table size
   expect(size).toBe(users.length);
+});
+
+it("should execute count hooks", async () => {
+  const fn = jest.fn();
+
+  use(userTable, (ctx) => {
+    if (isAction(ctx, "count")) {
+      fn();
+    }
+  });
+  await count(userTable);
+
+  expect(fn).toHaveBeenCalledTimes(1);
 });
