@@ -3,7 +3,10 @@ import { Or } from "../types";
 import { analyzeAnd } from "./and";
 import { analyzeWhere } from "./where";
 
-export function analyzeOr<T, P extends keyof T>(table: Table<T, P>, or: Or<T>): number {
+export function analyzeOr<T extends object, P extends keyof T>(
+  table: Table<T, P>,
+  or: Or<T>
+): number {
   let complexity = 0;
 
   for (const key in or.OR) {

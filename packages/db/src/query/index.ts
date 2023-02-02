@@ -8,7 +8,10 @@ import { Query } from "./types";
 /**
  * retrieve all items matching the given `filter`.
  */
-export function get<T, P extends keyof T>(table: Table<T, P>, filter: Query<T, P>): T[] {
+export function get<T extends object, P extends keyof T>(
+  table: Table<T, P>,
+  filter: Query<T, P>
+): T[] {
   let items: T[] = [];
 
   if (filter.where) {

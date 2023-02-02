@@ -7,7 +7,7 @@ import { analyzeWhere } from "./where";
 /**
  * @returns the theoretical complexity of a given filter.
  */
-export function analyze<T, P extends keyof T>(
+export function analyze<T extends object, P extends keyof T>(
   table: Table<T, P>,
   filter: Where<T> | And<T> | Or<T>
 ): number {

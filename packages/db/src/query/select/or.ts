@@ -11,7 +11,7 @@ import { selectForWhere } from "./where";
  *
  * @returns the selected items from the database, or `null` in case a full table scan is required.
  */
-export function selectForOr<T, P extends keyof T>(
+export function selectForOr<T extends object, P extends keyof T>(
   table: Table<T, P>,
   or: Or<T>,
   cb: SelectCallback<T>

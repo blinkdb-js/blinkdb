@@ -2,7 +2,7 @@ import { BlinkKey, Table } from "../../core";
 import { AllMatchers, OrdProps, Where } from "../types";
 import { analyzeMatcher } from "./matchers";
 
-export function analyzeWhere<T, P extends keyof T>(
+export function analyzeWhere<T extends object, P extends keyof T>(
   table: Table<T, P>,
   where: Where<T>
 ): number {

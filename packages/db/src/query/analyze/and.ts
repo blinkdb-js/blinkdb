@@ -3,7 +3,7 @@ import { And } from "../types";
 import { analyzeOr } from "./or";
 import { analyzeWhere } from "./where";
 
-export function analyzeAnd<T, P extends keyof T>(
+export function analyzeAnd<T extends object, P extends keyof T>(
   table: Table<T, P>,
   and: And<T>
 ): number {
