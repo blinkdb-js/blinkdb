@@ -1,6 +1,6 @@
 import { executeTableHooks } from "../events/Middleware";
 import { Table } from "./createTable";
-import { removeMany } from "./removeMany";
+import { internalRemoveMany } from "./removeMany";
 
 /**
  * Removes a given `entity` from the `table`.
@@ -27,7 +27,7 @@ export async function internalRemove<T extends object, P extends keyof T>(
   table: Table<T, P>,
   entity: Ids<T, P>
 ): Promise<boolean> {
-  return removeMany(table, [entity]);
+  return internalRemoveMany(table, [entity]);
 }
 
 export type Ids<T, P extends keyof T> = { [K in P]-?: T[P] };

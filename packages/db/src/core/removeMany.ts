@@ -1,3 +1,4 @@
+import { executeTableHooks } from "../events/Middleware";
 import { OrdProps } from "../query/types";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
@@ -15,7 +16,18 @@ import { Ids } from "./remove";
  * // Remove Alice from the table
  * await remove(userTable, { id: userId });
  */
-export async function removeMany<T, P extends keyof T>(
+export async function removeMany<T extends object, P extends keyof T>(
+  table: Table<T, P>,
+  entities: Ids<T, P>[]
+): Promise<boolean> {
+  return executeTableHooks(
+    table,
+    { action: "removeMany", params: [table, entities] },
+    () => internalRemoveMany(table, entities)
+  );
+}
+
+export async function internalRemoveMany<T extends object, P extends keyof T>(
   table: Table<T, P>,
   entities: Ids<T, P>[]
 ): Promise<boolean> {

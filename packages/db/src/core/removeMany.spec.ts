@@ -6,6 +6,7 @@ import { insertMany } from "./insertMany";
 import { many } from "./many";
 import { one } from "./one";
 import { removeMany } from "./removeMany";
+import { use } from "./use";
 
 let users: User[];
 let userTable: Table<User, "id">;
@@ -70,4 +71,18 @@ it("should correctly remove an entity from a table with index", async () => {
   expect(userWithIndex).not.toStrictEqual(firstUser);
   const userWithName = await first(userTable, { where: { name: firstUser.name } });
   expect(userWithName).not.toStrictEqual(firstUser);
+});
+
+it("should execute remove hooks", async () => {
+  const firstUser = await one(userTable, { where: { id: "30" } });
+  const fn = jest.fn();
+
+  use(userTable, (ctx) => {
+    fn(ctx.action);
+    return ctx.next();
+  });
+  await removeMany(userTable, [firstUser]);
+
+  expect(fn).toHaveBeenCalledTimes(1);
+  expect(fn).toHaveBeenCalledWith("removeMany");
 });
