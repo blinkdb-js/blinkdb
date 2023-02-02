@@ -1,10 +1,11 @@
+import { executeTableHooks } from "../events/Middleware";
 import { get } from "../query";
 import { Filter } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 import { Diff } from "./update";
-import { updateMany } from "./updateMany";
+import { internalUpdateMany } from "./updateMany";
 
 /**
  * Modifies all entities that match the given `filter` using the provided `callback`.
@@ -25,6 +26,18 @@ export async function updateWhere<T extends object, P extends keyof T>(
   filter: Filter<T>,
   callback: (item: T) => Diff<T, P> | Promise<Diff<T, P>>
 ): Promise<void> {
+  return executeTableHooks(
+    table,
+    { action: "updateWhere", params: [table, filter, callback] },
+    () => internalUpdateWhere(table, filter, callback)
+  );
+}
+
+export async function internalUpdateWhere<T extends object, P extends keyof T>(
+  table: Table<T, P>,
+  filter: Filter<T>,
+  callback: (item: T) => Diff<T, P> | Promise<Diff<T, P>>
+): Promise<void> {
   const primaryKeyProperty = table[BlinkKey].options.primary;
 
   let items = get(table, filter);
@@ -38,5 +51,5 @@ export async function updateWhere<T extends object, P extends keyof T>(
       return newItem;
     })
   );
-  return await updateMany(table, modifiedItems);
+  return await internalUpdateMany(table, modifiedItems);
 }

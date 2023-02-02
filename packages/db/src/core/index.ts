@@ -12,7 +12,7 @@ export { removeMany } from "./removeMany";
 export { removeWhere } from "./removeWhere";
 export { Diff, update } from "./update";
 export { updateMany } from "./updateMany";
-export * from "./updateWhere";
+export { updateWhere } from "./updateWhere";
 export * from "./use";
 export * from "./uuid";
 export * from "./watch";

@@ -5,6 +5,7 @@ import { insertMany } from "./insertMany";
 import { many } from "./many";
 import { one } from "./one";
 import { updateWhere } from "./updateWhere";
+import { use } from "./use";
 
 let users: User[];
 let userTable: Table<User, "id">;
@@ -61,4 +62,19 @@ it("should not update items that dont match the filter", async () => {
   });
 
   expect(newUsers.map((u) => u.name)).not.toContain("None");
+});
+
+it("should execute remove hooks", async () => {
+  const fn = jest.fn();
+
+  use(userTable, (ctx) => {
+    fn(ctx.action);
+    return ctx.next();
+  });
+  await updateWhere(userTable, { where: { age: { gte: 0 } } }, (item) => {
+    return { ...item, age: item.age ? item.age + 1 : item.age };
+  });
+
+  expect(fn).toHaveBeenCalledTimes(1);
+  expect(fn).toHaveBeenCalledWith("updateWhere");
 });
