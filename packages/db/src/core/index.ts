@@ -10,7 +10,7 @@ export { one } from "./one";
 export { Ids, remove } from "./remove";
 export { removeMany } from "./removeMany";
 export { removeWhere } from "./removeWhere";
-export * from "./update";
+export { Diff, update } from "./update";
 export * from "./updateMany";
 export * from "./updateWhere";
 export * from "./use";
