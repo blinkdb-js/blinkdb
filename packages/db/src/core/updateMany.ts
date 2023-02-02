@@ -1,3 +1,4 @@
+import { executeTableHooks } from "../events/Middleware";
 import { OrdProps } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
@@ -22,6 +23,15 @@ import { Diff } from "./update";
  * ]);
  */
 export async function updateMany<T extends object, P extends keyof T>(
+  table: Table<T, P>,
+  diffs: Diff<T, P>[]
+): Promise<void> {
+  return executeTableHooks(table, { action: "updateMany", params: [table, diffs] }, () =>
+    internalUpdateMany(table, diffs)
+  );
+}
+
+export async function internalUpdateMany<T extends object, P extends keyof T>(
   table: Table<T, P>,
   diffs: Diff<T, P>[]
 ): Promise<void> {

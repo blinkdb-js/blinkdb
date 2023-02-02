@@ -1,6 +1,6 @@
 import { executeTableHooks } from "../events/Middleware";
 import { Table } from "./createTable";
-import { updateMany } from "./updateMany";
+import { internalUpdateMany } from "./updateMany";
 
 /**
  * Saves updates of the given `entity` in `table`.
@@ -27,7 +27,7 @@ export async function internalUpdate<T extends object, P extends keyof T>(
   table: Table<T, P>,
   diff: Diff<T, P>
 ): Promise<void> {
-  await updateMany(table, [diff]);
+  await internalUpdateMany(table, [diff]);
 }
 
 export type Diff<T extends object, P extends keyof T> = Partial<T> & {

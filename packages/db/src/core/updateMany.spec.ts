@@ -5,6 +5,7 @@ import { insert } from "./insert";
 import { insertMany } from "./insertMany";
 import { one } from "./one";
 import { updateMany } from "./updateMany";
+import { use } from "./use";
 
 let users: User[];
 let userTable: Table<User, "id">;
@@ -67,4 +68,17 @@ it("should update indexes", async () => {
     name: "Alice the II.",
     age: 25,
   });
+});
+
+it("should execute remove hooks", async () => {
+  const fn = jest.fn();
+
+  use(userTable, (ctx) => {
+    fn(ctx.action);
+    return ctx.next();
+  });
+  await updateMany(userTable, [{ id: "0", name: "Alice the II.", age: 25 }]);
+
+  expect(fn).toHaveBeenCalledTimes(1);
+  expect(fn).toHaveBeenCalledWith("updateMany");
 });

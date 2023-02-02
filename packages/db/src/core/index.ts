@@ -11,7 +11,7 @@ export { Ids, remove } from "./remove";
 export { removeMany } from "./removeMany";
 export { removeWhere } from "./removeWhere";
 export { Diff, update } from "./update";
-export * from "./updateMany";
+export { updateMany } from "./updateMany";
 export * from "./updateWhere";
 export * from "./use";
 export * from "./uuid";
