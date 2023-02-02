@@ -4,6 +4,7 @@ import { createTable, Table } from "./createTable";
 import { insertMany } from "./insertMany";
 import { many } from "./many";
 import { removeWhere } from "./removeWhere";
+import { use } from "./use";
 
 let users: User[];
 let userTable: Table<User, "id">;
@@ -35,4 +36,17 @@ it("should remove items", async () => {
   expect(receivedUsers.sort(sortById)).toStrictEqual(
     users.filter((u) => u.name !== "Alice").sort(sortById)
   );
+});
+
+it("should execute remove hooks", async () => {
+  const fn = jest.fn();
+
+  use(userTable, (ctx) => {
+    fn(ctx.action);
+    return ctx.next();
+  });
+  await removeWhere(userTable, { where: { name: "Alice" } });
+
+  expect(fn).toHaveBeenCalledTimes(1);
+  expect(fn).toHaveBeenCalledWith("removeWhere");
 });

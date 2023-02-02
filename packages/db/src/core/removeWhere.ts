@@ -1,8 +1,9 @@
+import { executeTableHooks } from "../events/Middleware";
 import { get } from "../query";
 import { Filter } from "../query/types";
 import { Table } from "./createTable";
 import { Ids } from "./remove";
-import { removeMany } from "./removeMany";
+import { internalRemoveMany } from "./removeMany";
 
 /**
  * Removes all entities that match the given `filter`.
@@ -18,9 +19,20 @@ import { removeMany } from "./removeMany";
  *   }
  * });
  */
-export async function removeWhere<T, P extends keyof T>(
+export async function removeWhere<T extends object, P extends keyof T>(
   table: Table<T, P>,
   filter: Filter<T>
 ): Promise<void> {
-  await removeMany(table, get(table, filter) as Ids<T, P>[]);
+  return executeTableHooks(
+    table,
+    { action: "removeWhere", params: [table, filter] },
+    () => internalRemoveWhere(table, filter)
+  );
+}
+
+export async function internalRemoveWhere<T extends object, P extends keyof T>(
+  table: Table<T, P>,
+  filter: Filter<T>
+): Promise<void> {
+  await internalRemoveMany(table, get(table, filter) as Ids<T, P>[]);
 }
