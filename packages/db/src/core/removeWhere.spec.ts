@@ -38,7 +38,7 @@ it("should remove items", async () => {
   );
 });
 
-it("should execute remove hooks", async () => {
+it("should execute removeWhere hooks", async () => {
   const fn = jest.fn();
 
   use(userTable, (ctx) => {

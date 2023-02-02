@@ -64,7 +64,7 @@ it("should not update items that dont match the filter", async () => {
   expect(newUsers.map((u) => u.name)).not.toContain("None");
 });
 
-it("should execute remove hooks", async () => {
+it("should execute updateWhere hooks", async () => {
   const fn = jest.fn();
 
   use(userTable, (ctx) => {

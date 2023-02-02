@@ -73,7 +73,7 @@ it("should correctly remove an entity from a table with index", async () => {
   expect(userWithName).not.toStrictEqual(firstUser);
 });
 
-it("should execute remove hooks", async () => {
+it("should execute removeMany hooks", async () => {
   const firstUser = await one(userTable, { where: { id: "30" } });
   const fn = jest.fn();
 

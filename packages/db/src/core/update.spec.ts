@@ -55,7 +55,7 @@ it("should update indexes", async () => {
   });
 });
 
-it("should execute remove hooks", async () => {
+it("should execute update hooks", async () => {
   const fn = jest.fn();
 
   use(userTable, (ctx) => {
