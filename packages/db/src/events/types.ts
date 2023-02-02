@@ -1,6 +1,5 @@
 import {
   clear,
-  first,
   insert,
   insertMany,
   many,
@@ -12,7 +11,6 @@ import {
   update,
   updateMany,
   updateWhere,
-  watch,
 } from "../core";
 import { Filter, Query } from "../query/types";
 
@@ -57,8 +55,7 @@ export type HookAction =
   | "removeWhere"
   | "update"
   | "updateMany"
-  | "updateWhere"
-  | "watch";
+  | "updateWhere";
 
 export type HookMethods<T extends object = any, P extends keyof T = keyof T> = {
   clear: typeof clear<T, P>;
@@ -78,5 +75,4 @@ export type HookMethods<T extends object = any, P extends keyof T = keyof T> = {
   update: typeof update<T, P>;
   updateMany: typeof updateMany<T, P>;
   updateWhere: typeof updateWhere<T, P>;
-  watch: typeof watch<T, P>;
 };
