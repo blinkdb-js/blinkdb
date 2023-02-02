@@ -42,7 +42,10 @@ it("should clone returned items", async () => {
 it("should execute one hooks", async () => {
   const fn = jest.fn();
 
-  use(userTable, (ctx) => fn(ctx.action));
+  use(userTable, (ctx) => {
+    fn(ctx.action);
+    return ctx.next();
+  });
   await one(userTable, { where: { id: "0" } });
 
   expect(fn).toHaveBeenCalledTimes(1);

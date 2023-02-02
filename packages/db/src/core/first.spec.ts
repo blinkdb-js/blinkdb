@@ -67,7 +67,10 @@ describe("with filter", () => {
 it("should execute first hooks", async () => {
   const fn = jest.fn();
 
-  use(userTable, (ctx) => fn(ctx.action));
+  use(userTable, (ctx) => {
+    fn(ctx.action);
+    return ctx.next();
+  });
   await first(userTable);
 
   expect(fn).toHaveBeenCalledTimes(1);

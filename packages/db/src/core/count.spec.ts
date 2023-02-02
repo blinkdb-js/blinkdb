@@ -56,7 +56,10 @@ it("should return an estimated count if a filter is provided", async () => {
 it("should execute count hooks", async () => {
   const fn = jest.fn();
 
-  use(userTable, (ctx) => fn(ctx.action));
+  use(userTable, (ctx) => {
+    fn(ctx.action);
+    return ctx.next();
+  });
   await count(userTable);
 
   expect(fn).toHaveBeenCalledTimes(1);

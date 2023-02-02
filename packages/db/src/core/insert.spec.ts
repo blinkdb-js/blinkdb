@@ -57,7 +57,10 @@ it("should prevent duplicate primary keys", async () => {
 it("should execute insert hooks", async () => {
   const fn = jest.fn();
 
-  use(userTable, (ctx) => fn(ctx.action));
+  use(userTable, (ctx) => {
+    fn(ctx.action);
+    return ctx.next();
+  });
   await insert(userTable, users[0]);
 
   expect(fn).toHaveBeenCalledTimes(1);

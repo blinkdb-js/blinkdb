@@ -60,7 +60,10 @@ describe("with filter", () => {
 it("should execute many hooks", async () => {
   const fn = jest.fn();
 
-  use(userTable, (ctx) => fn(ctx.action));
+  use(userTable, (ctx) => {
+    fn(ctx.action);
+    return ctx.next();
+  });
   await many(userTable);
 
   expect(fn).toHaveBeenCalledTimes(1);

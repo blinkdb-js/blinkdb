@@ -58,7 +58,10 @@ it("should execute remove hooks", async () => {
   const firstUser = await one(userTable, { where: { id: "30" } });
   const fn = jest.fn();
 
-  use(userTable, (ctx) => fn(ctx.action));
+  use(userTable, (ctx) => {
+    fn(ctx.action);
+    return ctx.next();
+  });
   await remove(userTable, firstUser);
 
   expect(fn).toHaveBeenCalledTimes(1);
