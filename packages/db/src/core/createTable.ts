@@ -3,7 +3,6 @@ import { Dispatcher } from "../events/Dispatcher";
 import { Hook } from "../events/types";
 import { OrdProps } from "../query/types";
 import { BlinkKey, Database } from "./createDB";
-import { executeHooks } from "../events/Middleware";
 
 /**
  * Creates a new table where entities can be inserted/updated/deleted/retrieved.

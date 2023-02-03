@@ -1,4 +1,4 @@
-import { executeTableHooks } from "../events/Middleware";
+import { middleware } from "../events/Middleware";
 import { OrdProps } from "../query/types";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
@@ -20,10 +20,8 @@ export async function removeMany<T extends object, P extends keyof T>(
   table: Table<T, P>,
   entities: Ids<T, P>[]
 ): Promise<boolean> {
-  return executeTableHooks(
-    table,
-    { action: "removeMany", params: [table, entities] },
-    () => internalRemoveMany(table, entities)
+  return middleware(table, { action: "removeMany", params: [table, entities] }, () =>
+    internalRemoveMany(table, entities)
   );
 }
 

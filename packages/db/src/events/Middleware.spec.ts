@@ -1,11 +1,11 @@
-import { executeHooks } from "./Middleware";
-import { Hook, HookAction, HookContext } from "./types";
-import { User } from "../tests/utils";
 import { isAction } from "../core/use";
+import { User } from "../tests/utils";
+import { middleware } from "./Middleware";
+import { Hook, HookContext } from "./types";
 
 it("should work without hooks", async () => {
   const context = {} as HookContext<User, "id", "count">;
-  const result = executeHooks(context, [] as Hook<User, "id">[], () => 123);
+  const result = middleware([] as Hook<User, "id">[], context, () => 123);
 
   expect(result).toBe(123);
 });
@@ -15,7 +15,7 @@ describe("hooks", () => {
     const context = {} as HookContext<User, "id", "count">;
 
     const hooks: Hook<User, "id">[] = [({ next }) => next()];
-    const result = executeHooks(context, hooks, () => 123);
+    const result = middleware(hooks, context, () => 123);
 
     expect(result).toBe(123);
   });
@@ -31,9 +31,10 @@ describe("hooks", () => {
           const num = await ctx.next();
           return num + 1;
         }
+        return ctx.next() as any;
       },
     ];
-    const result = await executeHooks(context, hooks, () => 123);
+    const result = await middleware(hooks, context, () => 123);
 
     expect(result).toBe(124);
   });
@@ -42,7 +43,7 @@ describe("hooks", () => {
     const context = {} as HookContext<User, "id", "count">;
 
     const hooks: Hook<User, "id">[] = [() => 321];
-    const result = await executeHooks(context, hooks, () => 123);
+    const result = await middleware(hooks, context, () => 123);
 
     expect(result).toBe(321);
   });
@@ -55,7 +56,7 @@ describe("hooks", () => {
         throw new Error();
       },
     ];
-    const fn = async () => await executeHooks(context, hooks, () => 123);
+    const fn = async () => await middleware(hooks, context, () => 123);
 
     expect(fn).rejects.toThrowError();
   });
@@ -65,7 +66,7 @@ describe("hooks", () => {
     const context = {} as HookContext<User, "id", "count">;
 
     const hooks: Hook<User, "id">[] = [() => 123];
-    const result = await executeHooks(context, hooks, fn);
+    const result = await middleware(hooks, context, fn);
 
     expect(fn).toHaveBeenCalledTimes(0);
   });
@@ -82,7 +83,7 @@ describe("hooks", () => {
         return 321;
       },
     ];
-    const result = await executeHooks(context, hooks, fn);
+    const result = await middleware(hooks, context, fn);
 
     expect(fn).toHaveBeenCalledTimes(10);
   });
@@ -98,21 +99,24 @@ describe("hooks", () => {
           const num = await ctx.next();
           return num + 100;
         }
+        return ctx.next() as any;
       },
       async (ctx) => {
         if (isAction(ctx, "count")) {
           const num = await ctx.next();
           return num + 10;
         }
+        return ctx.next() as any;
       },
       async (ctx) => {
         if (isAction(ctx, "count")) {
           const num = await ctx.next();
           return num + 1;
         }
+        return ctx.next() as any;
       },
     ];
-    const result = await executeHooks(context, hooks, () => 123);
+    const result = await middleware(hooks, context, () => 123);
 
     expect(result).toBe(234);
   });
@@ -121,7 +125,7 @@ describe("hooks", () => {
     const context = {} as HookContext<User, "id", "count">;
 
     const hooks: Hook<User, "id">[] = [() => 111, () => 222, () => 333];
-    const result = await executeHooks(context, hooks, () => 123);
+    const result = await middleware(hooks, context, () => 123);
 
     expect(result).toBe(111);
   });

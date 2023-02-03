@@ -1,4 +1,4 @@
-import { executeTableHooks } from "../events/Middleware";
+import { middleware } from "../events/Middleware";
 import { get } from "../query";
 import { Filter } from "../query/types";
 import { clone } from "./clone";
@@ -26,7 +26,7 @@ export async function updateWhere<T extends object, P extends keyof T>(
   filter: Filter<T>,
   callback: (item: T) => Diff<T, P> | Promise<Diff<T, P>>
 ): Promise<void> {
-  return executeTableHooks(
+  return middleware(
     table,
     { action: "updateWhere", params: [table, filter, callback] },
     () => internalUpdateWhere(table, filter, callback)

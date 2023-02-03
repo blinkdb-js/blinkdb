@@ -1,4 +1,4 @@
-import { executeTableHooks } from "../events/Middleware";
+import { middleware } from "../events/Middleware";
 import { get } from "../query";
 import { analyze } from "../query/analyze";
 import { Filter } from "../query/types";
@@ -46,7 +46,7 @@ export async function count<T extends object, P extends keyof T>(
   filter?: Filter<T>,
   options: { exact: boolean } = { exact: true }
 ): Promise<number> {
-  return executeTableHooks(
+  return middleware(
     table,
     {
       action: "count",

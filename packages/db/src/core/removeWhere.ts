@@ -1,4 +1,4 @@
-import { executeTableHooks } from "../events/Middleware";
+import { middleware } from "../events/Middleware";
 import { get } from "../query";
 import { Filter } from "../query/types";
 import { Table } from "./createTable";
@@ -23,10 +23,8 @@ export async function removeWhere<T extends object, P extends keyof T>(
   table: Table<T, P>,
   filter: Filter<T>
 ): Promise<void> {
-  return executeTableHooks(
-    table,
-    { action: "removeWhere", params: [table, filter] },
-    () => internalRemoveWhere(table, filter)
+  return middleware(table, { action: "removeWhere", params: [table, filter] }, () =>
+    internalRemoveWhere(table, filter)
   );
 }
 

@@ -1,4 +1,4 @@
-import { executeTableHooks } from "../events/Middleware";
+import { middleware } from "../events/Middleware";
 import { Table } from "./createTable";
 import { internalRemoveMany } from "./removeMany";
 
@@ -18,7 +18,7 @@ export async function remove<T extends object, P extends keyof T>(
   table: Table<T, P>,
   entity: Ids<T, P>
 ): Promise<boolean> {
-  return executeTableHooks(table, { action: "remove", params: [table, entity] }, () =>
+  return middleware(table, { action: "remove", params: [table, entity] }, () =>
     internalRemove(table, entity)
   );
 }

@@ -1,4 +1,4 @@
-import { executeTableHooks } from "../events/Middleware";
+import { middleware } from "../events/Middleware";
 import { get } from "../query";
 import { Query } from "../query/types";
 import { clone } from "./clone";
@@ -36,7 +36,7 @@ export async function first<T extends object, P extends keyof T>(
   table: Table<T, P>,
   query?: Query<T, P>
 ): Promise<T | null> {
-  return executeTableHooks(table, { action: "first", params: [table, query] }, () =>
+  return middleware(table, { action: "first", params: [table, query] }, () =>
     internalFirst(table, query)
   );
 }

@@ -4,27 +4,19 @@ import { Hook, HookAction, HookContext, HookReturn } from "./types";
 /**
  * Execute all hooks.
  *
- * @param context the context to supply to the hooks.
  * @param hooks the list of hooks to execute. The first item in the list will be executed first.
+ * @param context the context to supply to the hooks.
  * @param impl the implementation that will be called if the last hook calls `next()`.
  */
-export function executeHooks<
+export function middleware<
   T extends object = any,
   P extends keyof T = keyof T,
   A extends HookAction = HookAction
 >(
-  context: Omit<HookContext<T, P, A>, "next">,
   hooks: Hook<T, P, A>[],
+  context: Omit<HookContext<T, P, A>, "next">,
   impl: () => HookReturn<T, P, A> | Awaited<HookReturn<T, P, A>>
-): HookReturn<T, P, A> | Awaited<HookReturn<T, P, A>> {
-  const [step, ...next] = hooks;
-  return step
-    ? step({
-        ...context,
-        next: () => executeHooks(context, next, impl),
-      })
-    : impl();
-}
+): HookReturn<T, P, A> | Awaited<HookReturn<T, P, A>>;
 
 /**
  * Execute all hooks for a given table (and its database).
@@ -34,24 +26,54 @@ export function executeHooks<
  * @param context the context to supply to the hooks.
  * @param impl the implementation that will be called if the last hook calls `next()`.
  */
-export function executeTableHooks<
+export function middleware<
   T extends object = any,
   P extends keyof T = keyof T,
   A extends HookAction = HookAction
 >(
   table: Table<T, P>,
-  context: Omit<Parameters<typeof executeHooks<T, P, A>>[0], "table">,
-  impl: Parameters<typeof executeHooks<T, P, A>>[2]
-): ReturnType<typeof executeHooks<T, P, A>> {
-  const dbHooks = table[BlinkKey].db[BlinkKey].hooks;
-  const tableHooks = table[BlinkKey].hooks;
+  context: Omit<HookContext<T, P, A>, "next" | "table">,
+  impl: () => HookReturn<T, P, A> | Awaited<HookReturn<T, P, A>>
+): HookReturn<T, P, A> | Awaited<HookReturn<T, P, A>>;
 
-  return executeHooks(
-    {
-      ...context,
-      table: table[BlinkKey].tableName,
-    },
-    [...dbHooks, ...tableHooks],
-    impl
-  );
+export function middleware<
+  T extends object = any,
+  P extends keyof T = keyof T,
+  A extends HookAction = HookAction
+>(
+  hooksOrTable: Hook<T, P, A>[] | Table<T, P>,
+  context: Omit<HookContext<T, P, A>, "next" | "table"> & { table?: string },
+  impl: () => HookReturn<T, P, A> | Awaited<HookReturn<T, P, A>>
+): HookReturn<T, P, A> | Awaited<HookReturn<T, P, A>> {
+  let contextTable = context.table;
+  let hooks: Hook<T, P, A>[];
+  if (Array.isArray(hooksOrTable)) {
+    hooks = hooksOrTable;
+  } else {
+    const table = hooksOrTable;
+    const dbHooks = table[BlinkKey].db[BlinkKey].hooks;
+    const tableHooks = table[BlinkKey].hooks;
+    hooks = [...dbHooks, ...tableHooks];
+    contextTable = table[BlinkKey].tableName;
+  }
+
+  return executeHook(hooks, { ...context, table: contextTable! }, impl);
+}
+
+function executeHook<
+  T extends object = any,
+  P extends keyof T = keyof T,
+  A extends HookAction = HookAction
+>(
+  hooks: Hook<T, P, A>[],
+  context: Omit<HookContext<T, P, A>, "next">,
+  impl: () => HookReturn<T, P, A> | Awaited<HookReturn<T, P, A>>
+): HookReturn<T, P, A> | Awaited<HookReturn<T, P, A>> {
+  const [step, ...next] = hooks;
+  return step
+    ? step({
+        ...context,
+        next: () => executeHook(next, context, impl),
+      })
+    : impl();
 }

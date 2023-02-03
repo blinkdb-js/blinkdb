@@ -1,4 +1,4 @@
-import { executeTableHooks } from "../events/Middleware";
+import { middleware } from "../events/Middleware";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 
@@ -13,10 +13,8 @@ import { Table } from "./createTable";
 export async function clear<T extends object, P extends keyof T>(
   table: Table<T, P>
 ): Promise<void> {
-  return executeTableHooks<T, P, "clear">(
-    table,
-    { action: "clear", params: [table] },
-    () => internalClear(table)
+  return middleware<T, P, "clear">(table, { action: "clear", params: [table] }, () =>
+    internalClear(table)
   );
 }
 

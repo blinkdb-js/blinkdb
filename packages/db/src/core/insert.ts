@@ -1,4 +1,4 @@
-import { executeTableHooks } from "../events/Middleware";
+import { middleware } from "../events/Middleware";
 import { Table } from "./createTable";
 import { internalInsertMany } from "./insertMany";
 
@@ -18,7 +18,7 @@ export async function insert<T extends object, P extends keyof T>(
   table: Table<T, P>,
   entity: Create<T, P>
 ): Promise<T[P]> {
-  return executeTableHooks(table, { action: "insert", params: [table, entity] }, () =>
+  return middleware(table, { action: "insert", params: [table, entity] }, () =>
     internalInsert(table, entity)
   );
 }

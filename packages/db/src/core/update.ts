@@ -1,4 +1,4 @@
-import { executeTableHooks } from "../events/Middleware";
+import { middleware } from "../events/Middleware";
 import { Table } from "./createTable";
 import { internalUpdateMany } from "./updateMany";
 
@@ -18,7 +18,7 @@ export async function update<T extends object, P extends keyof T>(
   table: Table<T, P>,
   diff: Diff<T, P>
 ): Promise<void> {
-  return executeTableHooks(table, { action: "update", params: [table, diff] }, () =>
+  return middleware(table, { action: "update", params: [table, diff] }, () =>
     internalUpdate(table, diff)
   );
 }
