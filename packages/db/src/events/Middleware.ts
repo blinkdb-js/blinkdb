@@ -15,8 +15,8 @@ export function middleware<
 >(
   hooks: Hook<T, P, A>[],
   context: Omit<HookContext<T, P, A>, "next">,
-  impl: () => HookReturn<T, P, A> | Awaited<HookReturn<T, P, A>>
-): HookReturn<T, P, A> | Awaited<HookReturn<T, P, A>>;
+  impl: () => HookReturn<T, P, A> | Promise<HookReturn<T, P, A>>
+): HookReturn<T, P, A> | Promise<HookReturn<T, P, A>>;
 
 /**
  * Execute all hooks for a given table (and its database).
@@ -33,8 +33,8 @@ export function middleware<
 >(
   table: Table<T, P>,
   context: Omit<HookContext<T, P, A>, "next" | "table">,
-  impl: () => HookReturn<T, P, A> | Awaited<HookReturn<T, P, A>>
-): HookReturn<T, P, A> | Awaited<HookReturn<T, P, A>>;
+  impl: () => HookReturn<T, P, A> | Promise<HookReturn<T, P, A>>
+): HookReturn<T, P, A> | Promise<HookReturn<T, P, A>>;
 
 export function middleware<
   T extends object = any,
@@ -43,8 +43,8 @@ export function middleware<
 >(
   hooksOrTable: Hook<T, P, A>[] | Table<T, P>,
   context: Omit<HookContext<T, P, A>, "next" | "table"> & { table?: string },
-  impl: () => HookReturn<T, P, A> | Awaited<HookReturn<T, P, A>>
-): HookReturn<T, P, A> | Awaited<HookReturn<T, P, A>> {
+  impl: () => HookReturn<T, P, A> | Promise<HookReturn<T, P, A>>
+): HookReturn<T, P, A> | Promise<HookReturn<T, P, A>> {
   let contextTable = context.table;
   let hooks: Hook<T, P, A>[];
   if (Array.isArray(hooksOrTable)) {
@@ -67,8 +67,8 @@ function executeHook<
 >(
   hooks: Hook<T, P, A>[],
   context: Omit<HookContext<T, P, A>, "next">,
-  impl: () => HookReturn<T, P, A> | Awaited<HookReturn<T, P, A>>
-): HookReturn<T, P, A> | Awaited<HookReturn<T, P, A>> {
+  impl: () => HookReturn<T, P, A> | Promise<HookReturn<T, P, A>>
+): HookReturn<T, P, A> | Promise<HookReturn<T, P, A>> {
   const [step, ...next] = hooks;
   return step
     ? step({

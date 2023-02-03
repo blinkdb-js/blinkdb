@@ -31,7 +31,7 @@ describe("hooks", () => {
           const num = await ctx.next();
           return num + 1;
         }
-        return ctx.next() as any;
+        return ctx.next();
       },
     ];
     const result = await middleware(hooks, context, () => 123);
@@ -99,21 +99,21 @@ describe("hooks", () => {
           const num = await ctx.next();
           return num + 100;
         }
-        return ctx.next() as any;
+        return ctx.next();
       },
       async (ctx) => {
         if (isAction(ctx, "count")) {
           const num = await ctx.next();
           return num + 10;
         }
-        return ctx.next() as any;
+        return ctx.next();
       },
       async (ctx) => {
         if (isAction(ctx, "count")) {
           const num = await ctx.next();
           return num + 1;
         }
-        return ctx.next() as any;
+        return ctx.next();
       },
     ];
     const result = await middleware(hooks, context, () => 123);
