@@ -1,5 +1,5 @@
 import { BlinkKey, Table } from "../core";
-import { Hook, HookAction, HookContext, HookReturn } from "./types";
+import { Hook, HookAction, HookContext, HookMethods, HookReturn } from "./types";
 
 /**
  * Execute all hooks.
@@ -15,7 +15,7 @@ export function middleware<
 >(
   hooks: Hook<T, P, A>[],
   context: Omit<HookContext<T, P, A>, "next">,
-  impl: () => HookReturn<T, P, A> | Promise<HookReturn<T, P, A>>
+  impl: () => ReturnType<HookMethods<T, P>[A]>
 ): HookReturn<T, P, A> | Promise<HookReturn<T, P, A>>;
 
 /**
@@ -33,7 +33,7 @@ export function middleware<
 >(
   table: Table<T, P>,
   context: Omit<HookContext<T, P, A>, "next" | "table">,
-  impl: () => HookReturn<T, P, A> | Promise<HookReturn<T, P, A>>
+  impl: () => ReturnType<HookMethods<T, P>[A]>
 ): HookReturn<T, P, A> | Promise<HookReturn<T, P, A>>;
 
 export function middleware<
@@ -43,7 +43,7 @@ export function middleware<
 >(
   hooksOrTable: Hook<T, P, A>[] | Table<T, P>,
   context: Omit<HookContext<T, P, A>, "next" | "table"> & { table?: string },
-  impl: () => HookReturn<T, P, A> | Promise<HookReturn<T, P, A>>
+  impl: () => ReturnType<HookMethods<T, P>[A]>
 ): HookReturn<T, P, A> | Promise<HookReturn<T, P, A>> {
   let contextTable = context.table;
   let hooks: Hook<T, P, A>[];
@@ -67,7 +67,7 @@ function executeHook<
 >(
   hooks: Hook<T, P, A>[],
   context: Omit<HookContext<T, P, A>, "next">,
-  impl: () => HookReturn<T, P, A> | Promise<HookReturn<T, P, A>>
+  impl: () => ReturnType<HookMethods<T, P>[A]>
 ): HookReturn<T, P, A> | Promise<HookReturn<T, P, A>> {
   const [step, ...next] = hooks;
   return step
@@ -75,5 +75,5 @@ function executeHook<
         ...context,
         next: () => executeHook(next, context, impl),
       })
-    : impl();
+    : (impl() as any);
 }
