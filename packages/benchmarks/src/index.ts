@@ -1,5 +1,5 @@
 import { glob } from "glob";
-import { basename, relative, resolve } from "path";
+import { relative, resolve } from "path";
 import { Bench } from "tinybench";
 
 const relPath = process.argv[2] ?? "**/*.ts";
@@ -10,18 +10,21 @@ glob(absPath, async (err, files) => {
   if (err) return console.error(err);
   let fileCount = 0;
   // Dynamically import all modules
-  const modules = await Promise.all(files.map(async (f) => ({
-    name: f,
-    module: await import(f)
-  })));
+  const modules = await Promise.all(
+    files.map(async (f) => ({
+      name: f,
+      module: await import(f),
+    }))
+  );
   for (const mod of modules) {
     if ("bench" in mod.module) {
       const bench: Bench = mod.module.bench;
       // Run the benchmark
+      await bench.warmup();
       await bench.run();
       // Output Results
       console.log(relative(resolve(__dirname, "./benchmarks"), mod.name));
-      console.table(getOutputTable(basename(mod.name), bench));
+      console.table(getOutputTable(bench));
       fileCount++;
     }
   }
@@ -33,11 +36,14 @@ glob(absPath, async (err, files) => {
  * nicely formatted output that can be passed
  * to `console.table`.
  */
-function getOutputTable(benchName: string, bench: Bench): any {
-  return bench.tasks.map(({ name, result }) => ({
-    Type: name,
-    "Ops/s": result?.hz ?? 0,
-    "Average Time (ps)": result?.mean ?? 0 * 1000,
-    "Variance (ps)": result?.variance ?? 0 * 1000,
-  }));
+function getOutputTable(bench: Bench): any {
+  return bench.tasks
+    .sort((a, b) => (b.result?.hz ?? 0) - (a.result?.hz ?? 0))
+    .map(({ name, result }) => ({
+      "name": name,
+      "ops/sec": result?.hz ?? 0,
+      "Average Time (ns)": result?.mean ?? 0 * 1000 * 1000,
+      "Margin": `\xb1${result?.rme.toFixed(2)}%`,
+      "Samples": result?.samples.length,
+    }));
 }
