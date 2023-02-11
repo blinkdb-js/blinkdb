@@ -1,3 +1,4 @@
+import { clear } from ".";
 import { generateRandomUsers, User } from "../tests/utils";
 import { createDB } from "./createDB";
 import { createTable, Table } from "./createTable";
@@ -49,6 +50,14 @@ it("should insert items retrievable by property", async () => {
 it("should prevent duplicate primary keys", async () => {
   const fn = async () => await insertMany(userTable, [users[0], users[0]]);
   expect(fn).rejects.toThrowError(`Primary key ${users[0].id} already in use`);
+});
+
+it("should allow inserting with a previousy deleted primary key", async () => {
+  const aliceId = await insertMany(userTable, [users[0]]);
+  await clear(userTable);
+  const fn = async () => await insertMany(userTable, [users[0]]);
+
+  expect(fn).not.toThrowError(`Primary key ${users[0].id} already in use`);
 });
 
 it("should execute insertMany hooks", async () => {
