@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "@ngneat/falso": "^6.1.0",
-    "blinkdb": "*",
+    "blinkdb": "file:../db",
     "clone": "^2.1.2",
     "glob": "^8.1.0",
     "lokijs": "^1.5.12",
