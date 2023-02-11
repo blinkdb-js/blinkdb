@@ -3,19 +3,22 @@
   "private": true,
   "description": "blinkDB benchmarks & comparisons",
   "scripts": {
-    "start-prof": "node -r ts-node/register --prof src/benchmarks/index.ts",
-    "start": "ts-node src/benchmarks/index.ts"
+    "start": "ts-node ./src/index.ts"
   },
   "dependencies": {
     "@ngneat/falso": "^6.1.0",
-    "blinkdb": "^0.10.0",
+    "blinkdb": "*",
     "clone": "^2.1.2",
+    "glob": "^8.1.0",
     "lokijs": "^1.5.12",
-    "sorted-btree": "^1.8.0"
+    "sorted-btree": "^1.8.0",
+    "tinybench": "^2.3.1",
+    "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0"
   },
   "devDependencies": {
     "@types/clone": "^2.1.1",
-    "@types/lokijs": "^1.5.7",
-    "ts-node": "^10.9.1"
+    "@types/glob": "^8.0.1",
+    "@types/lokijs": "^1.5.7"
   }
 }
