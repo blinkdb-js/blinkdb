@@ -1,0 +1,27 @@
+---
+layout: "../../layouts/DocsLayout.astro"
+title: "Middleware"
+---
+
+# Middleware
+
+Sometimes you may want to customize the behaviour of BlinkDB when methods like `insert`, `update`, `remove`, or others are called.
+Perhaps you want to prevent all calls to `remove` (and instead soft delete records), or you'd like to log all actions taken, or
+you just simply want to intercept all calls to a certain function.
+
+This is all quite simple with a call to [`use()`](/docs/reference/use):
+
+```ts
+use(userTable, async (ctx) => {
+  // Log the method called
+  console.log(ctx.action);
+  // Log parameters given to the method
+  console.log(ctx.params);
+
+  // Call the native implementation
+  const result = await ctx.next();
+  return result;
+})
+```
+
+More info about how hooks work and what you can do with them can be found in [the reference](/docs/reference/use).
