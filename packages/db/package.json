@@ -1,6 +1,6 @@
 {
   "name": "blinkdb",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "A lightning fast, in-memory database for client-side JS",
   "main": "dist/index.js",
   "module": "src/index.ts",
