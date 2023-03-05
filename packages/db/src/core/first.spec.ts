@@ -1,9 +1,8 @@
-import { User, generateRandomUsers } from "../tests/utils";
+import { generateRandomUsers, User } from "../tests/utils";
 import { clear } from "./clear";
-import { createDB, Database } from "./createDB";
+import { createDB } from "./createDB";
 import { createTable, Table } from "./createTable";
 import { first } from "./first";
-import { insert } from "./insert";
 import { insertMany } from "./insertMany";
 import { use } from "./use";
 
@@ -69,7 +68,7 @@ it("should execute first hooks", async () => {
 
   use(userTable, (ctx) => {
     fn(ctx.action);
-    return ctx.next();
+    return ctx.next(...ctx.params);
   });
   await first(userTable);
 

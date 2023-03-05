@@ -1,9 +1,9 @@
-import { User, generateRandomUsers, sortById } from "../tests/utils";
+import { generateRandomUsers, sortById, User } from "../tests/utils";
 import { clear } from "./clear";
-import { createDB, Database } from "./createDB";
+import { createDB } from "./createDB";
 import { createTable, Table } from "./createTable";
-import { many } from "./many";
 import { insertMany } from "./insertMany";
+import { many } from "./many";
 import { use } from "./use";
 
 let users: User[];
@@ -62,7 +62,7 @@ it("should execute many hooks", async () => {
 
   use(userTable, (ctx) => {
     fn(ctx.action);
-    return ctx.next();
+    return ctx.next(...ctx.params);
   });
   await many(userTable);
 

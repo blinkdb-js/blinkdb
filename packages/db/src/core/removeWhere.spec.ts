@@ -1,4 +1,4 @@
-import { User, generateRandomUsers, sortById } from "../tests/utils";
+import { generateRandomUsers, sortById, User } from "../tests/utils";
 import { createDB } from "./createDB";
 import { createTable, Table } from "./createTable";
 import { insertMany } from "./insertMany";
@@ -43,7 +43,7 @@ it("should execute removeWhere hooks", async () => {
 
   use(userTable, (ctx) => {
     fn(ctx.action);
-    return ctx.next();
+    return ctx.next(...ctx.params);
   });
   await removeWhere(userTable, { where: { name: "Alice" } });
 

@@ -1,9 +1,8 @@
-import { User, generateRandomUsers, sortById } from "../tests/utils";
+import { generateRandomUsers, sortById, User } from "../tests/utils";
 import { createDB } from "./createDB";
 import { createTable, Table } from "./createTable";
 import { insertMany } from "./insertMany";
 import { many } from "./many";
-import { one } from "./one";
 import { updateWhere } from "./updateWhere";
 import { use } from "./use";
 
@@ -69,7 +68,7 @@ it("should execute updateWhere hooks", async () => {
 
   use(userTable, (ctx) => {
     fn(ctx.action);
-    return ctx.next();
+    return ctx.next(...ctx.params);
   });
   await updateWhere(userTable, { where: { age: { gte: 0 } } }, (item) => {
     return { ...item, age: item.age ? item.age + 1 : item.age };

@@ -39,7 +39,7 @@ describe.each([
 
     use(obj() as Database, (ctx) => {
       fn(ctx.action);
-      return ctx.next();
+      return ctx.next(...ctx.params);
     });
     await insert(userTable, { id: "1000", name: "Alice", age: 26 });
 
@@ -54,7 +54,7 @@ describe.each([
           return undefined;
         }
       }
-      return ctx.next();
+      return ctx.next(...ctx.params);
     });
     const id = await insert(userTable, { id: "1000", name: "Alice", age: 26 });
 
@@ -64,10 +64,10 @@ describe.each([
   it("should modify actions", async () => {
     use(obj() as Database, async (ctx) => {
       if (isAction(ctx, "count")) {
-        const value = await ctx.next();
+        const value = await ctx.next(...ctx.params);
         return value + 899;
       }
-      return ctx.next() as any;
+      return ctx.next(...ctx.params);
     });
     const size = await count(userTable);
 
@@ -84,7 +84,7 @@ describe.each([
         }
         return uuids;
       }
-      return ctx.next();
+      return ctx.next(...ctx.params);
     });
     const [aliceUuid, bobUuid] = await insertMany(userTable, [
       { id: "1000", name: "Alice" },

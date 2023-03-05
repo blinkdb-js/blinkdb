@@ -2,10 +2,9 @@ import { generateRandomUsers, User } from "../tests/utils";
 import { createDB } from "./createDB";
 import { createTable, Table } from "./createTable";
 import { first } from "./first";
-import { insert } from "./insert";
-import { remove } from "./remove";
 import { insertMany } from "./insertMany";
 import { one } from "./one";
+import { remove } from "./remove";
 import { use } from "./use";
 
 let users: User[];
@@ -60,7 +59,7 @@ it("should execute remove hooks", async () => {
 
   use(userTable, (ctx) => {
     fn(ctx.action);
-    return ctx.next();
+    return ctx.next(...ctx.params);
   });
   await remove(userTable, firstUser);
 

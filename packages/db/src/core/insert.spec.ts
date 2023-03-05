@@ -59,7 +59,7 @@ it("should execute insert hooks", async () => {
 
   use(userTable, (ctx) => {
     fn(ctx.action);
-    return ctx.next();
+    return ctx.next(...ctx.params);
   });
   await insert(userTable, users[0]);
 

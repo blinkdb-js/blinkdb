@@ -26,8 +26,10 @@ export async function updateMany<T extends object, P extends keyof T>(
   table: Table<T, P>,
   diffs: Diff<T, P>[]
 ): Promise<void> {
-  return middleware(table, { action: "updateMany", params: [table, diffs] }, () =>
-    internalUpdateMany(table, diffs)
+  return middleware<T, P, "updateMany">(
+    table,
+    { action: "updateMany", params: [table, diffs] },
+    (table, diffs) => internalUpdateMany(table, diffs)
   );
 }
 

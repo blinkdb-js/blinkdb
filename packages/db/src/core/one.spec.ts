@@ -1,8 +1,8 @@
-import { User, generateRandomUsers } from "../tests/utils";
+import { generateRandomUsers, User } from "../tests/utils";
 import { createDB } from "./createDB";
 import { createTable, Table } from "./createTable";
-import { one } from "./one";
 import { insertMany } from "./insertMany";
+import { one } from "./one";
 import { use } from "./use";
 
 let users: User[];
@@ -44,7 +44,7 @@ it("should execute one hooks", async () => {
 
   use(userTable, (ctx) => {
     fn(ctx.action);
-    return ctx.next();
+    return ctx.next(...ctx.params);
   });
   await one(userTable, { where: { id: "0" } });
 

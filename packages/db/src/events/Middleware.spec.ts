@@ -4,7 +4,7 @@ import { middleware } from "./Middleware";
 import { Hook, HookContext } from "./types";
 
 it("should work without hooks", async () => {
-  const context = {} as HookContext<User, "id", "count">;
+  const context = { params: [] as any } as HookContext<User, "id", "count">;
   const result = middleware([] as Hook<User, "id">[], context, () => 123);
 
   expect(result).toBe(123);
@@ -12,9 +12,9 @@ it("should work without hooks", async () => {
 
 describe("hooks", () => {
   it("should work", async () => {
-    const context = {} as HookContext<User, "id", "count">;
+    const context = { params: [] as any } as HookContext<User, "id", "count">;
 
-    const hooks: Hook<User, "id">[] = [({ next }) => next()];
+    const hooks: Hook<User, "id">[] = [({ next, params }) => next(...params)];
     const result = middleware(hooks, context, () => 123);
 
     expect(result).toBe(123);
@@ -23,20 +23,40 @@ describe("hooks", () => {
   it("should be able to modify values", async () => {
     const context = {
       action: "count",
+      params: [] as any,
     } as HookContext<User, "id", "count">;
 
     const hooks: Hook<User, "id">[] = [
       async (ctx) => {
         if (isAction(ctx, "count")) {
-          const num = await ctx.next();
+          const num = await ctx.next(...ctx.params);
           return num + 1;
         }
-        return ctx.next();
+        return ctx.next(...ctx.params);
       },
     ];
     const result = await middleware(hooks, context, () => 123);
 
     expect(result).toBe(124);
+  });
+
+  it("should be able to modify parameters", async () => {
+    const context = {
+      action: "count",
+      params: [] as any,
+    } as HookContext<User, "id", "count">;
+
+    const hooks: Hook<User, "id">[] = [
+      async (ctx) => {
+        if (isAction(ctx, "count")) {
+          return ctx.next(null as any, ctx.params[1], ctx.params[2]);
+        }
+        return ctx.next(...ctx.params);
+      },
+    ];
+    const result = await middleware(hooks, context, (t) => (t === null ? 100 : 0));
+
+    expect(result).toBe(100);
   });
 
   it("should be able to return new values", async () => {
@@ -73,12 +93,12 @@ describe("hooks", () => {
 
   it("should call the implementation n times if next() is called n times", async () => {
     const fn = jest.fn(() => 123);
-    const context = {} as HookContext<User, "id", "count">;
+    const context = { params: [] as any } as HookContext<User, "id", "count">;
 
     const hooks: Hook<User, "id">[] = [
-      ({ next }) => {
+      ({ next, params }) => {
         for (let i = 0; i < 10; i++) {
-          next();
+          next(...params);
         }
         return 321;
       },
@@ -91,29 +111,30 @@ describe("hooks", () => {
   it("should work with multiple hooks", async () => {
     const context = {
       action: "count",
+      params: [] as any,
     } as HookContext<User, "id", "count">;
 
     const hooks: Hook<User, "id">[] = [
       async (ctx) => {
         if (isAction(ctx, "count")) {
-          const num = await ctx.next();
+          const num = await ctx.next(...ctx.params);
           return num + 100;
         }
-        return ctx.next();
+        return ctx.next(...ctx.params);
       },
       async (ctx) => {
         if (isAction(ctx, "count")) {
-          const num = await ctx.next();
+          const num = await ctx.next(...ctx.params);
           return num + 10;
         }
-        return ctx.next();
+        return ctx.next(...ctx.params);
       },
       async (ctx) => {
         if (isAction(ctx, "count")) {
-          const num = await ctx.next();
+          const num = await ctx.next(...ctx.params);
           return num + 1;
         }
-        return ctx.next();
+        return ctx.next(...ctx.params);
       },
     ];
     const result = await middleware(hooks, context, () => 123);

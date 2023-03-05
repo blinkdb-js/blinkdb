@@ -36,8 +36,10 @@ export async function first<T extends object, P extends keyof T>(
   table: Table<T, P>,
   query?: Query<T, P>
 ): Promise<T | null> {
-  return middleware(table, { action: "first", params: [table, query] }, () =>
-    internalFirst(table, query)
+  return middleware<T, P, "first">(
+    table,
+    { action: "first", params: [table, query] },
+    (table, query) => internalFirst(table, query)
   );
 }
 

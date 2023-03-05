@@ -18,8 +18,10 @@ export async function insert<T extends object, P extends keyof T>(
   table: Table<T, P>,
   entity: Create<T, P>
 ): Promise<T[P]> {
-  return middleware(table, { action: "insert", params: [table, entity] }, () =>
-    internalInsert(table, entity)
+  return middleware<T, P, "insert">(
+    table,
+    { action: "insert", params: [table, entity] },
+    (table, entity) => internalInsert(table, entity)
   );
 }
 

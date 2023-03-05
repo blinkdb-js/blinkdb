@@ -1,4 +1,4 @@
-import { User, generateRandomUsers } from "../tests/utils";
+import { generateRandomUsers, User } from "../tests/utils";
 import { createDB } from "./createDB";
 import { createTable, Table } from "./createTable";
 import { first } from "./first";
@@ -79,7 +79,7 @@ it("should execute removeMany hooks", async () => {
 
   use(userTable, (ctx) => {
     fn(ctx.action);
-    return ctx.next();
+    return ctx.next(...ctx.params);
   });
   await removeMany(userTable, [firstUser]);
 

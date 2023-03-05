@@ -18,8 +18,10 @@ export async function remove<T extends object, P extends keyof T>(
   table: Table<T, P>,
   entity: Ids<T, P>
 ): Promise<boolean> {
-  return middleware(table, { action: "remove", params: [table, entity] }, () =>
-    internalRemove(table, entity)
+  return middleware<T, P, "remove">(
+    table,
+    { action: "remove", params: [table, entity] },
+    (table, entity) => internalRemove(table, entity)
   );
 }
 

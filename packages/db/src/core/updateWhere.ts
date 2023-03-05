@@ -26,10 +26,10 @@ export async function updateWhere<T extends object, P extends keyof T>(
   filter: Filter<T>,
   callback: (item: T) => Diff<T, P> | Promise<Diff<T, P>>
 ): Promise<void> {
-  return middleware(
+  return middleware<T, P, "updateWhere">(
     table,
     { action: "updateWhere", params: [table, filter, callback] },
-    () => internalUpdateWhere(table, filter, callback)
+    (table, filter, callback) => internalUpdateWhere(table, filter, callback)
   );
 }
 

@@ -1,7 +1,6 @@
-import { User, generateRandomUsers } from "../tests/utils";
+import { generateRandomUsers, User } from "../tests/utils";
 import { createDB } from "./createDB";
 import { createTable, Table } from "./createTable";
-import { insert } from "./insert";
 import { insertMany } from "./insertMany";
 import { one } from "./one";
 import { update } from "./update";
@@ -60,7 +59,7 @@ it("should execute update hooks", async () => {
 
   use(userTable, (ctx) => {
     fn(ctx.action);
-    return ctx.next();
+    return ctx.next(...ctx.params);
   });
   await update(userTable, { id: "0", name: "Alice the II.", age: 25 });
 

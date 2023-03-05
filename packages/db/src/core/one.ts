@@ -20,8 +20,10 @@ export async function one<T extends object, P extends keyof T>(
   table: Table<T, P>,
   query: Query<T, P>
 ): Promise<T> {
-  return middleware(table, { action: "one", params: [table, query] }, () =>
-    internalOne(table, query)
+  return middleware<T, P, "one">(
+    table,
+    { action: "one", params: [table, query] },
+    (table, query) => internalOne(table, query)
   );
 }
 

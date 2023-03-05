@@ -1,10 +1,9 @@
-import { analyze } from "../query/analyze";
 import { generateRandomUsers, User } from "../tests/utils";
 import { count } from "./count";
 import { createDB } from "./createDB";
 import { createTable, Table } from "./createTable";
 import { insertMany } from "./insertMany";
-import { isAction, use } from "./use";
+import { use } from "./use";
 
 let users: User[];
 let userTable: Table<User, "id">;
@@ -58,7 +57,7 @@ it("should execute count hooks", async () => {
 
   use(userTable, (ctx) => {
     fn(ctx.action);
-    return ctx.next();
+    return ctx.next(...ctx.params);
   });
   await count(userTable);
 

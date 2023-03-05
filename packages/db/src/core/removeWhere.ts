@@ -23,8 +23,10 @@ export async function removeWhere<T extends object, P extends keyof T>(
   table: Table<T, P>,
   filter: Filter<T>
 ): Promise<void> {
-  return middleware(table, { action: "removeWhere", params: [table, filter] }, () =>
-    internalRemoveWhere(table, filter)
+  return middleware<T, P, "removeWhere">(
+    table,
+    { action: "removeWhere", params: [table, filter] },
+    (table, filter) => internalRemoveWhere(table, filter)
   );
 }
 

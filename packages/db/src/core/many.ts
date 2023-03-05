@@ -45,8 +45,10 @@ export async function many<T extends object, P extends keyof T>(
   table: Table<T, P>,
   query?: Query<T, P>
 ): Promise<T[]> {
-  return middleware(table, { action: "many", params: [table, query] }, () =>
-    internalMany(table, query)
+  return middleware<T, P, "many">(
+    table,
+    { action: "many", params: [table, query] },
+    (table, query) => internalMany(table, query)
   );
 }
 

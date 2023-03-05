@@ -20,8 +20,10 @@ export async function removeMany<T extends object, P extends keyof T>(
   table: Table<T, P>,
   entities: Ids<T, P>[]
 ): Promise<boolean> {
-  return middleware(table, { action: "removeMany", params: [table, entities] }, () =>
-    internalRemoveMany(table, entities)
+  return middleware<T, P, "removeMany">(
+    table,
+    { action: "removeMany", params: [table, entities] },
+    (table, entities) => internalRemoveMany(table, entities)
   );
 }
 

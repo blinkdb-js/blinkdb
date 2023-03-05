@@ -1,5 +1,5 @@
 import { generateRandomUsers, User } from "../tests/utils";
-import { createDB, Database } from "./createDB";
+import { createDB } from "./createDB";
 import { createTable, Table } from "./createTable";
 import { insertMany } from "./insertMany";
 import { one } from "./one";
@@ -56,7 +56,7 @@ it("should execute insertMany hooks", async () => {
 
   use(userTable, (ctx) => {
     fn(ctx.action);
-    return ctx.next();
+    return ctx.next(...ctx.params);
   });
   await insertMany(userTable, [users[0], users[1]]);
 

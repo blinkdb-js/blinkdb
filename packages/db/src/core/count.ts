@@ -46,13 +46,13 @@ export async function count<T extends object, P extends keyof T>(
   filter?: Filter<T>,
   options: { exact: boolean } = { exact: true }
 ): Promise<number> {
-  return middleware(
+  return middleware<T, P, "count">(
     table,
     {
       action: "count",
       params: [table, filter, options],
     },
-    () => internalCount(table, filter, options)
+    (table, filter, options) => internalCount(table, filter, options)
   );
 }
 

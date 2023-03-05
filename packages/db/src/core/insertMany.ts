@@ -24,8 +24,10 @@ export async function insertMany<T extends object, P extends keyof T>(
   table: Table<T, P>,
   entities: Create<T, P>[]
 ): Promise<T[P][]> {
-  return middleware(table, { action: "insertMany", params: [table, entities] }, () =>
-    internalInsertMany(table, entities)
+  return middleware<T, P, "insertMany">(
+    table,
+    { action: "insertMany", params: [table, entities] },
+    (table, entities) => internalInsertMany(table, entities)
   );
 }
 

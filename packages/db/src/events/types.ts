@@ -28,7 +28,9 @@ export type HookContext<
   action: A;
   table: string;
   params: HookParams<T, P, A>;
-  next: () => HookReturn<T, P, A> | Promise<HookReturn<T, P, A>>;
+  next: (
+    ...params: HookParams<T, P, A>
+  ) => HookReturn<T, P, A> | Promise<HookReturn<T, P, A>>;
 };
 
 export type HookParams<

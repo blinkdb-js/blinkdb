@@ -4,7 +4,7 @@ import { createDB } from "./createDB";
 import { createTable, Table } from "./createTable";
 import { insertMany } from "./insertMany";
 import { many } from "./many";
-import { isAction, use } from "./use";
+import { use } from "./use";
 
 let users: User[];
 let userTable: Table<User, "id">;
@@ -28,7 +28,7 @@ it("should execute clear hooks", async () => {
 
   use(userTable, (ctx) => {
     fn(ctx.action);
-    return ctx.next();
+    return ctx.next(...ctx.params);
   });
   await clear(userTable);
 
