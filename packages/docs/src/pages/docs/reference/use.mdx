@@ -12,7 +12,7 @@ Typical usage of `use()` looks like this:
 ```ts
 use(userTable, async (ctx) => {
   // Call the next registered hook (or the implementation)
-  const result = await ctx.next();
+  const result = await ctx.next(...ctx.params);
   // Return results
   return result;
 });
@@ -56,7 +56,7 @@ Additionally, hooks themselves are called in the reverse order of when they were
 // Register a hook on the entire database
 use(db, async (ctx) => {
   console.log("1");
-  const result = await ctx.next();
+  const result = await ctx.next(...ctx.params);
   console.log("6");
   return result;
 });
@@ -64,7 +64,7 @@ use(db, async (ctx) => {
 // Register a hook on the userTable
 use(userTable, async (ctx) => {
   console.log("2");
-  const result = await ctx.next();
+  const result = await ctx.next(...ctx.params);
   console.log("5");
   return result;
 });
@@ -73,7 +73,7 @@ use(userTable, async (ctx) => {
 // - this will be called after the second hook
 use(userTable, async (ctx) => {
   console.log("3");
-  const result = await ctx.next();
+  const result = await ctx.next(...ctx.params);
   console.log("4");
   return result;
 });
@@ -116,7 +116,7 @@ The name of the method currently executing a hook can be retrieved with `ctx.act
 ```ts
 use(userTable, async (ctx) => {
   console.log(ctx.action);
-  const result = await ctx.next();
+  const result = await ctx.next(...ctx.params);
   return result;
 });
 
@@ -133,7 +133,7 @@ use(userTable, async (ctx) => {
   if(isAction(ctx, "count")) {
     console.log("User has executed count()!");
   }
-  const result = await ctx.next();
+  const result = await ctx.next(...ctx.params);
   return result;
 });
 ```
@@ -144,10 +144,10 @@ It provides the same functionality as a `ctx.action === "count"` check, but addi
 use(userTable, async (ctx) => {
   if(isAction(ctx, "count")) {
     // `result` is now typed as `number`!
-    const result = await ctx.next();
+    const result = await ctx.next(...ctx.params);
   }
   // Out here, `result` can be anything - a number, one entity, a list of entities...
-  const result = await ctx.next();
+  const result = await ctx.next(...ctx.params);
   return result;
 });
 ```

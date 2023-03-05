@@ -19,7 +19,7 @@ use(userTable, async (ctx) => {
   console.log(ctx.params);
 
   // Call the native implementation
-  const result = await ctx.next();
+  const result = await ctx.next(...ctx.params);
   return result;
 })
 ```
