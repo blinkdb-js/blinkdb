@@ -15,7 +15,7 @@ export function middleware<
 >(
   hooks: Hook<T, P, A>[],
   context: Omit<HookContext<T, P, A>, "next">,
-  impl: () => ReturnType<HookMethods<T, P>[A]>
+  impl: () => ReturnType<HookMethods<T, P>[A]> | Awaited<ReturnType<HookMethods<T, P>[A]>>
 ): HookReturn<T, P, A> | Promise<HookReturn<T, P, A>>;
 
 /**
@@ -43,7 +43,7 @@ export function middleware<
 >(
   hooksOrTable: Hook<T, P, A>[] | Table<T, P>,
   context: Omit<HookContext<T, P, A>, "next" | "table"> & { table?: string },
-  impl: () => ReturnType<HookMethods<T, P>[A]>
+  impl: () => ReturnType<HookMethods<T, P>[A]> | Awaited<ReturnType<HookMethods<T, P>[A]>>
 ): HookReturn<T, P, A> | Promise<HookReturn<T, P, A>> {
   let contextTable = context.table;
   let hooks: Hook<T, P, A>[];
