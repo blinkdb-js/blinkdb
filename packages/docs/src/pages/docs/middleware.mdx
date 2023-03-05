@@ -13,15 +13,51 @@ This is all quite simple with a call to [`use()`](/docs/reference/use):
 
 ```ts
 use(userTable, async (ctx) => {
-  // Log the method called
-  console.log(ctx.action);
-  // Log parameters given to the method
-  console.log(ctx.params);
+  // Execute code before calling the implementation
+  console.log(ctx.action); // Log the method called
+  console.log(ctx.params); // Log parameters given to the method
 
   // Call the native implementation
   const result = await ctx.next(...ctx.params);
+
+  // Execute code after the implementation
+  console.log("Everything worked!");
+
+  // Don't forget to return the result ;)
   return result;
 })
 ```
 
-More info about how hooks work and what you can do with them can be found in [the reference](/docs/reference/use).
+More info about how hooks work can be found in [the reference](/docs/reference/use).
+
+## Modifying parameters
+
+Hooks allow you to modify parameters passed to BlinkDB functions.
+
+As an example, you can make sure that [`count`](/docs/reference/count) will always [prefer performance to accuracy](/docs/reference/count#performance):
+
+```ts
+use(userTable, async (ctx) => {
+  if(isAction(ctx, "count")) {
+    // Always pass `{ exact: false }` as an option to `count`
+    return ctx.next(ctx.params[0], ctx.params[1], { exact: false });
+  }
+  return ctx.next(...ctx.params);
+})
+```
+
+## Modifying return values
+
+Just like you can change the objects you pass to `ctx.next()`, you can also modify the return value:
+
+```ts
+use(userTable, async (ctx) => {
+  if(isAction(ctx, "count")) {
+    // `count(...)` will now always return 10 users more than we actually have
+    const num = await ctx.next(...ctx.params);
+    return num + 10;
+  }
+  return ctx.next(...ctx.params);
+})
+```
+
