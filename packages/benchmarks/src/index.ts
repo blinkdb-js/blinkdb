@@ -24,13 +24,31 @@ glob(escapedPath, async (err, files) => {
       await bench.warmup();
       await bench.run();
       // Output Results
-      console.log(relative(resolve(__dirname, "./benchmarks"), mod.name));
+      console.log(
+        `${relative(resolve(__dirname, "./benchmarks"), mod.name)} ${getComparisonOutput(
+          bench
+        )}`
+      );
       console.table(getOutputTable(bench));
       fileCount++;
     }
   }
   console.log(`DONE (${fileCount} files)`);
 });
+
+/**
+ * Returns a nice relative comparison between the first two elements in tbe benchmark
+ */
+function getComparisonOutput(bench: Bench): string {
+  const tasks = bench.tasks.sort((a, b) => (b.result?.hz ?? 0) - (a.result?.hz ?? 0));
+  if (tasks.length < 2) {
+    return "";
+  }
+  const first = tasks[0];
+  const second = tasks[1];
+  const times = ((second.result?.mean ?? 0) / (first.result?.mean ?? 0)).toFixed(2);
+  return `--- ${first.name} is ${times}x faster than ${second.name}`;
+}
 
 /**
  * Takes a bench that has already run and returns
@@ -43,7 +61,7 @@ function getOutputTable(bench: Bench): any {
     .map(({ name, result }) => ({
       name: name,
       "ops/sec": result?.hz ?? 0,
-      "Average Time (ns)": result?.mean ?? 0 * 1000 * 1000,
+      "Average Time (ns)": (result?.mean ?? 0) * 1000 * 1000,
       Margin: `\xb1${result?.rme.toFixed(2)}%`,
       Samples: result?.samples.length,
     }));
