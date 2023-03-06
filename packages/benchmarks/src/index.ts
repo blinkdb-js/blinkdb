@@ -3,10 +3,11 @@ import { relative, resolve } from "path";
 import { Bench } from "tinybench";
 
 const relPath = process.argv[2] ?? "**/*.ts";
-const absPath = resolve(__dirname, "./benchmarks", relPath);
+const absPath = resolve(__dirname, "benchmarks/", relPath);
+const escapedPath = absPath.replace(/\\/g, "/");
 
 // Loads all files from `./benchmarks/**/*.ts` (by default)
-glob(absPath, async (err, files) => {
+glob(escapedPath, async (err, files) => {
   if (err) return console.error(err);
   let fileCount = 0;
   // Dynamically import all modules
@@ -40,10 +41,10 @@ function getOutputTable(bench: Bench): any {
   return bench.tasks
     .sort((a, b) => (b.result?.hz ?? 0) - (a.result?.hz ?? 0))
     .map(({ name, result }) => ({
-      "name": name,
+      name: name,
       "ops/sec": result?.hz ?? 0,
       "Average Time (ns)": result?.mean ?? 0 * 1000 * 1000,
-      "Margin": `\xb1${result?.rme.toFixed(2)}%`,
-      "Samples": result?.samples.length,
+      Margin: `\xb1${result?.rme.toFixed(2)}%`,
+      Samples: result?.samples.length,
     }));
 }
