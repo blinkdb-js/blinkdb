@@ -11,7 +11,8 @@ import { SelectCallback, SelectResult } from "./types";
 export function selectForWhere<T extends object, P extends keyof T>(
   table: Table<T, P>,
   filter: Where<T>,
-  cb: SelectCallback<T>
+  cb: SelectCallback<T>,
+  from?: T[P]
 ): SelectResult<T> {
   // No matchers in filter? We can return early
   if (Object.keys(filter).length === 0) return { fullTableScan: false };
@@ -20,12 +21,17 @@ export function selectForWhere<T extends object, P extends keyof T>(
 
   // Check primary key for items to select
   // TODO: Instead of first checking for the primary key, use either
-  // the column specified in `sort` or use the best one as determined bv
+  // the column specified in `sort` or use the best one as determined by
   // analyzing
   if (primaryKeyProperty in filter) {
     const btree = table[BlinkKey].storage.primary;
     const matcher = filter[primaryKeyProperty];
-    selectForMatcher(btree, matcher as AllMatchers<T[P] & OrdProps>, cb);
+    selectForMatcher(
+      btree,
+      matcher as AllMatchers<T[P] & OrdProps>,
+      cb,
+      from as T[P] & OrdProps
+    );
     return { rowsScanned: [primaryKeyProperty], fullTableScan: false };
   }
 

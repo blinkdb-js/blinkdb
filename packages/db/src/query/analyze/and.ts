@@ -5,7 +5,8 @@ import { analyzeWhere } from "./where";
 
 export function analyzeAnd<T extends object, P extends keyof T>(
   table: Table<T, P>,
-  and: And<T>
+  and: And<T>,
+  from?: T[P]
 ): number {
   let minComplexity = Number.MAX_SAFE_INTEGER;
 
@@ -14,7 +15,7 @@ export function analyzeAnd<T extends object, P extends keyof T>(
   for (const key in and.AND) {
     const filter = and.AND[key];
     const filterComplexity =
-      "OR" in filter ? analyzeOr(table, filter) : analyzeWhere(table, filter);
+      "OR" in filter ? analyzeOr(table, filter, from) : analyzeWhere(table, filter, from);
     if (filterComplexity < minComplexity) {
       minComplexity = filterComplexity;
     }

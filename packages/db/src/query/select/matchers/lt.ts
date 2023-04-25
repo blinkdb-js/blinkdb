@@ -5,9 +5,10 @@ import { SelectCallback } from "../types";
 export function selectForLt<K extends OrdProps, E>(
   btree: BTree<K, E>,
   matcher: LtMatcher<K>,
-  cb: SelectCallback<E>
+  cb: SelectCallback<E>,
+  from?: K
 ): void {
-  const minKey = btree.minKey();
+  const minKey = from ?? btree.minKey();
   const maxKey = matcher.lt;
   if (minKey !== undefined) {
     btree.editRange(minKey, maxKey, false, (_, v) => {

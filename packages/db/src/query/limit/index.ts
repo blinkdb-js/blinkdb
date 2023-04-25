@@ -1,6 +1,5 @@
-import { BlinkKey, Table } from "../../core";
-import { compare } from "../compare";
-import { Limit, OrdProps } from "../types";
+import { Table } from "../../core";
+import { Limit } from "../types";
 
 /**
  * @returns all items from `items` limited according to the given `limit` object.
@@ -14,15 +13,8 @@ export function limitItems<T extends object, P extends keyof T>(
     return [];
   }
 
-  const primaryKeyProperty = table[BlinkKey].options.primary;
   let fromIndex = 0;
   let toIndex = items.length;
-
-  if (limit.from !== undefined) {
-    fromIndex = items.findIndex(
-      (item) => compare(item[primaryKeyProperty] as OrdProps, limit.from as OrdProps) >= 0
-    );
-  }
 
   if (limit.skip !== undefined) {
     fromIndex += limit.skip;

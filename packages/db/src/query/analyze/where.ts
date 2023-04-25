@@ -4,7 +4,8 @@ import { analyzeMatcher } from "./matchers";
 
 export function analyzeWhere<T extends object, P extends keyof T>(
   table: Table<T, P>,
-  where: Where<T>
+  where: Where<T>,
+  from?: T[P]
 ): number {
   if (Object.keys(where).length === 0) return 0;
 
@@ -16,7 +17,11 @@ export function analyzeWhere<T extends object, P extends keyof T>(
     let complexity: number | undefined;
     if ((key as string) === primaryKeyProperty) {
       const btree = table[BlinkKey].storage.primary;
-      complexity = analyzeMatcher(btree, matcher as AllMatchers<T[P] & OrdProps>);
+      complexity = analyzeMatcher(
+        btree,
+        matcher as AllMatchers<T[P] & OrdProps>,
+        from as T[P] & OrdProps
+      );
     } else {
       const btree = table[BlinkKey].storage.indexes[key];
       if (btree) {

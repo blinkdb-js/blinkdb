@@ -1,23 +1,24 @@
 import equal from "fast-deep-equal";
 import BTree, { defaultComparator } from "sorted-btree";
-import { InMatcher } from "../../types";
+import { getBiggerKey } from "../../compare";
+import { InMatcher, OrdProps } from "../../types";
 import { SelectCallback } from "../types";
+import { selectForEq } from "./eq";
 
-export function selectForIn<K, E>(
+export function selectForIn<K extends OrdProps, E>(
   btree: BTree<K, E>,
   matcher: InMatcher<K>,
-  cb: SelectCallback<E>
+  cb: SelectCallback<E>,
+  from?: K
 ): void {
   if (matcher.in.length === 1) {
-    const key = matcher.in[0];
-    const item = btree.get(key);
-    if (item) cb(item);
-    return;
+    return selectForEq(btree, matcher.in[0], cb, from);
   }
 
   const matcherItems = getSortedMatcherItems(matcher);
 
-  const minKey = matcherItems[0];
+  let minKey = matcherItems[0];
+  minKey = from ? getBiggerKey(minKey, from) : minKey;
   const maxKey = matcherItems[matcherItems.length - 1];
 
   btree.editRange(minKey, maxKey, true, (key, val) => {

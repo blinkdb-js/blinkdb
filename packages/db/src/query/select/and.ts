@@ -14,7 +14,8 @@ import { selectForWhere } from "./where";
 export function selectForAnd<T extends object, P extends keyof T>(
   table: Table<T, P>,
   and: And<T>,
-  cb: SelectCallback<T>
+  cb: SelectCallback<T>,
+  from?: T[P]
 ): SelectResult<T> {
   if (and.AND.length === 0) {
     return { fullTableScan: false };
@@ -25,7 +26,7 @@ export function selectForAnd<T extends object, P extends keyof T>(
 
   for (const filter of and.AND) {
     const complexity =
-      "OR" in filter ? analyzeOr(table, filter) : analyzeWhere(table, filter);
+      "OR" in filter ? analyzeOr(table, filter, from) : analyzeWhere(table, filter, from);
     if (complexity < minComplexity) {
       minComplexity = complexity;
       bestFilter = filter;
@@ -33,6 +34,6 @@ export function selectForAnd<T extends object, P extends keyof T>(
   }
 
   return "OR" in bestFilter
-    ? selectForOr(table, bestFilter, cb)
-    : selectForWhere(table, bestFilter, cb);
+    ? selectForOr(table, bestFilter, cb, from)
+    : selectForWhere(table, bestFilter, cb, from);
 }

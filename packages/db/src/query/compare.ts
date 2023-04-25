@@ -7,3 +7,7 @@ export function compare<T extends OrdProps>(a: T, b: T) {
   }
   return defaultComparator(a as Exclude<T, BigInt>, b as Exclude<T, BigInt>);
 }
+
+export function getBiggerKey<T extends OrdProps>(a: T, b: T) {
+  return compare(a, b) >= 0 ? a : b;
+}
