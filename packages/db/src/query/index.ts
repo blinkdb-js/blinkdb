@@ -12,6 +12,7 @@ export function get<T extends object, P extends keyof T>(
   table: Table<T, P>,
   filter: Query<T, P>
 ): T[] {
+  let skipFromStep = false;
   let items: T[] = [];
 
   // Retrieve items
@@ -34,6 +35,7 @@ export function get<T extends object, P extends keyof T>(
         btree.forRange(filter.limit.from as T[P] & OrdProps, maxKey, true, (_, item) => {
           items.push(item);
         });
+        skipFromStep = true;
       }
     } else {
       items = table[BlinkKey].storage.primary.valuesArray();
@@ -47,7 +49,7 @@ export function get<T extends object, P extends keyof T>(
 
   // Limit items
   if (filter.limit) {
-    items = limitItems(table, items, filter.limit);
+    items = limitItems(table, items, filter.limit, skipFromStep);
   }
 
   return items;
