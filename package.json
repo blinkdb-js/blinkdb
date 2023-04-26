@@ -9,7 +9,8 @@
     "prepare": "node ./prepare.js",
     "build": "npm run build -w=blinkdb",
     "publish": "npm publish -w=blinkdb",
-    "test": "jest"
+    "test": "jest",
+    "test-coverage": "jest --coverage"
   },
   "devDependencies": {
     "@swc/core": "^1.2.242",
