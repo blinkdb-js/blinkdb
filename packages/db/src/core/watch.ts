@@ -105,7 +105,7 @@ export async function watch<T extends object, P extends keyof T>(
     }
     if (entitiesHaveChanged) {
       if (query?.sort) {
-        entityList = sortItems(entityList, query.sort);
+        entityList = sortItems(table, entityList, query.sort);
       }
       if (query?.limit) {
         entityList = limitItems(table, entityList, query.limit);
@@ -142,7 +142,7 @@ export async function watch<T extends object, P extends keyof T>(
 
     if (entitiesHaveChanged) {
       if (query?.sort) {
-        entityList = sortItems(entityList, query.sort);
+        entityList = sortItems(table, entityList, query.sort);
       }
       if (query?.limit) {
         entityList = limitItems(table, entityList, query.limit);
@@ -163,7 +163,7 @@ export async function watch<T extends object, P extends keyof T>(
     if (entitiesHaveChanged) {
       entityList = Array.from(entities.values());
       if (query?.sort) {
-        entityList = sortItems(entityList, query.sort);
+        entityList = sortItems(table, entityList, query.sort);
       }
       if (query?.limit) {
         entityList = limitItems(table, entityList, query.limit);

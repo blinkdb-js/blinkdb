@@ -2,6 +2,7 @@ import { BlinkKey, Table } from "../core";
 import { matches } from "./filter";
 import { limitItems } from "./limit";
 import { select } from "./select";
+import { SelectResult } from "./select/types";
 import { sortItems } from "./sort";
 import { OrdProps, Query } from "./types";
 
@@ -14,10 +15,11 @@ export function get<T extends object, P extends keyof T>(
 ): T[] {
   let skipFromStep = false;
   let items: T[] = [];
+  let selectResult: SelectResult<T> | undefined;
 
   // Retrieve items
   if (filter.where) {
-    select(
+    selectResult = select(
       table,
       filter.where,
       (item) => {
@@ -37,14 +39,22 @@ export function get<T extends object, P extends keyof T>(
         });
         skipFromStep = true;
       }
+      selectResult = {
+        rowsScanned: [table[BlinkKey].options.primary],
+        fullTableScan: false,
+      };
     } else {
       items = table[BlinkKey].storage.primary.valuesArray();
+      selectResult = {
+        rowsScanned: [table[BlinkKey].options.primary],
+        fullTableScan: false,
+      };
     }
   }
 
   // Sort items
   if (filter.sort) {
-    items = sortItems(items, filter.sort);
+    items = sortItems(table, items, filter.sort, selectResult);
   }
 
   // Limit items
