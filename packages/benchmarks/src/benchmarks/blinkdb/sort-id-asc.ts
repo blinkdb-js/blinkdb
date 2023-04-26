@@ -27,7 +27,7 @@ for (let i = 0; i < 10000; i++) {
 lokiUserTable.insert(users);
 insertMany(blinkUserTable, users);
 
-export const bench = new Bench({ iterations: 1 })
+export const bench = new Bench()
   .add("lokijs", () => {
     lokiUserTable.chain().find().simplesort("id");
   })
