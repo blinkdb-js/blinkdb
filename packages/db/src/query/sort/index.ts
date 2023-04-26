@@ -14,11 +14,17 @@ export function sortItems<T extends object, P extends keyof T>(
 ): T[] {
   // In the event we want to sort by id and the select engine scanned only the id column, it's already sorted
   const primaryKey = table[BlinkKey].options.primary;
-  if ((sort.key as keyof T) === primaryKey && sort.order === "asc") {
+  if ((sort.key as keyof T) === primaryKey) {
     if (selectResult && !selectResult.fullTableScan) {
       const rowsScanned = selectResult.rowsScanned;
       if (rowsScanned && rowsScanned.length === 1 && rowsScanned[0] === primaryKey) {
-        return items;
+        switch (sort.order) {
+          case "asc":
+            return items;
+          case "desc":
+            items.reverse();
+            return items;
+        }
       }
     }
   }
