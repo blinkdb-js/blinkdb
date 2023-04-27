@@ -22,6 +22,11 @@ beforeEach(async () => {
   await insertMany(userTable, users);
 });
 
+it("should return the primary keys of all updated items", async () => {
+  const ids = await updateMany(userTable, users);
+  expect(ids).toStrictEqual(users.map((u) => u.id));
+});
+
 it("should throw if the primary key given to update is not found", async () => {
   expect(updateMany(userTable, [{ id: "1000" }])).rejects.toThrow(
     /Item with primary key .* not found./

@@ -51,5 +51,5 @@ export async function internalUpdateWhere<T extends object, P extends keyof T>(
       return newItem;
     })
   );
-  return await internalUpdateMany(table, modifiedItems);
+  await internalUpdateMany(table, modifiedItems);
 }
