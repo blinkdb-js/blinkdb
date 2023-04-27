@@ -11,6 +11,8 @@ import {
   update,
   updateMany,
   updateWhere,
+  upsert,
+  upsertMany,
 } from "../core";
 import { Filter, Query } from "../query/types";
 
@@ -57,7 +59,9 @@ export type HookAction =
   | "removeWhere"
   | "update"
   | "updateMany"
-  | "updateWhere";
+  | "updateWhere"
+  | "upsert"
+  | "upsertMany";
 
 export type HookMethods<T extends object = any, P extends keyof T = keyof T> = {
   clear: typeof clear<T, P>;
@@ -77,4 +81,6 @@ export type HookMethods<T extends object = any, P extends keyof T = keyof T> = {
   update: typeof update<T, P>;
   updateMany: typeof updateMany<T, P>;
   updateWhere: typeof updateWhere<T, P>;
+  upsert: typeof upsert<T, P>;
+  upsertMany: typeof upsertMany<T, P>;
 };

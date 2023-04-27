@@ -13,6 +13,8 @@ export { removeWhere } from "./removeWhere";
 export { Diff, update } from "./update";
 export { updateMany } from "./updateMany";
 export { updateWhere } from "./updateWhere";
+export { upsert } from "./upsert";
+export { upsertMany } from "./upsertMany";
 export * from "./use";
 export * from "./uuid";
 export * from "./watch";
