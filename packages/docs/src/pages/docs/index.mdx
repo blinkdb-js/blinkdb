@@ -97,12 +97,12 @@ resulting in incredible performance, regardless if you're working with **10.000*
     </div>
     ```ts
       // Either watch for changes on the whole table...
-      watch(userTable, users => {
+      await watch(userTable, users => {
         console.log('All users in the database:', users);
       });
 
       // ...or specify a filter
-      watch(userTable, { where: { age: { lt: 5 } } }, babies => {
+      await watch(userTable, { where: { age: { lt: 5 } } }, babies => {
         console.log('All babies in the database:', babies);
       });
     ```
