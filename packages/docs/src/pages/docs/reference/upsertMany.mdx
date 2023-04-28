@@ -1,0 +1,23 @@
+---
+layout: "../../../layouts/DocsLayout.astro"
+title: "upsertMany()"
+---
+
+# upsertMany()
+
+Inserts the items into the table, or updates them if items with the given primary keys already exist.
+
+Returns the ids of the inserted/updated items.
+
+```ts
+const [aliceId, bobId, charlieId] = await upsertMany(userTable, [
+  { id: uuid(), name: "Alice", age: 23 },
+  { id: "existing-bob-uuid", name: "Bob", age: 45 },
+  { id: uuid(), name: "Charlie", age: 34 }
+]);
+```
+
+| Parameter  | Description                                                           |
+| ---------- | --------------------------------------------------------------------- |
+| `table`    | The table created by [`createTable()`](/docs/reference/createTable) . |
+| `items`    | The items to insert/update.                                           |
