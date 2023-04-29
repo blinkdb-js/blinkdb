@@ -15,28 +15,50 @@ beforeEach(async () => {
   await insertMany(userTable, users);
 });
 
-it("should throw if there is no match", async () => {
-  const fn = async () => await one(userTable, { where: { id: "1337" } });
+describe("with id", () => {
+  it("should throw if there is no match", async () => {
+    const fn = async () => await one(userTable, "1337");
 
-  expect(fn).rejects.toThrow("No items found for the given query.");
+    expect(fn).rejects.toThrow("No items found for the given query.");
+  });
+
+  it("should return the item if it finds a match", async () => {
+    const item = await one(userTable, "0");
+
+    expect(item).toStrictEqual(users.find((u) => u.id === "0"));
+  });
+
+  it("should clone returned items", async () => {
+    const item = await one(userTable, "0");
+
+    expect(item).not.toBe(users.find((u) => u.id === "0"));
+  });
 });
 
-it("should throw if there's more than more match", async () => {
-  const fn = async () => await one(userTable, { where: { id: { gte: "" } } });
+describe("with filter", () => {
+  it("should throw if there is no match", async () => {
+    const fn = async () => await one(userTable, { where: { id: "1337" } });
 
-  expect(fn).rejects.toThrow("More than one item found for the given query.");
-});
+    expect(fn).rejects.toThrow("No items found for the given query.");
+  });
 
-it("should return the item if it finds a match", async () => {
-  const item = await one(userTable, { where: { id: "0" } });
+  it("should throw if there's more than more match", async () => {
+    const fn = async () => await one(userTable, { where: { id: { gte: "" } } });
 
-  expect(item).toStrictEqual(users.find((u) => u.id === "0"));
-});
+    expect(fn).rejects.toThrow("More than one item found for the given query.");
+  });
 
-it("should clone returned items", async () => {
-  const item = await one(userTable, { where: { id: "0" } });
+  it("should return the item if it finds a match", async () => {
+    const item = await one(userTable, { where: { id: "0" } });
 
-  expect(item).not.toBe(users.find((u) => u.id === "0"));
+    expect(item).toStrictEqual(users.find((u) => u.id === "0"));
+  });
+
+  it("should clone returned items", async () => {
+    const item = await one(userTable, { where: { id: "0" } });
+
+    expect(item).not.toBe(users.find((u) => u.id === "0"));
+  });
 });
 
 it("should execute one hooks", async () => {

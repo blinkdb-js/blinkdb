@@ -3,7 +3,6 @@ import {
   insert,
   insertMany,
   many,
-  one,
   remove,
   removeMany,
   removeWhere,
@@ -74,7 +73,7 @@ export type HookMethods<T extends object = any, P extends keyof T = keyof T> = {
   insert: typeof insert<T, P>;
   insertMany: typeof insertMany<T, P>;
   many: typeof many<T, P>;
-  one: typeof one<T, P>;
+  one: (table: Table<T, P>, queryOrId: Query<T, P>|T[P]) => Promise<T>;
   remove: typeof remove<T, P>;
   removeMany: typeof removeMany<T, P>;
   removeWhere: typeof removeWhere<T, P>;
