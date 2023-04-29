@@ -69,7 +69,7 @@ export type HookMethods<T extends object = any, P extends keyof T = keyof T> = {
     filter?: Filter<T>,
     options?: { exact: boolean }
   ) => Promise<number>;
-  first: (table: Table<T, P>, query?: Query<T, P>) => Promise<T | null>;
+  first: (table: Table<T, P>, queryOrId?: Query<T, P>|T[P]) => Promise<T | null>;
   insert: typeof insert<T, P>;
   insertMany: typeof insertMany<T, P>;
   many: typeof many<T, P>;
