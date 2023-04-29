@@ -1,5 +1,5 @@
 import { randFirstName } from "@ngneat/falso";
-import { clear, createDB, createTable, insertMany, one } from "blinkdb";
+import { createDB, createTable, insertMany, one } from "blinkdb";
 import loki from "lokijs";
 import { Bench } from "tinybench";
 
@@ -32,5 +32,5 @@ export const bench = new Bench()
     lokiUserTable.get(2);
   })
   .add("blinkdb", async () => {
-    await one(blinkUserTable, { where: { id: 2 } });
+    await one(blinkUserTable, 2);
   });
