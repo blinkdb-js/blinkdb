@@ -5,6 +5,7 @@ import { createTable, Table } from "./createTable";
 import { insert } from "./insert";
 import { one } from "./one";
 import { use } from "./use";
+import { PrimaryKeyAlreadyInUseError } from "./errors";
 
 let users: User[];
 let userTable: Table<User, "id">;
@@ -52,7 +53,7 @@ it("should prevent duplicate primary keys", async () => {
   const aliceId = await insert(userTable, users[0]);
   const fn = async () => await insert(userTable, users[0]);
 
-  expect(fn).rejects.toThrow(`Primary key ${users[0].id} already in use`);
+  await expect(fn).rejects.toThrow(PrimaryKeyAlreadyInUseError);
 });
 
 it("should allow inserting with a previousy deleted primary key", async () => {
@@ -60,7 +61,7 @@ it("should allow inserting with a previousy deleted primary key", async () => {
   await clear(userTable);
   const fn = async () => await insert(userTable, users[0]);
 
-  expect(fn).not.toThrow(`Primary key ${users[0].id} already in use`);
+  expect(fn).not.toThrow(PrimaryKeyAlreadyInUseError);
 });
 
 it("should execute insert hooks", async () => {

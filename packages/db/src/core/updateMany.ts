@@ -4,6 +4,7 @@ import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 import { Diff } from "./update";
+import { InvalidPrimaryKeyError, ItemNotFoundError } from "./errors";
 
 /**
  * Saves updates of the given entities in the `table`.
@@ -47,13 +48,13 @@ export async function internalUpdateMany<T extends object, P extends keyof T>(
     const primaryKey = diff[primaryKeyProperty] as T[P] & OrdProps;
 
     if (primaryKey === undefined || primaryKey === null) {
-      throw new Error(`"${primaryKey}" is an invalid primary key value.`);
+      throw new InvalidPrimaryKeyError(primaryKey);
     }
 
     const item = table[BlinkKey].storage.primary.get(primaryKey);
 
     if (item === undefined || item === null) {
-      throw new Error(`Item with primary key "${primaryKey}" not found.`);
+      throw new ItemNotFoundError<T, P>(primaryKey);
     }
 
     const oldItem = clone(item);

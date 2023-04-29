@@ -6,6 +6,7 @@ import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 import { Diff } from "./update";
 import { internalUpdateMany } from "./updateMany";
+import { PrimaryKeyCannotBeModifiedError } from "./errors";
 
 /**
  * Modifies all entities that match the given `filter` using the provided `callback`.
@@ -46,7 +47,7 @@ export async function internalUpdateWhere<T extends object, P extends keyof T>(
     items.map(async (item) => {
       const newItem = await callback(item);
       if (newItem[primaryKeyProperty] !== item[primaryKeyProperty]) {
-        throw new Error(`Primary key cannot be modified in update queries.`);
+        throw new PrimaryKeyCannotBeModifiedError(item[primaryKeyProperty]);
       }
       return newItem;
     })

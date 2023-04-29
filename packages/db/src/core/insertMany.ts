@@ -4,6 +4,7 @@ import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 import { Create } from "./insert";
+import { PrimaryKeyAlreadyInUseError } from "./errors";
 
 /**
  * Inserts new entities into `table`.
@@ -42,7 +43,7 @@ export async function internalInsertMany<T extends object, P extends keyof T>(
     const primaryKey = entity[primaryKeyProperty] as T[P] & OrdProps;
 
     if (table[BlinkKey].storage.primary.has(primaryKey)) {
-      throw new Error(`Primary key ${primaryKey} already in use.`);
+      throw new PrimaryKeyAlreadyInUseError(primaryKey);
     }
 
     const storageEntity = table[BlinkKey].db[BlinkKey].options.clone

@@ -5,6 +5,7 @@ import { insertMany } from "./insertMany";
 import { many } from "./many";
 import { updateWhere } from "./updateWhere";
 import { use } from "./use";
+import { PrimaryKeyCannotBeModifiedError } from "./errors";
 
 let users: User[];
 let userTable: Table<User, "id">;
@@ -23,11 +24,11 @@ beforeEach(async () => {
 });
 
 it("should throw if the primary key is modified inside the callback", async () => {
-  expect(
+  await expect(
     updateWhere(userTable, { where: { age: { gt: 0 } } }, (item) => {
       return { ...item, id: "1" };
     })
-  ).rejects.toThrow("Primary key cannot be modified in update queries.");
+  ).rejects.toThrow(PrimaryKeyCannotBeModifiedError);
 });
 
 it("should update no items if no items match", async () => {

@@ -4,6 +4,7 @@ import { OrdProps, Query } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
+import { MoreThanOneItemFoundError, ItemNotFoundError } from "./errors";
 
 /**
  * Retrieves the first entity from `table` matching the given `id`.
@@ -55,7 +56,7 @@ export async function internalOne<T extends object, P extends keyof T>(
   if(typeof queryOrId !== "object") {
     let entity = table[BlinkKey].storage.primary.get(queryOrId as T[P] & OrdProps) ?? null;
     if(entity === null) {
-      throw new Error("No items found for the given query.");
+      throw new ItemNotFoundError(queryOrId);
     }
     entity = table[BlinkKey].db[BlinkKey].options.clone ? clone(entity) : entity;
     return entity;
@@ -63,9 +64,9 @@ export async function internalOne<T extends object, P extends keyof T>(
 
   const res = get(table, queryOrId as Query<T, P>);
   if (res.length === 0) {
-    throw new Error("No items found for the given query.");
+    throw new ItemNotFoundError(queryOrId);
   } else if (res.length > 1) {
-    throw new Error("More than one item found for the given query.");
+    throw new MoreThanOneItemFoundError(queryOrId);
   }
 
   return table[BlinkKey].db[BlinkKey].options.clone ? clone(res[0]) : res[0];

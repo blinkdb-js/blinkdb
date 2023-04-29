@@ -5,6 +5,7 @@ import { insertMany } from "./insertMany";
 import { one } from "./one";
 import { update } from "./update";
 import { use } from "./use";
+import { ItemNotFoundError } from "./errors";
 
 let users: User[];
 let userTable: Table<User, "id">;
@@ -29,9 +30,7 @@ it("should return the primary key of the updated item", async () => {
 });
 
 it("should throw if the primary key given to update is not found", async () => {
-  expect(update(userTable, { id: "1000" })).rejects.toThrow(
-    /Item with primary key .* not found./
-  );
+  await expect(update(userTable, { id: "1000" })).rejects.toThrow(ItemNotFoundError);
 });
 
 it("should update the entity if the primary key is found", async () => {

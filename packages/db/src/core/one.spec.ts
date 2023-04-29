@@ -4,6 +4,7 @@ import { createTable, Table } from "./createTable";
 import { insertMany } from "./insertMany";
 import { one } from "./one";
 import { use } from "./use";
+import { ItemNotFoundError, MoreThanOneItemFoundError } from "./errors";
 
 let users: User[];
 let userTable: Table<User, "id">;
@@ -19,7 +20,7 @@ describe("with id", () => {
   it("should throw if there is no match", async () => {
     const fn = async () => await one(userTable, "1337");
 
-    expect(fn).rejects.toThrow("No items found for the given query.");
+    await expect(fn).rejects.toThrow(ItemNotFoundError);
   });
 
   it("should return the item if it finds a match", async () => {
@@ -39,13 +40,13 @@ describe("with filter", () => {
   it("should throw if there is no match", async () => {
     const fn = async () => await one(userTable, { where: { id: "1337" } });
 
-    expect(fn).rejects.toThrow("No items found for the given query.");
+    await expect(fn).rejects.toThrow(ItemNotFoundError);
   });
 
   it("should throw if there's more than more match", async () => {
     const fn = async () => await one(userTable, { where: { id: { gte: "" } } });
 
-    expect(fn).rejects.toThrow("More than one item found for the given query.");
+    await expect(fn).rejects.toThrow(MoreThanOneItemFoundError);
   });
 
   it("should return the item if it finds a match", async () => {

@@ -2,6 +2,7 @@ export { clear } from "./clear";
 export { count } from "./count";
 export * from "./createDB";
 export * from "./createTable";
+export * from "./errors";
 export { first } from "./first";
 export { Create, insert } from "./insert";
 export { insertMany } from "./insertMany";
