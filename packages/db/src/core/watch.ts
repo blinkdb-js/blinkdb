@@ -84,12 +84,10 @@ export async function watch<T extends object, P extends keyof T>(
     table[BlinkKey].db[BlinkKey].options.clone ? clone(initialEntities) : initialEntities
   );
 
-  let entities: Map<T[P], T> = new Map();
+  let entities: Map<T[P], T> = new Map(
+    initialEntities.map((e) => [e[primaryKeyProperty], e])
+  );
   let entityList: T[] = initialEntities;
-  for (let entity of initialEntities) {
-    const primaryKey = entity[primaryKeyProperty];
-    entities.set(primaryKey, entity);
-  }
 
   const removeOnInsertCb = table[BlinkKey].events.onInsert.register((changes) => {
     let entitiesHaveChanged = false;
