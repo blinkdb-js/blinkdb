@@ -18,7 +18,7 @@ import { many } from "./many";
  * const db = createDB();
  * const userTable = createTable<User>(db, "users")();
  * // This will output 'List of all users: []'
- * watch(userTable, (users) => {
+ * await watch(userTable, (users) => {
  *   console.log('List of all users: ', users);
  * });
  * // This will output 'List of all users: [{ id: "some-uuid", name: "Alice" }]'
@@ -46,7 +46,7 @@ export async function watch<T extends object, P extends keyof T>(
  * const db = createDB();
  * const userTable = createTable<User>(db, "users")();
  * // This will output 'List of all babies: []'
- * watch(userTable, { age: { lt: 3 } }, (users) => {
+ * await watch(userTable, { age: { lt: 3 } }, (users) => {
  *   console.log('List of all babies: ', users);
  * });
  * // This will output 'List of all babies: [{ id: "some-uuid", name: "Alice" }]'
