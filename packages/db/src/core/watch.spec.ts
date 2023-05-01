@@ -1,10 +1,10 @@
-import { compare } from "../query/compare";
 import { generateRandomUsers, sortById, User } from "../tests/utils";
 import { clear } from "./clear";
-import { createDB, Database } from "./createDB";
+import { createDB } from "./createDB";
 import { createTable, Table } from "./createTable";
 import { insert } from "./insert";
 import { insertMany } from "./insertMany";
+import { many } from "./many";
 import { remove } from "./remove";
 import { removeMany } from "./removeMany";
 import { removeWhere } from "./removeWhere";
@@ -40,7 +40,7 @@ it("should work with filter", async () => {
   await watch(userTable, { where: { id: { gt: "0" } } }, fn);
 
   expect(fn.mock.calls[0][0].sort(sortById)).toStrictEqual(
-    users.filter((u) => u.id > "0").sort(sortById)
+    (await many(userTable, { where: { id: { gt: "0" } } })).sort(sortById)
   );
 });
 
@@ -50,15 +50,23 @@ it("should work with sort", async () => {
     { where: { age: { gt: 0 } }, sort: { key: "age", order: "desc" } },
     fn
   );
-  const results = fn.mock.calls[0][0];
 
-  expect(results[0].age).toBeGreaterThanOrEqual(results[1].age!);
+  expect(fn.mock.calls[0][0]).toStrictEqual(
+    await many(userTable, {
+      where: { age: { gt: 0 } },
+      sort: { key: "age", order: "desc" },
+    })
+  );
 });
 
 it("should work with limit", async () => {
   await watch(userTable, { where: { id: { gt: "0" } }, limit: { take: 4 } }, fn);
 
-  expect(fn.mock.calls[0][0]).toHaveLength(4);
+  expect(fn.mock.calls[0][0].sort(sortById)).toStrictEqual(
+    (await many(userTable, { where: { id: { gt: "0" } }, limit: { take: 4 } })).sort(
+      sortById
+    )
+  );
 });
 
 describe("without filter", () => {
@@ -319,5 +327,19 @@ describe("with filter", () => {
 
     expect(fn.mock.calls.length).toBe(2);
     expect(fn.mock.calls[1][0]).toStrictEqual([]);
+  });
+});
+
+describe("limit", () => {
+  it("should limit correctly after new items", async () => {
+    await watch(userTable, { limit: { skip: 10, take: 4 } }, fn);
+    await insertMany(userTable, [
+      { id: "101", name: "Alice" },
+      { id: "102", name: "Bob" },
+    ]);
+
+    expect(fn.mock.calls[1][0].sort(sortById)).toStrictEqual(
+      (await many(userTable, { limit: { skip: 10, take: 4 } })).sort(sortById)
+    );
   });
 });
