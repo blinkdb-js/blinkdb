@@ -331,7 +331,7 @@ describe("with filter", () => {
 });
 
 describe("limit", () => {
-  it("should limit correctly after new items", async () => {
+  it("should limit.take & limit.skip correctly after new items", async () => {
     await watch(userTable, { limit: { skip: 10, take: 4 } }, fn);
     await insertMany(userTable, [
       { id: "101", name: "Alice" },
@@ -340,6 +340,17 @@ describe("limit", () => {
 
     expect(fn.mock.calls[1][0].sort(sortById)).toStrictEqual(
       (await many(userTable, { limit: { skip: 10, take: 4 } })).sort(sortById)
+    );
+  });
+  it("should limit.from correctly after new items", async () => {
+    await watch(userTable, { limit: { from: "80" } }, fn);
+    await insertMany(userTable, [
+      { id: "01", name: "Alice" },
+      { id: "02", name: "Bob" },
+    ]);
+
+    expect(fn.mock.calls[1][0].sort(sortById)).toStrictEqual(
+      (await many(userTable, { limit: { from: "80" } })).sort(sortById)
     );
   });
 });

@@ -84,6 +84,11 @@ export async function watch<T extends object, P extends keyof T>(
     return table[BlinkKey].db[BlinkKey].options.clone ? clone(items) : items;
   }
 
+  function sort(items: T[]): T[] {
+    if (!query?.limit?.from) return items;
+    return items.filter((i) => i[primaryKeyProperty] >= query!.limit!.from!);
+  }
+
   function limit(items: T[]): T[] {
     if (!query?.limit) return items;
     return limitItems(table, items, query.limit, true);
@@ -108,7 +113,7 @@ export async function watch<T extends object, P extends keyof T>(
       ? { ...query.limit, take: undefined, skip: undefined }
       : undefined,
   });
-  cb(sanitize(limit(entities)));
+  cb(sanitize(limit(sort(entities))));
 
   const removeOnInsertCb = table[BlinkKey].events.onInsert.register((changes) => {
     let entitiesHaveChanged = false;
@@ -121,7 +126,7 @@ export async function watch<T extends object, P extends keyof T>(
       entitiesHaveChanged = true;
     }
     if (entitiesHaveChanged) {
-      cb(sanitize(limit(entities)));
+      cb(sanitize(limit(sort(entities))));
     }
   });
 
@@ -152,7 +157,7 @@ export async function watch<T extends object, P extends keyof T>(
     }
 
     if (entitiesHaveChanged) {
-      cb(sanitize(limit(entities)));
+      cb(sanitize(limit(sort(entities))));
     }
   });
 
@@ -168,7 +173,7 @@ export async function watch<T extends object, P extends keyof T>(
       }
     }
     if (entitiesHaveChanged) {
-      cb(sanitize(limit(entities)));
+      cb(sanitize(limit(sort(entities))));
     }
   });
 
