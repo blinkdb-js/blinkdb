@@ -4,9 +4,9 @@
  * Used in calls to query functions like `many()`, `one()` or `first()`.
  */
 export type Query<T, P extends keyof T> = {
-  where?: Where<T> | Or<T> | And<T>;
-  sort?: Sort<T>;
-  limit?: Limit<T, P>;
+  where?: Where<T> | Or<T> | And<T>|undefined;
+  sort?: Sort<T>|undefined;
+  limit?: Limit<T, P>|undefined;
 };
 
 /**
@@ -15,7 +15,7 @@ export type Query<T, P extends keyof T> = {
  * Used in calls to `watch()`.
  */
 export type Filter<T> = {
-  where?: Where<T> | Or<T> | And<T>;
+  where?: Where<T> | Or<T> | And<T>|undefined;
 };
 
 /**
@@ -67,9 +67,9 @@ export type ValidSortKey<T> = {
  * `skip` items, and then take up to `take` items.
  */
 export type Limit<T, P extends keyof T> = {
-  from?: T[P];
-  skip?: number;
-  take?: number;
+  from?: T[P]|undefined;
+  skip?: number|undefined;
+  take?: number|undefined;
 };
 
 /**
