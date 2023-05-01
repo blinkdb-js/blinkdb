@@ -1,5 +1,5 @@
 import { randFirstName } from "@ngneat/falso";
-import { createDB, createTable, insertMany, one } from "blinkdb";
+import { createDB, createTable, insertMany, upsert } from "blinkdb";
 import loki from "lokijs";
 import { Bench } from "tinybench";
 
@@ -11,12 +11,14 @@ interface User {
 
 const blinkdb = createDB({ clone: false });
 let blinkUserTable = createTable<User>(blinkdb, "users")();
+let blinkIndex = 0;
 
 const lokidb = new loki("users.db");
 let lokiUserTable = lokidb.addCollection<User>("users", { unique: ["id"] });
+let lokiIndex = 0;
 
 let users: User[] = [];
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < 100000; i++) {
   users.push({
     id: i,
     name: randFirstName(),
@@ -24,13 +26,18 @@ for (let i = 0; i < 10000; i++) {
   });
 }
 
-lokiUserTable.insert(users);
-insertMany(blinkUserTable, users);
+lokiUserTable.insert(users.slice(0, 50000));
+insertMany(blinkUserTable, users.slice(0, 50000));
 
 export const bench = new Bench()
   .add("lokijs", () => {
-    lokiUserTable.get(2);
+    const user = users[lokiIndex++];
+    if(lokiUserTable.get((user as any).$loki)) {
+     lokiUserTable.update(user);
+    } else {
+      lokiUserTable.insert(user);
+    }
   })
   .add("blinkdb", async () => {
-    await one(blinkUserTable, 2);
+    await upsert(blinkUserTable, users[blinkIndex++]);
   });

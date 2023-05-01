@@ -1,9 +1,26 @@
 import { middleware } from "../events/Middleware";
 import { get } from "../query";
-import { Query } from "../query/types";
+import { OrdProps, Query } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
+import { MoreThanOneItemFoundError, ItemNotFoundError } from "./errors";
+
+/**
+ * Retrieves the first entity from `table` matching the given `id`.
+ *
+ * @throws if no item matches the given id.
+ *
+ * @example
+ * const db = createDB();
+ * const userTable = createTable<User>(db, "users")();
+ * // Retrieve the user with id 10
+ * const userWithId = await one(userTable, 10);
+ */
+export async function one<T extends object, P extends keyof T>(
+  table: Table<T, P>,
+  id: T[P]
+): Promise<T>;
 
 /**
  * Retrieves the first entity from `table` matching the given `filter`.
@@ -19,23 +36,37 @@ import { Table } from "./createTable";
 export async function one<T extends object, P extends keyof T>(
   table: Table<T, P>,
   query: Query<T, P>
+): Promise<T>;
+
+export async function one<T extends object, P extends keyof T>(
+  table: Table<T, P>,
+  queryOrId: Query<T, P>|T[P]
 ): Promise<T> {
   return middleware<T, P, "one">(
     table,
-    { action: "one", params: [table, query] },
+    { action: "one", params: [table, queryOrId] },
     (table, query) => internalOne(table, query)
   );
 }
 
 export async function internalOne<T extends object, P extends keyof T>(
   table: Table<T, P>,
-  query: Query<T, P>
+  queryOrId: Query<T, P>|T[P]
 ): Promise<T> {
-  const res = get(table, query);
+  if(typeof queryOrId !== "object") {
+    let entity = table[BlinkKey].storage.primary.get(queryOrId as T[P] & OrdProps) ?? null;
+    if(entity === null) {
+      throw new ItemNotFoundError(queryOrId);
+    }
+    entity = table[BlinkKey].db[BlinkKey].options.clone ? clone(entity) : entity;
+    return entity;
+  }
+
+  const res = get(table, queryOrId as Query<T, P>);
   if (res.length === 0) {
-    throw new Error("No items found for the given query.");
+    throw new ItemNotFoundError(queryOrId);
   } else if (res.length > 1) {
-    throw new Error("More than one item found for the given query.");
+    throw new MoreThanOneItemFoundError(queryOrId);
   }
 
   return table[BlinkKey].db[BlinkKey].options.clone ? clone(res[0]) : res[0];

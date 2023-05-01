@@ -31,12 +31,13 @@ await watch(userTable, { where: { age: { lt: 3 } } }, (babies) => {
 
 ## Stop observing changes
 
-If you want to stop watching for changes, call `stop()` on the object returned by `watch()`.
+If you want to stop watching for changes, call the function returned by `watch()`.
 
 ```ts
-const watcher = await watch(userTable, (users) => {
+const stop = await watch(userTable, (users) => {
   console.log("All users: ", users);
 });
 
-watcher.stop();
+// Stop watching changes
+stop();
 ```

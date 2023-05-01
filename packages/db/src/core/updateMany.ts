@@ -4,12 +4,16 @@ import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 import { Diff } from "./update";
+import { InvalidPrimaryKeyError, ItemNotFoundError } from "./errors";
 
 /**
  * Saves updates of the given entities in the `table`.
  *
  * @throws if one of the entities has not been inserted into the table before,
  * e.g. if the primary key of the entity was not found.
+ *
+ * @returns the primary key of the updated entities,
+ * in the same order as the items.
  *
  * @example
  * const db = createDB();
@@ -25,7 +29,7 @@ import { Diff } from "./update";
 export async function updateMany<T extends object, P extends keyof T>(
   table: Table<T, P>,
   diffs: Diff<T, P>[]
-): Promise<void> {
+): Promise<T[P][]> {
   return middleware<T, P, "updateMany">(
     table,
     { action: "updateMany", params: [table, diffs] },
@@ -36,20 +40,21 @@ export async function updateMany<T extends object, P extends keyof T>(
 export async function internalUpdateMany<T extends object, P extends keyof T>(
   table: Table<T, P>,
   diffs: Diff<T, P>[]
-): Promise<void> {
+): Promise<T[P][]> {
+  const primaryKeys: T[P][] = [];
   const events: { oldEntity: T; newEntity: T }[] = [];
   for (const diff of diffs) {
     const primaryKeyProperty = table[BlinkKey].options.primary;
     const primaryKey = diff[primaryKeyProperty] as T[P] & OrdProps;
 
     if (primaryKey === undefined || primaryKey === null) {
-      throw new Error(`"${primaryKey}" is an invalid primary key value.`);
+      throw new InvalidPrimaryKeyError(primaryKey);
     }
 
     const item = table[BlinkKey].storage.primary.get(primaryKey);
 
     if (item === undefined || item === null) {
-      throw new Error(`Item with primary key "${primaryKey}" not found.`);
+      throw new ItemNotFoundError<T, P>(primaryKey);
     }
 
     const oldItem = clone(item);
@@ -78,7 +83,9 @@ export async function internalUpdateMany<T extends object, P extends keyof T>(
         }
       }
     }
+    primaryKeys.push(primaryKey);
     events.push({ oldEntity: oldItem, newEntity: item });
   }
   table[BlinkKey].events.onUpdate.dispatch(events);
+  return primaryKeys;
 }

@@ -29,10 +29,38 @@ export function sortItems<T extends object, P extends keyof T>(
     }
   }
 
-  items.sort((a, b) => {
+  items.sort(sortWithSortQuery(sort));
+  return items;
+}
+
+/**
+ * Returns a comparison function that can be used to sort a list according to a sort query.
+ */
+export function sortWithSortQuery<T>(sort: Sort<T>): (a: T, b: T) => number {
+  return (a, b) => {
     const aKey = a[sort.key] as OrdProps;
     const bKey = b[sort.key] as OrdProps;
     return sort.order === "asc" ? compare(aKey, bKey) : compare(bKey, aKey);
-  });
-  return items;
+  };
+}
+
+/**
+ * Inserts `item` into `arr` which is assumed to be sorted with `sort`.
+ */
+export function insertIntoSortedList<T>(arr: T[], item: T, sort: Sort<T>): void {
+  function insertInIndex(index: number) {
+    arr.splice(index, 0, item);
+  }
+  function getSortedIndex() {
+    let low = 0;
+    let high = arr.length;
+
+    while (low < high) {
+      const mid = (low + high) >>> 1;
+      if (sortWithSortQuery<T>(sort)(arr[mid], item) < 0) low = mid + 1;
+      else high = mid;
+    }
+    return low;
+  }
+  insertInIndex(getSortedIndex());
 }

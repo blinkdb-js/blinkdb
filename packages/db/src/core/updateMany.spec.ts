@@ -5,6 +5,7 @@ import { insertMany } from "./insertMany";
 import { one } from "./one";
 import { updateMany } from "./updateMany";
 import { use } from "./use";
+import { ItemNotFoundError } from "./errors";
 
 let users: User[];
 let userTable: Table<User, "id">;
@@ -22,10 +23,13 @@ beforeEach(async () => {
   await insertMany(userTable, users);
 });
 
+it("should return the primary keys of all updated items", async () => {
+  const ids = await updateMany(userTable, users);
+  expect(ids).toStrictEqual(users.map((u) => u.id));
+});
+
 it("should throw if the primary key given to update is not found", async () => {
-  expect(updateMany(userTable, [{ id: "1000" }])).rejects.toThrow(
-    /Item with primary key .* not found./
-  );
+  await expect(updateMany(userTable, [{ id: "1000" }])).rejects.toThrow(ItemNotFoundError);
 });
 
 it("should update the entity if the primary key is found", async () => {

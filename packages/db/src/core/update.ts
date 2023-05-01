@@ -7,6 +7,8 @@ import { internalUpdateMany } from "./updateMany";
  *
  * @throws if the entity has not been inserted into the table before, e.g. if the primary key of the entity was not found.
  *
+ * @returns the primary key of the updated entity.
+ *
  * @example
  * const db = createDB();
  * const userTable = createTable<User>(db, "users")();
@@ -17,7 +19,7 @@ import { internalUpdateMany } from "./updateMany";
 export async function update<T extends object, P extends keyof T>(
   table: Table<T, P>,
   diff: Diff<T, P>
-): Promise<void> {
+): Promise<T[P]> {
   return middleware<T, P, "update">(
     table,
     { action: "update", params: [table, diff] },
@@ -28,8 +30,9 @@ export async function update<T extends object, P extends keyof T>(
 export async function internalUpdate<T extends object, P extends keyof T>(
   table: Table<T, P>,
   diff: Diff<T, P>
-): Promise<void> {
-  await internalUpdateMany(table, [diff]);
+): Promise<T[P]> {
+  const ids = await internalUpdateMany(table, [diff]);
+  return ids[0];
 }
 
 export type Diff<T extends object, P extends keyof T> = Partial<T> & {

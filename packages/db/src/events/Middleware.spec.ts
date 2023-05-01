@@ -78,7 +78,7 @@ describe("hooks", () => {
     ];
     const fn = async () => await middleware(hooks, context, () => 123);
 
-    expect(fn).rejects.toThrowError();
+    expect(fn).rejects.toThrow();
   });
 
   it("should not call the implementation if next() isn't called", async () => {

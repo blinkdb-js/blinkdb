@@ -16,7 +16,7 @@ beforeEach(async () => {
   await insertMany(userTable, users);
 });
 
-describe("without filter", () => {
+describe("without filter or id", () => {
   it("should return null if there are no users in table", async () => {
     await clear(userTable);
     const item = await first(userTable);
@@ -34,6 +34,26 @@ describe("without filter", () => {
     const item = await first(userTable);
 
     expect(item).not.toBe(users[0]);
+  });
+});
+
+describe("with id", () => {
+  it("should return null if there is no match", async () => {
+    const item = await first(userTable, "1337");
+
+    expect(item).toBe(null);
+  });
+
+  it("should return the item if it finds a match", async () => {
+    const item = await first(userTable, "0");
+
+    expect(item).toStrictEqual(users.find((u) => u.id === "0"));
+  });
+
+  it("should clone returned items", async () => {
+    const item = await first(userTable, "0");
+
+    expect(item).not.toBe(users.find((u) => u.id === "0"));
   });
 });
 
