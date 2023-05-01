@@ -31,7 +31,7 @@ import { many } from "./many";
 export async function watch<T extends object, P extends keyof T>(
   table: Table<T, P>,
   callback: (entities: T[]) => Promise<void> | void
-): Promise<{ stop: () => void }>;
+): Promise<() => void>;
 
 /**
  * Watches all changes in `table` and calls `callback` whenever entities
@@ -60,13 +60,13 @@ export async function watch<T extends object, P extends keyof T>(
   table: Table<T, P>,
   query: Query<T, P>,
   callback: (entities: T[]) => Promise<void> | void
-): Promise<{ stop: () => void }>;
+): Promise<() => void>;
 
 export async function watch<T extends object, P extends keyof T>(
   table: Table<T, P>,
   queryOrCallback: Query<T, P> | ((entities: T[]) => Promise<void> | void),
   callback?: (entities: T[]) => Promise<void> | void
-): Promise<{ stop: () => void }> {
+): Promise<() => void> {
   let query: Query<T, P> | undefined;
   let cb: (entities: T[]) => Promise<void> | void;
 
@@ -110,7 +110,7 @@ export async function watch<T extends object, P extends keyof T>(
     where: query?.where,
     sort: query?.sort,
     limit: query?.limit
-      ? { ...query.limit, take: undefined, skip: undefined }
+      ? { ...query?.limit, take: undefined, skip: undefined }
       : undefined,
   });
   cb(sanitize(limit(sort(entities))));
@@ -182,12 +182,10 @@ export async function watch<T extends object, P extends keyof T>(
     cb([]);
   });
 
-  return {
-    stop: () => {
-      removeOnInsertCb();
-      removeOnUpdateCb();
-      removeOnRemoveCb();
-      removeOnClearCb();
-    },
+  return () => {
+    removeOnInsertCb();
+    removeOnUpdateCb();
+    removeOnRemoveCb();
+    removeOnClearCb();
   };
 }
