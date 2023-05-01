@@ -14,11 +14,11 @@ It's perfect for usage inside reactive components like React Hooks.
 
 ```ts
 // Call `callback` whenever ALL entities change
-watch(userTable, (users) => {
+await watch(userTable, (users) => {
   console.log("All users: ", users);
 });
 // Call `callback` whenever an item matching the filter changes
-watch(userTable, { where: { age: { lt: 3 } } }, (babies) => {
+await watch(userTable, { where: { age: { lt: 3 } } }, (babies) => {
   console.log("All babies: ", babies);
 });
 ```
@@ -34,7 +34,7 @@ watch(userTable, { where: { age: { lt: 3 } } }, (babies) => {
 If you want to stop watching for changes, call the function returned by `watch()`.
 
 ```ts
-const stop = watch(userTable, (users) => {
+const stop = await watch(userTable, (users) => {
   console.log("All users: ", users);
 });
 
