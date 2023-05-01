@@ -1,7 +1,7 @@
 import { matches } from "../query/filter";
 import { limitItems } from "../query/limit";
-import { sortItems } from "../query/sort";
-import { Query } from "../query/types";
+import { insertIntoSortedList } from "../query/sort";
+import { Query, ValidSortKey } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
@@ -69,6 +69,7 @@ export async function watch<T extends object, P extends keyof T>(
 ): Promise<{ stop: () => void }> {
   let query: Query<T, P> | undefined;
   let cb: (entities: T[]) => Promise<void> | void;
+
   if (typeof queryOrCallback === "object") {
     query = queryOrCallback;
     cb = callback!;
@@ -79,15 +80,35 @@ export async function watch<T extends object, P extends keyof T>(
 
   const primaryKeyProperty = table[BlinkKey].options.primary;
 
-  let initialEntities = await many(table, query);
-  cb(
-    table[BlinkKey].db[BlinkKey].options.clone ? clone(initialEntities) : initialEntities
-  );
+  function sanitize(items: T[]): T[] {
+    return table[BlinkKey].db[BlinkKey].options.clone ? clone(items) : items;
+  }
 
-  let entities: Map<T[P], T> = new Map(
-    initialEntities.map((e) => [e[primaryKeyProperty], e])
-  );
-  let entityList: T[] = initialEntities;
+  function limit(items: T[]): T[] {
+    if (!query?.limit) return items;
+    return limitItems(table, items, query.limit, true);
+  }
+
+  function insertIntoEntityList(item: T): void {
+    insertIntoSortedList(
+      entities,
+      item,
+      query?.sort ?? {
+        key: primaryKeyProperty as unknown as ValidSortKey<T>,
+        order: "asc",
+      }
+    );
+  }
+
+  // Retrieve initial entities
+  let entities = await many(table, {
+    where: query?.where,
+    sort: query?.sort,
+    limit: query?.limit
+      ? { ...query.limit, take: undefined, skip: undefined }
+      : undefined,
+  });
+  cb(sanitize(limit(entities)));
 
   const removeOnInsertCb = table[BlinkKey].events.onInsert.register((changes) => {
     let entitiesHaveChanged = false;
@@ -96,20 +117,11 @@ export async function watch<T extends object, P extends keyof T>(
       if (query?.where && !matches(entity, query.where)) {
         continue;
       }
-      const primaryKey = entity[primaryKeyProperty];
-      entities.set(primaryKey, entity);
-      entityList.push(entity);
+      insertIntoEntityList(entity);
       entitiesHaveChanged = true;
     }
     if (entitiesHaveChanged) {
-      if (query?.sort) {
-        entityList = sortItems(table, entityList, query.sort);
-      }
-      if (query?.limit) {
-        entityList = limitItems(table, entityList, query.limit);
-      }
-
-      cb(table[BlinkKey].db[BlinkKey].options.clone ? clone(entityList) : entityList);
+      cb(sanitize(limit(entities)));
     }
   });
 
@@ -124,29 +136,23 @@ export async function watch<T extends object, P extends keyof T>(
         continue;
       } else if (matchesOldEntity && !matchesNewEntity) {
         const primaryKey = oldEntity[primaryKeyProperty];
-        entities.delete(primaryKey);
-        entityList = Array.from(entities.values());
+        entities = entities.filter((e) => e[primaryKeyProperty] !== primaryKey);
       } else if (!matchesOldEntity && matchesNewEntity) {
-        const primaryKey = newEntity[primaryKeyProperty];
-        entities.set(primaryKey, newEntity);
-        entityList.push(newEntity);
+        insertIntoEntityList(newEntity);
       } else if (matchesOldEntity && matchesNewEntity) {
         const primaryKey = newEntity[primaryKeyProperty];
-        entities.set(primaryKey, newEntity);
-        entityList = Array.from(entities.values());
+        const entityInArray = entities.find((e) => e[primaryKeyProperty] === primaryKey);
+        if (entityInArray) {
+          for (const prop in entityInArray) {
+            entityInArray[prop] = newEntity[prop];
+          }
+        }
       }
       entitiesHaveChanged = true;
     }
 
     if (entitiesHaveChanged) {
-      if (query?.sort) {
-        entityList = sortItems(table, entityList, query.sort);
-      }
-      if (query?.limit) {
-        entityList = limitItems(table, entityList, query.limit);
-      }
-
-      cb(table[BlinkKey].db[BlinkKey].options.clone ? clone(entityList) : entityList);
+      cb(sanitize(limit(entities)));
     }
   });
 
@@ -155,26 +161,20 @@ export async function watch<T extends object, P extends keyof T>(
     for (const change of changes) {
       const entity = change.entity;
       const primaryKey = entity[primaryKeyProperty];
-      const deleted = entities.delete(primaryKey);
-      entitiesHaveChanged = entitiesHaveChanged || deleted;
+      const index = entities.findIndex((e) => e[primaryKeyProperty] === primaryKey);
+      if (index !== -1) {
+        entities.splice(index, 1);
+        entitiesHaveChanged = true;
+      }
     }
     if (entitiesHaveChanged) {
-      entityList = Array.from(entities.values());
-      if (query?.sort) {
-        entityList = sortItems(table, entityList, query.sort);
-      }
-      if (query?.limit) {
-        entityList = limitItems(table, entityList, query.limit);
-      }
-      cb(table[BlinkKey].db[BlinkKey].options.clone ? clone(entityList) : entityList);
+      cb(sanitize(limit(entities)));
     }
   });
 
   const removeOnClearCb = table[BlinkKey].events.onClear.register(() => {
-    entities.clear();
-    entityList = [];
-
-    cb(entityList);
+    entities = [];
+    cb([]);
   });
 
   return {
