@@ -60,7 +60,8 @@ export type HookAction =
   | "updateMany"
   | "updateWhere"
   | "upsert"
-  | "upsertMany";
+  | "upsertMany"
+  | "watch";
 
 export type HookMethods<T extends object = any, P extends keyof T = keyof T> = {
   clear: typeof clear<T, P>;
@@ -69,11 +70,11 @@ export type HookMethods<T extends object = any, P extends keyof T = keyof T> = {
     filter?: Filter<T>,
     options?: { exact: boolean }
   ) => Promise<number>;
-  first: (table: Table<T, P>, queryOrId?: Query<T, P>|T[P]) => Promise<T | null>;
+  first: (table: Table<T, P>, queryOrId?: Query<T, P> | T[P]) => Promise<T | null>;
   insert: typeof insert<T, P>;
   insertMany: typeof insertMany<T, P>;
   many: typeof many<T, P>;
-  one: (table: Table<T, P>, queryOrId: Query<T, P>|T[P]) => Promise<T>;
+  one: (table: Table<T, P>, queryOrId: Query<T, P> | T[P]) => Promise<T>;
   remove: typeof remove<T, P>;
   removeMany: typeof removeMany<T, P>;
   removeWhere: typeof removeWhere<T, P>;
@@ -82,4 +83,5 @@ export type HookMethods<T extends object = any, P extends keyof T = keyof T> = {
   updateWhere: typeof updateWhere<T, P>;
   upsert: typeof upsert<T, P>;
   upsertMany: typeof upsertMany<T, P>;
+  watch: typeof many<T, P>;
 };

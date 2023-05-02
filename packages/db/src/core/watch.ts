@@ -1,3 +1,4 @@
+import { middleware } from "../events/Middleware";
 import { matches } from "../query/filter";
 import { limitItems } from "../query/limit";
 import { insertIntoSortedList } from "../query/sort";
@@ -5,7 +6,7 @@ import { Query, ValidSortKey } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
-import { many } from "./many";
+import { internalMany } from "./many";
 
 /**
  * Watches all changes in `table` and calls `callback` whenever entities are inserted, updated, or removed.
@@ -106,13 +107,23 @@ export async function watch<T extends object, P extends keyof T>(
   }
 
   // Retrieve initial entities
-  let entities = await many(table, {
-    where: query?.where,
-    sort: query?.sort,
-    limit: query?.limit
-      ? { ...query?.limit, take: undefined, skip: undefined }
-      : undefined,
-  });
+  let entities = await middleware<T, P, "watch">(
+    table,
+    {
+      action: "watch",
+      params: [
+        table,
+        {
+          where: query?.where,
+          sort: query?.sort,
+          limit: query?.limit
+            ? { ...query?.limit, take: undefined, skip: undefined }
+            : undefined,
+        },
+      ],
+    },
+    (table, query) => internalMany(table, query)
+  );
   cb(sanitize(limit(sort(entities))));
 
   const removeOnInsertCb = table[BlinkKey].events.onInsert.register((changes) => {
