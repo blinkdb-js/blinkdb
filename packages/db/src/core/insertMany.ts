@@ -3,8 +3,8 @@ import { OrdProps } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
-import { Create } from "./insert";
 import { PrimaryKeyAlreadyInUseError } from "./errors";
+import { Create } from "./insert";
 
 /**
  * Inserts new entities into `table`.
@@ -68,6 +68,6 @@ export async function internalInsertMany<T extends object, P extends keyof T>(
     primaryKeys.push(primaryKey);
     events.push({ entity: storageEntity });
   }
-  table[BlinkKey].events.onInsert.dispatch(events);
+  void table[BlinkKey].events.onInsert.dispatch(events);
   return primaryKeys;
 }

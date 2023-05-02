@@ -65,6 +65,6 @@ export async function internalRemoveMany<T extends object, P extends keyof T>(
     }
     allEntitiesRemoved = allEntitiesRemoved && hasDeleted;
   }
-  table[BlinkKey].events.onRemove.dispatch(events);
+  void table[BlinkKey].events.onRemove.dispatch(events);
   return allEntitiesRemoved;
 }
