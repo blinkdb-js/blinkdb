@@ -11,6 +11,7 @@ import { removeWhere } from "./removeWhere";
 import { update } from "./update";
 import { updateMany } from "./updateMany";
 import { updateWhere } from "./updateWhere";
+import { use } from "./use";
 import { watch } from "./watch";
 
 let users: User[];
@@ -353,4 +354,17 @@ describe("limit", () => {
       (await many(userTable, { limit: { from: "80" } })).sort(sortById)
     );
   });
+});
+
+it("should execute watch hooks", async () => {
+  const fn = jest.fn();
+
+  use(userTable, (ctx) => {
+    fn(ctx.action);
+    return ctx.next(...ctx.params);
+  });
+  await watch(userTable, () => {});
+
+  expect(fn).toHaveBeenCalledTimes(1);
+  expect(fn).toHaveBeenCalledWith("watch");
 });
