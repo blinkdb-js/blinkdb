@@ -13,7 +13,7 @@ import { internalRemoveMany } from "./removeMany";
  * const userTable = createTable<User>(db, "users")();
  * const userId = await insert(userTable, { id: uuid(), name: 'Alice', age: 15 });
  * // Remove all users older than 15
- * await removeMany(userTable, {
+ * await removeWhere(userTable, {
  *   where: {
  *     age: { gt: 15 }
  *   }
