@@ -27,5 +27,5 @@ export async function internalClear<T extends object, P extends keyof T>(
     btree.clear();
     btree.totalItemSize = 0;
   }
-  table[BlinkKey].events.onClear.dispatch();
+  void table[BlinkKey].events.onClear.dispatch();
 }

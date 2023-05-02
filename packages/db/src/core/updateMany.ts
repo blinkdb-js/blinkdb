@@ -3,8 +3,8 @@ import { OrdProps } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
-import { Diff } from "./update";
 import { InvalidPrimaryKeyError, ItemNotFoundError } from "./errors";
+import { Diff } from "./update";
 
 /**
  * Saves updates of the given entities in the `table`.
@@ -86,6 +86,6 @@ export async function internalUpdateMany<T extends object, P extends keyof T>(
     primaryKeys.push(primaryKey);
     events.push({ oldEntity: oldItem, newEntity: item });
   }
-  table[BlinkKey].events.onUpdate.dispatch(events);
+  void table[BlinkKey].events.onUpdate.dispatch(events);
   return primaryKeys;
 }
