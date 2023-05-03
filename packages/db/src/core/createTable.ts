@@ -1,7 +1,7 @@
 import BTree from "sorted-btree";
 import { Dispatcher } from "../events/Dispatcher";
 import { Hook } from "../events/types";
-import { OrdProps } from "../query/types";
+import { OrdProps, PrimaryKeyProps } from "../query/types";
 import { BlinkKey, Database } from "./createDB";
 
 /**
@@ -70,10 +70,14 @@ export function createTable<T extends { id: string | number }>(
 export function createTable<T extends object>(
   db: Database,
   tableName: string
-): <P extends keyof T>(options: TableOptions<T, P>) => Table<ValidEntity<T>, P>;
+): <P extends PrimaryKeyProps<T>>(
+  options: TableOptions<T, P>
+) => Table<ValidEntity<T>, P>;
 
 export function createTable<T extends object>(db: Database, tableName: string) {
-  return <P extends keyof T>(options?: TableOptions<T, P>): Table<ValidEntity<T>, P> => {
+  return <P extends PrimaryKeyProps<T>>(
+    options?: TableOptions<T, P>
+  ): Table<ValidEntity<T>, P> => {
     const primaryBTree = new BTree();
     primaryBTree.totalItemSize = 0;
     const table: Table<ValidEntity<T>, P> = {
@@ -111,7 +115,7 @@ export function createTable<T extends object>(db: Database, tableName: string) {
   };
 }
 
-export interface TableOptions<T, P extends keyof T> {
+export interface TableOptions<T extends object, P extends keyof T> {
   /**
    * The primary key of the entity.
    *
