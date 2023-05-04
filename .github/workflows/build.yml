@@ -1,6 +1,6 @@
 name: Build
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   build:
@@ -14,6 +14,3 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm run test
-      - run: npm run test-coverage
-      - name: Upload coverage
-        uses: codecov/codecov-action@v3
