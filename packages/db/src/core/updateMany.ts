@@ -1,5 +1,5 @@
 import { middleware } from "../events/Middleware";
-import { EntityWithPk, Ordinal, PrimaryKeyProps } from "../types";
+import { EntityWithPk, isOrdinal, PrimaryKeyProps } from "../types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
@@ -45,7 +45,7 @@ export async function internalUpdateMany<
   const events: { oldEntity: T; newEntity: T }[] = [];
   for (const diff of diffs) {
     const primaryKeyProperty = table[BlinkKey].options.primary;
-    const primaryKey = diff[primaryKeyProperty] as T[P] & Ordinal;
+    const primaryKey = diff[primaryKeyProperty] as T[P];
 
     if (primaryKey === undefined || primaryKey === null) {
       throw new InvalidPrimaryKeyError(primaryKey);
@@ -63,21 +63,24 @@ export async function internalUpdateMany<
     for (key in diff) {
       if (key !== primaryKeyProperty) {
         item[key] = diff[key];
-        if (oldItem[key] !== item[key]) {
-          const btree = table[BlinkKey].storage.indexes[key as keyof T];
-          if (btree !== undefined) {
-            let oldIndexItems = btree.get(oldItem[key] as T[typeof key] & Ordinal)!;
+        const oldVal = oldItem[key as keyof T];
+        const newVal = item[key as keyof T];
+        if (oldVal !== item[key]) {
+          key = key as keyof T;
+          const btree = table[BlinkKey].storage.indexes[key];
+          if (btree !== undefined && isOrdinal(oldVal) && isOrdinal(newVal)) {
+            let oldIndexItems = btree.get(oldVal)!;
             const arrayIndex = oldIndexItems.indexOf(item);
             // This condition is only false if clone is disabled and the user changed the indexed property without calling update
             if (arrayIndex !== -1) {
               oldIndexItems.splice(arrayIndex, 1);
             }
 
-            const newIndexItems = btree.get(item[key] as T[typeof key] & Ordinal);
+            const newIndexItems = btree.get(newVal);
             if (newIndexItems !== undefined) {
               newIndexItems.push(item);
             } else {
-              btree.set(item[key] as T[typeof key] & Ordinal, [item]);
+              btree.set(newVal, [item]);
             }
           }
         }
