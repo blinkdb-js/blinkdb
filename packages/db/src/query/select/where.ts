@@ -27,12 +27,7 @@ export function selectForWhere<T extends EntityWithPk<T>, P extends PrimaryKeyPr
   if (primaryKeyProperty in filter) {
     const btree = table[BlinkKey].storage.primary;
     const matcher = filter[primaryKeyProperty];
-    selectForMatcher(
-      btree,
-      matcher as AllMatchers<T[P] & Ordinal>,
-      cb,
-      from as T[P] & Ordinal
-    );
+    selectForMatcher(btree, matcher as AllMatchers<T[P]>, cb, from as T[P]);
     return { rowsScanned: [primaryKeyProperty], fullTableScan: false };
   }
 
