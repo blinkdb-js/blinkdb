@@ -1,6 +1,6 @@
 import BTree from "sorted-btree";
+import { Ordinal } from "../../../types";
 import { compare } from "../../compare";
-import { Ordinal } from "../../types";
 import { SelectCallback } from "../types";
 
 export function selectForEq<K extends Ordinal, E>(

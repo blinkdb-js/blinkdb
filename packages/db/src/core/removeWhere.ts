@@ -1,6 +1,7 @@
 import { middleware } from "../events/Middleware";
 import { get } from "../query";
-import { EntityWithPk, Filter, PrimaryKeyProps } from "../query/types";
+import { Filter } from "../query/types";
+import { EntityWithPk, PrimaryKeyProps } from "../types";
 import { Table } from "./createTable";
 import { Ids } from "./remove";
 import { internalRemoveMany } from "./removeMany";

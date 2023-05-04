@@ -1,5 +1,6 @@
 import BTree from "sorted-btree";
-import { LtMatcher, Ordinal } from "../../types";
+import { Ordinal } from "../../../types";
+import { LtMatcher } from "../../types";
 import { SelectCallback } from "../types";
 
 export function selectForLt<K extends Ordinal, E>(

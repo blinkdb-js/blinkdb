@@ -1,5 +1,6 @@
 import { defaultComparator } from "sorted-btree";
-import { Ordinal } from "./types";
+
+import { Ordinal } from "../types";
 
 export function compare<T extends Ordinal>(a: T, b: T) {
   if (typeof a === "bigint" && typeof b === "bigint") {

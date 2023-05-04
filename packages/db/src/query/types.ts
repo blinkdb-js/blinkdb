@@ -1,3 +1,5 @@
+import { EntityPropTypes, Eq, Ordinal, SimpleEq } from "../types";
+
 /**
  * Specifies what and how items should be returned from a query.
  *
@@ -88,7 +90,7 @@ export type Matchers<T, K extends keyof T> = T[K] extends (infer R)[] | undefine
   ? EqMatchers<T[K]> | T[K]
   : T[K] extends object | undefined
   ? ObjMatchers<T[K]> | EqMatchers<T[K]>
-  : T[K] extends ValidPropTypes
+  : T[K] extends EntityPropTypes
   ? EqMatchers<T[K]>
   : never;
 
@@ -134,51 +136,3 @@ export type ContainsMatcher<T> = { contains: T };
 export type ObjMatchers<T> = {
   where: Where<T>;
 };
-
-/**
- * BlinkDB doesn't allow functions or Symbols as valid properties
- * in entities.
- */
-export type ValidPropTypes =
-  | string
-  | boolean
-  | number
-  | null
-  | undefined
-  | BigInt
-  | Date
-  | unknown[]
-  | object;
-
-/**
- * Types that can be ordered with >, >=, <, and <= operations.
- */
-export type Ordinal = string | number | null | undefined | BigInt | Date;
-
-/**
- * Types comparable by equality with `deepEqual(a, b)`.
- */
-export type Eq = ValidPropTypes;
-
-/**
- * Types comparable by simple equality with `a === b`.
- */
-export type SimpleEq = string | boolean | number | null | undefined | Date;
-
-/**
- * Types valid for a primary key.
- */
-type PrimaryKey = string | number;
-
-/**
- * Select only properties valid for a primary key of a given object.
- */
-export type PrimaryKeyProps<T> = keyof T &
-  {
-    [Key in keyof T]: T[Key] extends PrimaryKey ? Key : never;
-  }[keyof T];
-
-/**
- * An object with a primary key.
- */
-export type EntityWithPk<T> = Record<PrimaryKeyProps<T>, PrimaryKey>;

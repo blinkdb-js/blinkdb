@@ -1,5 +1,6 @@
 import { Table } from "../../core";
-import { EntityWithPk, Or, PrimaryKeyProps } from "../types";
+import { EntityWithPk, PrimaryKeyProps } from "../../types";
+import { Or } from "../types";
 import { analyzeAnd } from "./and";
 import { analyzeWhere } from "./where";
 

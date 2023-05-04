@@ -1,6 +1,7 @@
 import BTree from "sorted-btree";
+import { Ordinal } from "../../../types";
 import { getBiggerKey } from "../../compare";
-import { GteMatcher, Ordinal } from "../../types";
+import { GteMatcher } from "../../types";
 import { SelectCallback } from "../types";
 
 export function selectForGte<K extends Ordinal, E>(

@@ -13,7 +13,8 @@ import {
   upsert,
   upsertMany,
 } from "../core";
-import { EntityWithPk, Filter, PrimaryKeyProps, Query } from "../query/types";
+import { Filter, Query } from "../query/types";
+import { EntityWithPk, PrimaryKeyProps } from "../types";
 
 export type Hook<
   T extends EntityWithPk<T> = any,

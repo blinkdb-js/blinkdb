@@ -1,6 +1,7 @@
 import { middleware } from "../events/Middleware";
 import { get } from "../query";
-import { EntityWithPk, PrimaryKeyProps, Query } from "../query/types";
+import { Query } from "../query/types";
+import { EntityWithPk, PrimaryKeyProps } from "../types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";

@@ -1,6 +1,7 @@
 import BTree from "sorted-btree";
+import { Ordinal } from "../../../types";
 import { getBiggerKey } from "../../compare";
-import { BetweenMatcher, Ordinal } from "../../types";
+import { BetweenMatcher } from "../../types";
 import { SelectCallback } from "../types";
 
 export function selectForBetween<K extends Ordinal, E>(

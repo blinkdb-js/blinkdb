@@ -1,4 +1,5 @@
-import { BetweenMatcher, Ordinal } from "../../types";
+import { Ordinal } from "../../../types";
+import { BetweenMatcher } from "../../types";
 
 export function matchesBetween<T extends Ordinal>(
   value: T,

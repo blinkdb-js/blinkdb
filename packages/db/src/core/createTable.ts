@@ -1,7 +1,7 @@
 import BTree from "sorted-btree";
 import { Dispatcher } from "../events/Dispatcher";
 import { Hook } from "../events/types";
-import { EntityWithPk, Ordinal, PrimaryKeyProps } from "../query/types";
+import { EntityWithPk, Ordinal, PrimaryKeyProps } from "../types";
 import { BlinkKey, Database } from "./createDB";
 
 /**

@@ -1,5 +1,6 @@
 import { BlinkKey, Table } from "../../core";
-import { AllMatchers, EntityWithPk, Ordinal, PrimaryKeyProps, Where } from "../types";
+import { EntityWithPk, Ordinal, PrimaryKeyProps } from "../../types";
+import { AllMatchers, Where } from "../types";
 import { analyzeMatcher } from "./matchers";
 
 export function analyzeWhere<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(

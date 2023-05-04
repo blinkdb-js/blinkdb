@@ -1,5 +1,5 @@
 import { Hook, HookAction, HookContext } from "../events/types";
-import { EntityWithPk, PrimaryKeyProps } from "../query/types";
+import { EntityWithPk, PrimaryKeyProps } from "../types";
 import { BlinkKey, Database } from "./createDB";
 import { Table } from "./createTable";
 

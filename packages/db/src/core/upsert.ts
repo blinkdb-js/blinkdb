@@ -1,5 +1,5 @@
 import { middleware } from "../events/Middleware";
-import { EntityWithPk, PrimaryKeyProps } from "../query/types";
+import { EntityWithPk, PrimaryKeyProps } from "../types";
 import { Table } from "./createTable";
 import { Create } from "./insert";
 import { internalUpsertMany } from "./upsertMany";

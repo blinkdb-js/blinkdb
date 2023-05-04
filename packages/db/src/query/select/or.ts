@@ -1,7 +1,8 @@
 import { BlinkKey, Table } from "../../core";
+import { EntityWithPk, PrimaryKeyProps } from "../../types";
 import { analyzeAnd } from "../analyze/and";
 import { analyzeWhere } from "../analyze/where";
-import { EntityWithPk, Or, PrimaryKeyProps } from "../types";
+import { Or } from "../types";
 import { selectForAnd } from "./and";
 import { SelectCallback, SelectResult } from "./types";
 import { selectForWhere } from "./where";
