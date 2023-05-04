@@ -1,5 +1,5 @@
 import { BlinkKey, Table } from "../../core";
-import { EntityWithPk, Ordinal, PrimaryKeyProps } from "../../types";
+import { EntityWithPk, PrimaryKeyProps } from "../../types";
 import { compare } from "../compare";
 import { Limit } from "../types";
 
@@ -22,7 +22,7 @@ export function limitItems<T extends EntityWithPk<T>, P extends PrimaryKeyProps<
 
   if (!skipFromStep && limit.from !== undefined) {
     fromIndex = items.findIndex(
-      (item) => compare(item[primaryKeyProperty] as Ordinal, limit.from as Ordinal) >= 0
+      (item) => compare(item[primaryKeyProperty], limit.from) >= 0
     );
   }
 
