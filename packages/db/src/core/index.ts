@@ -6,6 +6,7 @@ export * from "./errors";
 export { first } from "./first";
 export { insert } from "./insert";
 export { insertMany } from "./insertMany";
+export { key } from "./key";
 export { many } from "./many";
 export { one } from "./one";
 export { Ids, remove } from "./remove";
