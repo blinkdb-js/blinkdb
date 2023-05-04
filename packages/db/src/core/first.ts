@@ -1,7 +1,7 @@
 import { middleware } from "../events/Middleware";
 import { get } from "../query";
 import { Query } from "../query/types";
-import { EntityWithPk, Ordinal, PrimaryKeyProps } from "../types";
+import { EntityWithPk, PrimaryKeyProps } from "../types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
@@ -69,12 +69,12 @@ export async function internalFirst<
     entity = table[BlinkKey].db[BlinkKey].options.clone ? clone(entity) : entity;
     return entity;
   } else if (typeof queryOrId !== "object") {
-    let entity = table[BlinkKey].storage.primary.get(queryOrId as T[P] & Ordinal) ?? null;
+    let entity = table[BlinkKey].storage.primary.get(queryOrId) ?? null;
     entity = table[BlinkKey].db[BlinkKey].options.clone ? clone(entity) : entity;
     return entity;
   }
 
-  const res = get(table, queryOrId as Query<T, P>);
+  const res = get(table, queryOrId);
   if (!res[0]) {
     return null;
   }
