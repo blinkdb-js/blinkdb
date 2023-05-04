@@ -39,5 +39,5 @@ export function selectForMatcher<K extends Ordinal, E>(
     }
   }
 
-  return selectForEq(btree, matcher as any, cb, from);
+  return selectForEq(btree, matcher, cb, from);
 }
