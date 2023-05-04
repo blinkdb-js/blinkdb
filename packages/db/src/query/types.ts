@@ -165,6 +165,8 @@ export type EqProps = ValidProps;
  */
 export type SimpleEqProps = string | boolean | number | null | undefined | Date;
 
+type PrimaryKeyValue = string | number;
+
 /**
  * Select only string|number properties of a given object.
  */
@@ -174,3 +176,9 @@ export type PrimaryKeyProps<T> = Exclude<
   }[keyof T],
   undefined
 >;
+
+/**
+ * An object that contains keys that return a `PrimaryKeyValue`. This type is necessary if you want to index
+ * this object with a `PrimaryKeyProps` so that typescript correctly returns a `PrimaryKeyValue`.
+ */
+export type PrimaryKeyIndexable<T> = Record<PrimaryKeyProps<T>, PrimaryKeyValue>;

@@ -1,9 +1,9 @@
 import { Table } from "../../core";
-import { Or } from "../types";
+import { Or, PrimaryKeyIndexable, PrimaryKeyProps } from "../types";
 import { analyzeAnd } from "./and";
 import { analyzeWhere } from "./where";
 
-export function analyzeOr<T extends object, P extends keyof T>(
+export function analyzeOr<T extends PrimaryKeyIndexable<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>,
   or: Or<T>,
   from?: T[P]

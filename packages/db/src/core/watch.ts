@@ -2,7 +2,12 @@ import { middleware } from "../events/Middleware";
 import { matches } from "../query/filter";
 import { limitItems } from "../query/limit";
 import { insertIntoSortedList } from "../query/sort";
-import { Query, ValidSortKey } from "../query/types";
+import {
+  PrimaryKeyIndexable,
+  PrimaryKeyProps,
+  Query,
+  ValidSortKey,
+} from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
@@ -29,7 +34,10 @@ import { internalMany } from "./many";
  * // This will output 'List of all users: []'
  * await remove(userTable, { id: userId });
  */
-export async function watch<T extends object, P extends keyof T>(
+export async function watch<
+  T extends PrimaryKeyIndexable<T>,
+  P extends PrimaryKeyProps<T>
+>(
   table: Table<T, P>,
   callback: (entities: T[]) => Promise<void> | void
 ): Promise<() => void>;
@@ -57,13 +65,19 @@ export async function watch<T extends object, P extends keyof T>(
  * // This won't output anything
  * await remove(userTable, { id: userId });
  */
-export async function watch<T extends object, P extends keyof T>(
+export async function watch<
+  T extends PrimaryKeyIndexable<T>,
+  P extends PrimaryKeyProps<T>
+>(
   table: Table<T, P>,
   query: Query<T, P>,
   callback: (entities: T[]) => Promise<void> | void
 ): Promise<() => void>;
 
-export async function watch<T extends object, P extends keyof T>(
+export async function watch<
+  T extends PrimaryKeyIndexable<T>,
+  P extends PrimaryKeyProps<T>
+>(
   table: Table<T, P>,
   queryOrCallback: Query<T, P> | ((entities: T[]) => Promise<void> | void),
   callback?: (entities: T[]) => Promise<void> | void

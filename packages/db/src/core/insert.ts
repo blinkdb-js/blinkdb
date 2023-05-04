@@ -1,4 +1,5 @@
 import { middleware } from "../events/Middleware";
+import { PrimaryKeyIndexable, PrimaryKeyProps } from "../query/types";
 import { Table } from "./createTable";
 import { internalInsertMany } from "./insertMany";
 
@@ -14,10 +15,10 @@ import { internalInsertMany } from "./insertMany";
  * const bobId = await insert(userTable, { id: uuid(), name: "Bob", age: 45 });
  * const charlieId = await insert(userTable, { id: uuid(), name: "Charlie", age: 34 });
  */
-export async function insert<T extends object, P extends keyof T>(
-  table: Table<T, P>,
-  entity: Create<T, P>
-): Promise<T[P]> {
+export async function insert<
+  T extends PrimaryKeyIndexable<T>,
+  P extends PrimaryKeyProps<T>
+>(table: Table<T, P>, entity: Create<T, P>): Promise<T[P]> {
   return middleware<T, P, "insert">(
     table,
     { action: "insert", params: [table, entity] },
@@ -25,10 +26,10 @@ export async function insert<T extends object, P extends keyof T>(
   );
 }
 
-export async function internalInsert<T extends object, P extends keyof T>(
-  table: Table<T, P>,
-  entity: Create<T, P>
-): Promise<T[P]> {
+export async function internalInsert<
+  T extends PrimaryKeyIndexable<T>,
+  P extends PrimaryKeyProps<T>
+>(table: Table<T, P>, entity: Create<T, P>): Promise<T[P]> {
   const ids = await internalInsertMany(table, [entity]);
   return ids[0];
 }
