@@ -20,6 +20,18 @@ export type EntityPropTypes =
  */
 export type Ordinal = string | number | null | undefined | BigInt | Date;
 
+export function isOrdinal(val: unknown): val is Ordinal {
+  const t = typeof val;
+  return (
+    t === "string" ||
+    t === "number" ||
+    t === "bigint" ||
+    val === null ||
+    val === undefined ||
+    val instanceof Date
+  );
+}
+
 /**
  * Types comparable by equality with `deepEqual(a, b)`.
  */
