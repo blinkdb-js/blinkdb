@@ -1,6 +1,6 @@
 import { middleware } from "../events/Middleware";
 import { get } from "../query";
-import { OrdProps, PrimaryKeyIndexable, PrimaryKeyProps, Query } from "../query/types";
+import { EntityWithPk, Ordinal, PrimaryKeyProps, Query } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
@@ -14,10 +14,9 @@ import { Table } from "./createTable";
  * // Retrieve the first user
  * const firstUser = await first(userTable);
  */
-export async function first<
-  T extends PrimaryKeyIndexable<T>,
-  P extends PrimaryKeyProps<T>
->(table: Table<T, P>): Promise<T | null>;
+export async function first<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+  table: Table<T, P>
+): Promise<T | null>;
 
 /**
  * Retrieves the first entity from `table` matching the given `filter`.
@@ -28,10 +27,10 @@ export async function first<
  * // Retrieve the first user named 'Alice'
  * const firstUser = await first(userTable, { where: { name: "Alice" } });
  */
-export async function first<
-  T extends PrimaryKeyIndexable<T>,
-  P extends PrimaryKeyProps<T>
->(table: Table<T, P>, query: Query<T, P>): Promise<T | null>;
+export async function first<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+  table: Table<T, P>,
+  query: Query<T, P>
+): Promise<T | null>;
 
 /**
  * Retrieves the first entity from `table` with the given `id`.
@@ -42,15 +41,15 @@ export async function first<
  * // Retrieve the 'Alice' user by their id
  * const firstUser = await first(userTable, 'alice-uuid');
  */
-export async function first<
-  T extends PrimaryKeyIndexable<T>,
-  P extends PrimaryKeyProps<T>
->(table: Table<T, P>, id: T[P]): Promise<T | null>;
+export async function first<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+  table: Table<T, P>,
+  id: T[P]
+): Promise<T | null>;
 
-export async function first<
-  T extends PrimaryKeyIndexable<T>,
-  P extends PrimaryKeyProps<T>
->(table: Table<T, P>, queryOrId?: Query<T, P> | T[P]): Promise<T | null> {
+export async function first<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+  table: Table<T, P>,
+  queryOrId?: Query<T, P> | T[P]
+): Promise<T | null> {
   return middleware<T, P, "first">(
     table,
     { action: "first", params: [table, queryOrId] },
@@ -59,7 +58,7 @@ export async function first<
 }
 
 export async function internalFirst<
-  T extends PrimaryKeyIndexable<T>,
+  T extends EntityWithPk<T>,
   P extends PrimaryKeyProps<T>
 >(table: Table<T, P>, queryOrId?: Query<T, P> | T[P]): Promise<T | null> {
   if (queryOrId === undefined) {
@@ -69,8 +68,7 @@ export async function internalFirst<
     entity = table[BlinkKey].db[BlinkKey].options.clone ? clone(entity) : entity;
     return entity;
   } else if (typeof queryOrId !== "object") {
-    let entity =
-      table[BlinkKey].storage.primary.get(queryOrId as T[P] & OrdProps) ?? null;
+    let entity = table[BlinkKey].storage.primary.get(queryOrId as T[P] & Ordinal) ?? null;
     entity = table[BlinkKey].db[BlinkKey].options.clone ? clone(entity) : entity;
     return entity;
   }

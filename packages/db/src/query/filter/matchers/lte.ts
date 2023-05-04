@@ -1,8 +1,5 @@
-import { LteMatcher, OrdProps } from "../../types";
+import { LteMatcher, Ordinal } from "../../types";
 
-export function matchesLte<T extends OrdProps>(
-  value: T,
-  matcher: LteMatcher<T>
-): boolean {
+export function matchesLte<T extends Ordinal>(value: T, matcher: LteMatcher<T>): boolean {
   return value! <= matcher.lte!;
 }

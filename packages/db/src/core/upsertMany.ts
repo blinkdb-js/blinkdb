@@ -1,5 +1,5 @@
 import { middleware } from "../events/Middleware";
-import { OrdProps, PrimaryKeyIndexable, PrimaryKeyProps } from "../query/types";
+import { EntityWithPk, Ordinal, PrimaryKeyProps } from "../query/types";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 import { Create } from "./insert";
@@ -23,10 +23,10 @@ import { internalUpdateMany } from "./updateMany";
  *   { id: uuid(), age: 45 }
  * ]);
  */
-export async function upsertMany<
-  T extends PrimaryKeyIndexable<T>,
-  P extends PrimaryKeyProps<T>
->(table: Table<T, P>, entities: Create<T, P>[]): Promise<T[P][]> {
+export async function upsertMany<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+  table: Table<T, P>,
+  entities: Create<T, P>[]
+): Promise<T[P][]> {
   return middleware<T, P, "upsertMany">(
     table,
     { action: "upsertMany", params: [table, entities] },
@@ -35,7 +35,7 @@ export async function upsertMany<
 }
 
 export async function internalUpsertMany<
-  T extends PrimaryKeyIndexable<T>,
+  T extends EntityWithPk<T>,
   P extends PrimaryKeyProps<T>
 >(table: Table<T, P>, entities: Create<T, P>[]): Promise<T[P][]> {
   // Split entities into items to create & items to update
@@ -43,7 +43,7 @@ export async function internalUpsertMany<
   const items: { entity: Create<T, P>; method: "insert" | "update" }[] = [];
   const primaryKeyProperty = table[BlinkKey].options.primary;
   for (const entity of entities) {
-    const primaryKey = entity[primaryKeyProperty] as T[P] & OrdProps;
+    const primaryKey = entity[primaryKeyProperty] as T[P] & Ordinal;
     const primaryKeyExists = table[BlinkKey].storage.primary.has(primaryKey);
     items.push({ entity, method: primaryKeyExists ? "update" : "insert" });
   }

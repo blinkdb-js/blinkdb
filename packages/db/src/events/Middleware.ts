@@ -1,5 +1,5 @@
 import { BlinkKey, Table } from "../core";
-import { PrimaryKeyIndexable, PrimaryKeyProps } from "../query/types";
+import { EntityWithPk, PrimaryKeyProps } from "../query/types";
 import {
   Hook,
   HookAction,
@@ -17,7 +17,7 @@ import {
  * @param impl the implementation that will be called if the last hook calls `next()`.
  */
 export function middleware<
-  T extends PrimaryKeyIndexable<T> = any,
+  T extends EntityWithPk<T> = any,
   P extends PrimaryKeyProps<T> = PrimaryKeyProps<T>,
   A extends HookAction = HookAction
 >(
@@ -37,7 +37,7 @@ export function middleware<
  * @param impl the implementation that will be called if the last hook calls `next()`.
  */
 export function middleware<
-  T extends PrimaryKeyIndexable<T> = any,
+  T extends EntityWithPk<T> = any,
   P extends PrimaryKeyProps<T> = PrimaryKeyProps<T>,
   A extends HookAction = HookAction
 >(
@@ -47,7 +47,7 @@ export function middleware<
 ): HookReturn<T, P, A> | Promise<HookReturn<T, P, A>>;
 
 export function middleware<
-  T extends PrimaryKeyIndexable<T> = any,
+  T extends EntityWithPk<T> = any,
   P extends PrimaryKeyProps<T> = PrimaryKeyProps<T>,
   A extends HookAction = HookAction
 >(
@@ -73,7 +73,7 @@ export function middleware<
 }
 
 function executeHook<
-  T extends PrimaryKeyIndexable<T> = any,
+  T extends EntityWithPk<T> = any,
   P extends PrimaryKeyProps<T> = PrimaryKeyProps<T>,
   A extends HookAction = HookAction
 >(

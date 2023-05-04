@@ -1,5 +1,5 @@
 import { middleware } from "../events/Middleware";
-import { OrdProps, PrimaryKeyIndexable, PrimaryKeyProps } from "../query/types";
+import { EntityWithPk, Ordinal, PrimaryKeyProps } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
@@ -26,10 +26,10 @@ import { Diff } from "./update";
  *   { id: bobId, age: 45 }
  * ]);
  */
-export async function updateMany<
-  T extends PrimaryKeyIndexable<T>,
-  P extends PrimaryKeyProps<T>
->(table: Table<T, P>, diffs: Diff<T, P>[]): Promise<T[P][]> {
+export async function updateMany<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+  table: Table<T, P>,
+  diffs: Diff<T, P>[]
+): Promise<T[P][]> {
   return middleware<T, P, "updateMany">(
     table,
     { action: "updateMany", params: [table, diffs] },
@@ -38,14 +38,14 @@ export async function updateMany<
 }
 
 export async function internalUpdateMany<
-  T extends PrimaryKeyIndexable<T>,
+  T extends EntityWithPk<T>,
   P extends PrimaryKeyProps<T>
 >(table: Table<T, P>, diffs: Diff<T, P>[]): Promise<T[P][]> {
   const primaryKeys: T[P][] = [];
   const events: { oldEntity: T; newEntity: T }[] = [];
   for (const diff of diffs) {
     const primaryKeyProperty = table[BlinkKey].options.primary;
-    const primaryKey = diff[primaryKeyProperty] as T[P] & OrdProps;
+    const primaryKey = diff[primaryKeyProperty] as T[P] & Ordinal;
 
     if (primaryKey === undefined || primaryKey === null) {
       throw new InvalidPrimaryKeyError(primaryKey);
@@ -66,18 +66,18 @@ export async function internalUpdateMany<
         if (oldItem[key] !== item[key]) {
           const btree = table[BlinkKey].storage.indexes[key as keyof T];
           if (btree !== undefined) {
-            let oldIndexItems = btree.get(oldItem[key] as T[typeof key] & OrdProps)!;
+            let oldIndexItems = btree.get(oldItem[key] as T[typeof key] & Ordinal)!;
             const arrayIndex = oldIndexItems.indexOf(item);
             // This condition is only false if clone is disabled and the user changed the indexed property without calling update
             if (arrayIndex !== -1) {
               oldIndexItems.splice(arrayIndex, 1);
             }
 
-            const newIndexItems = btree.get(item[key] as T[typeof key] & OrdProps);
+            const newIndexItems = btree.get(item[key] as T[typeof key] & Ordinal);
             if (newIndexItems !== undefined) {
               newIndexItems.push(item);
             } else {
-              btree.set(item[key] as T[typeof key] & OrdProps, [item]);
+              btree.set(item[key] as T[typeof key] & Ordinal, [item]);
             }
           }
         }

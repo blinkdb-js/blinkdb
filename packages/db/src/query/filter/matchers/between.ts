@@ -1,6 +1,6 @@
-import { BetweenMatcher, OrdProps } from "../../types";
+import { BetweenMatcher, Ordinal } from "../../types";
 
-export function matchesBetween<T extends OrdProps>(
+export function matchesBetween<T extends Ordinal>(
   value: T,
   matcher: BetweenMatcher<T>
 ): boolean {

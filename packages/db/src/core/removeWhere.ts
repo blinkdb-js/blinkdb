@@ -1,6 +1,6 @@
 import { middleware } from "../events/Middleware";
 import { get } from "../query";
-import { Filter, PrimaryKeyIndexable, PrimaryKeyProps } from "../query/types";
+import { EntityWithPk, Filter, PrimaryKeyProps } from "../query/types";
 import { Table } from "./createTable";
 import { Ids } from "./remove";
 import { internalRemoveMany } from "./removeMany";
@@ -20,7 +20,7 @@ import { internalRemoveMany } from "./removeMany";
  * });
  */
 export async function removeWhere<
-  T extends PrimaryKeyIndexable<T>,
+  T extends EntityWithPk<T>,
   P extends PrimaryKeyProps<T>
 >(table: Table<T, P>, filter: Filter<T>): Promise<void> {
   return middleware<T, P, "removeWhere">(
@@ -31,7 +31,7 @@ export async function removeWhere<
 }
 
 export async function internalRemoveWhere<
-  T extends PrimaryKeyIndexable<T>,
+  T extends EntityWithPk<T>,
   P extends PrimaryKeyProps<T>
 >(table: Table<T, P>, filter: Filter<T>): Promise<void> {
   await internalRemoveMany(table, get(table, filter) as Ids<T, P>[]);

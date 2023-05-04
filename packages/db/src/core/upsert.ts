@@ -1,5 +1,5 @@
 import { middleware } from "../events/Middleware";
-import { PrimaryKeyIndexable, PrimaryKeyProps } from "../query/types";
+import { EntityWithPk, PrimaryKeyProps } from "../query/types";
 import { Table } from "./createTable";
 import { Create } from "./insert";
 import { internalUpsertMany } from "./upsertMany";
@@ -19,10 +19,10 @@ import { internalUpsertMany } from "./upsertMany";
  * // This will create a new entity
  * await upsert(userTable, { id: uuid(), name: "Bob", age: 49 });
  */
-export async function upsert<
-  T extends PrimaryKeyIndexable<T>,
-  P extends PrimaryKeyProps<T>
->(table: Table<T, P>, entity: Create<T, P>): Promise<T[P]> {
+export async function upsert<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+  table: Table<T, P>,
+  entity: Create<T, P>
+): Promise<T[P]> {
   return middleware<T, P, "upsert">(
     table,
     { action: "upsert", params: [table, entity] },
@@ -31,7 +31,7 @@ export async function upsert<
 }
 
 export async function internalUpsert<
-  T extends PrimaryKeyIndexable<T>,
+  T extends EntityWithPk<T>,
   P extends PrimaryKeyProps<T>
 >(table: Table<T, P>, entity: Create<T, P>): Promise<T[P]> {
   const ids = await internalUpsertMany(table, [entity]);

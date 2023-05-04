@@ -1,9 +1,9 @@
 import BTree from "sorted-btree";
 import { getBiggerKey } from "../../compare";
-import { GtMatcher, OrdProps } from "../../types";
+import { GtMatcher, Ordinal } from "../../types";
 import { SelectCallback } from "../types";
 
-export function selectForGt<K extends OrdProps, E>(
+export function selectForGt<K extends Ordinal, E>(
   btree: BTree<K, E>,
   matcher: GtMatcher<K>,
   cb: SelectCallback<E>,

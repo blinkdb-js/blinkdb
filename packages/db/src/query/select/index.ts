@@ -1,5 +1,5 @@
 import { Table } from "../../core";
-import { And, Or, PrimaryKeyIndexable, PrimaryKeyProps, Where } from "../types";
+import { And, EntityWithPk, Or, PrimaryKeyProps, Where } from "../types";
 import { selectForAnd } from "./and";
 import { selectForOr } from "./or";
 import { SelectCallback, SelectResult } from "./types";
@@ -10,7 +10,7 @@ import { selectForWhere } from "./where";
  *
  * @returns the selected items from the database, or `null` in case a full table scan is required.
  */
-export function select<T extends PrimaryKeyIndexable<T>, P extends PrimaryKeyProps<T>>(
+export function select<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>,
   where: Where<T> | Or<T> | And<T>,
   cb: SelectCallback<T>,

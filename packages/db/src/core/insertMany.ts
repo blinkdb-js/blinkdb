@@ -1,5 +1,5 @@
 import { middleware } from "../events/Middleware";
-import { OrdProps, PrimaryKeyIndexable, PrimaryKeyProps } from "../query/types";
+import { EntityWithPk, Ordinal, PrimaryKeyProps } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
@@ -21,10 +21,10 @@ import { Create } from "./insert";
  *   { id: uuid(), name: "Charlie", age: 34 }
  * ]);
  */
-export async function insertMany<
-  T extends PrimaryKeyIndexable<T>,
-  P extends PrimaryKeyProps<T>
->(table: Table<T, P>, entities: Create<T, P>[]): Promise<T[P][]> {
+export async function insertMany<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+  table: Table<T, P>,
+  entities: Create<T, P>[]
+): Promise<T[P][]> {
   return middleware<T, P, "insertMany">(
     table,
     { action: "insertMany", params: [table, entities] },
@@ -33,14 +33,14 @@ export async function insertMany<
 }
 
 export async function internalInsertMany<
-  T extends PrimaryKeyIndexable<T>,
+  T extends EntityWithPk<T>,
   P extends PrimaryKeyProps<T>
 >(table: Table<T, P>, entities: Create<T, P>[]): Promise<T[P][]> {
   const primaryKeys: T[P][] = [];
   const events: { entity: T }[] = [];
   for (const entity of entities) {
     const primaryKeyProperty = table[BlinkKey].options.primary;
-    const primaryKey = entity[primaryKeyProperty] as T[P] & OrdProps;
+    const primaryKey = entity[primaryKeyProperty] as T[P] & Ordinal;
 
     if (table[BlinkKey].storage.primary.has(primaryKey)) {
       throw new PrimaryKeyAlreadyInUseError(primaryKey);
@@ -54,7 +54,7 @@ export async function internalInsertMany<
     table[BlinkKey].storage.primary.totalItemSize++;
     for (const property in table[BlinkKey].storage.indexes) {
       const btree = table[BlinkKey].storage.indexes[property]!;
-      const key = entity[property] as T[typeof property] & OrdProps;
+      const key = entity[property] as T[typeof property] & Ordinal;
       if (key === null || key === undefined) continue;
 
       const items = btree.get(key);

@@ -1,6 +1,6 @@
 import { middleware } from "../events/Middleware";
 import { get } from "../query";
-import { OrdProps, PrimaryKeyIndexable, PrimaryKeyProps, Query } from "../query/types";
+import { EntityWithPk, Ordinal, PrimaryKeyProps, Query } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
@@ -17,7 +17,7 @@ import { ItemNotFoundError, MoreThanOneItemFoundError } from "./errors";
  * // Retrieve the user with id 10
  * const userWithId = await one(userTable, 10);
  */
-export async function one<T extends PrimaryKeyIndexable<T>, P extends PrimaryKeyProps<T>>(
+export async function one<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>,
   id: T[P]
 ): Promise<T>;
@@ -33,12 +33,12 @@ export async function one<T extends PrimaryKeyIndexable<T>, P extends PrimaryKey
  * // Retrieve the user with id 10
  * const userWithId = await one(userTable, { where: { id: 10 } });
  */
-export async function one<T extends PrimaryKeyIndexable<T>, P extends PrimaryKeyProps<T>>(
+export async function one<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>,
   query: Query<T, P>
 ): Promise<T>;
 
-export async function one<T extends PrimaryKeyIndexable<T>, P extends PrimaryKeyProps<T>>(
+export async function one<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>,
   queryOrId: Query<T, P> | T[P]
 ): Promise<T> {
@@ -50,12 +50,11 @@ export async function one<T extends PrimaryKeyIndexable<T>, P extends PrimaryKey
 }
 
 export async function internalOne<
-  T extends PrimaryKeyIndexable<T>,
+  T extends EntityWithPk<T>,
   P extends PrimaryKeyProps<T>
 >(table: Table<T, P>, queryOrId: Query<T, P> | T[P]): Promise<T> {
   if (typeof queryOrId !== "object") {
-    let entity =
-      table[BlinkKey].storage.primary.get(queryOrId as T[P] & OrdProps) ?? null;
+    let entity = table[BlinkKey].storage.primary.get(queryOrId as T[P] & Ordinal) ?? null;
     if (entity === null) {
       throw new ItemNotFoundError(queryOrId);
     }
