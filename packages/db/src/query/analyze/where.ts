@@ -18,11 +18,7 @@ export function analyzeWhere<T extends EntityWithPk<T>, P extends PrimaryKeyProp
     let complexity: number | undefined;
     if ((key as string) === primaryKeyProperty) {
       const btree = table[BlinkKey].storage.primary;
-      complexity = analyzeMatcher(
-        btree,
-        matcher as AllMatchers<T[P] & Ordinal>,
-        from as T[P] & Ordinal
-      );
+      complexity = analyzeMatcher(btree, matcher as AllMatchers<T[P]>, from);
     } else {
       const btree = table[BlinkKey].storage.indexes[key];
       if (btree) {
