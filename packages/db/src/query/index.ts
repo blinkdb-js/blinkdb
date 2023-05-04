@@ -1,5 +1,5 @@
 import { BlinkKey, Table } from "../core";
-import { EntityWithPk, Ordinal, PrimaryKeyProps } from "../types";
+import { EntityWithPk, PrimaryKeyProps } from "../types";
 import { matches } from "./filter";
 import { limitItems } from "./limit";
 import { select } from "./select";
@@ -35,7 +35,7 @@ export function get<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
     if (filter.limit?.from) {
       const maxKey = btree.maxKey();
       if (maxKey) {
-        btree.forRange(filter.limit.from as T[P] & Ordinal, maxKey, true, (_, item) => {
+        btree.forRange(filter.limit.from, maxKey, true, (_, item) => {
           items.push(item);
         });
         skipFromStep = true;
