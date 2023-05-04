@@ -1,5 +1,5 @@
 import { middleware } from "../events/Middleware";
-import { OrdProps } from "../query/types";
+import { OrdProps, PrimaryKeyIndexable, PrimaryKeyProps } from "../query/types";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 import { Create } from "./insert";
@@ -23,10 +23,10 @@ import { internalUpdateMany } from "./updateMany";
  *   { id: uuid(), age: 45 }
  * ]);
  */
-export async function upsertMany<T extends object, P extends keyof T>(
-  table: Table<T, P>,
-  entities: Create<T, P>[]
-): Promise<T[P][]> {
+export async function upsertMany<
+  T extends PrimaryKeyIndexable<T>,
+  P extends PrimaryKeyProps<T>
+>(table: Table<T, P>, entities: Create<T, P>[]): Promise<T[P][]> {
   return middleware<T, P, "upsertMany">(
     table,
     { action: "upsertMany", params: [table, entities] },
@@ -34,10 +34,10 @@ export async function upsertMany<T extends object, P extends keyof T>(
   );
 }
 
-export async function internalUpsertMany<T extends object, P extends keyof T>(
-  table: Table<T, P>,
-  entities: Create<T, P>[]
-): Promise<T[P][]> {
+export async function internalUpsertMany<
+  T extends PrimaryKeyIndexable<T>,
+  P extends PrimaryKeyProps<T>
+>(table: Table<T, P>, entities: Create<T, P>[]): Promise<T[P][]> {
   // Split entities into items to create & items to update
   // reduces the number of outgoing events to 2
   const items: { entity: Create<T, P>; method: "insert" | "update" }[] = [];

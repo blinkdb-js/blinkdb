@@ -1,5 +1,5 @@
 import { middleware } from "../events/Middleware";
-import { OrdProps } from "../query/types";
+import { OrdProps, PrimaryKeyIndexable, PrimaryKeyProps } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
@@ -21,10 +21,10 @@ import { Create } from "./insert";
  *   { id: uuid(), name: "Charlie", age: 34 }
  * ]);
  */
-export async function insertMany<T extends object, P extends keyof T>(
-  table: Table<T, P>,
-  entities: Create<T, P>[]
-): Promise<T[P][]> {
+export async function insertMany<
+  T extends PrimaryKeyIndexable<T>,
+  P extends PrimaryKeyProps<T>
+>(table: Table<T, P>, entities: Create<T, P>[]): Promise<T[P][]> {
   return middleware<T, P, "insertMany">(
     table,
     { action: "insertMany", params: [table, entities] },
@@ -32,10 +32,10 @@ export async function insertMany<T extends object, P extends keyof T>(
   );
 }
 
-export async function internalInsertMany<T extends object, P extends keyof T>(
-  table: Table<T, P>,
-  entities: Create<T, P>[]
-): Promise<T[P][]> {
+export async function internalInsertMany<
+  T extends PrimaryKeyIndexable<T>,
+  P extends PrimaryKeyProps<T>
+>(table: Table<T, P>, entities: Create<T, P>[]): Promise<T[P][]> {
   const primaryKeys: T[P][] = [];
   const events: { entity: T }[] = [];
   for (const entity of entities) {

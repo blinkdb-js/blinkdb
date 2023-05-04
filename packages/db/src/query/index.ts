@@ -4,12 +4,12 @@ import { limitItems } from "./limit";
 import { select } from "./select";
 import { SelectResult } from "./select/types";
 import { sortItems } from "./sort";
-import { OrdProps, Query } from "./types";
+import { OrdProps, PrimaryKeyIndexable, PrimaryKeyProps, Query } from "./types";
 
 /**
  * retrieve all items matching the given `filter`.
  */
-export function get<T extends object, P extends keyof T>(
+export function get<T extends PrimaryKeyIndexable<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>,
   filter: Query<T, P>
 ): T[] {
