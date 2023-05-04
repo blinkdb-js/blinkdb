@@ -1,5 +1,5 @@
 import { middleware } from "../events/Middleware";
-import { PrimaryKeyIndexable, PrimaryKeyProps } from "../query/types";
+import { EntityWithPk, PrimaryKeyProps } from "../query/types";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 
@@ -11,17 +11,16 @@ import { Table } from "./createTable";
  * const userTable = createTable<User>(db, "users")();
  * await clear(userTable);
  */
-export async function clear<
-  T extends PrimaryKeyIndexable<T>,
-  P extends PrimaryKeyProps<T>
->(table: Table<T, P>): Promise<void> {
+export async function clear<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+  table: Table<T, P>
+): Promise<void> {
   return middleware<T, P, "clear">(table, { action: "clear", params: [table] }, (table) =>
     internalClear(table)
   );
 }
 
 export async function internalClear<
-  T extends PrimaryKeyIndexable<T>,
+  T extends EntityWithPk<T>,
   P extends PrimaryKeyProps<T>
 >(table: Table<T, P>): Promise<void> {
   table[BlinkKey].storage.primary.clear();

@@ -1,5 +1,5 @@
 import { Hook, HookAction, HookContext } from "../events/types";
-import { PrimaryKeyIndexable, PrimaryKeyProps } from "../query/types";
+import { EntityWithPk, PrimaryKeyProps } from "../query/types";
 import { BlinkKey, Database } from "./createDB";
 import { Table } from "./createTable";
 
@@ -22,7 +22,7 @@ import { Table } from "./createTable";
  * });
  */
 export function use<
-  T extends PrimaryKeyIndexable<T> = { [keys: string]: unknown },
+  T extends EntityWithPk<T> = { [keys: string]: unknown },
   P extends PrimaryKeyProps<T> = any
 >(database: Database, hook: Hook<T, P>): () => void;
 
@@ -47,12 +47,12 @@ export function use<
  *   return ctx.next();
  * });
  */
-export function use<T extends PrimaryKeyIndexable<T>, P extends PrimaryKeyProps<T>>(
+export function use<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>,
   hook: Hook<T, P>
 ): () => void;
 
-export function use<T extends PrimaryKeyIndexable<T>, P extends PrimaryKeyProps<T>>(
+export function use<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
   obj: Table<T, P> | Database,
   hook: Hook<T, P>
 ): () => void {
@@ -75,7 +75,7 @@ export function use<T extends PrimaryKeyIndexable<T>, P extends PrimaryKeyProps<
  * });
  */
 export function isAction<
-  T extends PrimaryKeyIndexable<T> = any,
+  T extends EntityWithPk<T> = any,
   P extends PrimaryKeyProps<T> = PrimaryKeyProps<T>,
   A extends HookAction = HookAction
 >(ctx: HookContext<T, P>, action: A): ctx is HookContext<T, P, A> {

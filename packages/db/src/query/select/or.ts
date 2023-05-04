@@ -1,7 +1,7 @@
 import { BlinkKey, Table } from "../../core";
 import { analyzeAnd } from "../analyze/and";
 import { analyzeWhere } from "../analyze/where";
-import { Or, PrimaryKeyIndexable, PrimaryKeyProps } from "../types";
+import { EntityWithPk, Or, PrimaryKeyProps } from "../types";
 import { selectForAnd } from "./and";
 import { SelectCallback, SelectResult } from "./types";
 import { selectForWhere } from "./where";
@@ -11,10 +11,12 @@ import { selectForWhere } from "./where";
  *
  * @returns the selected items from the database, or `null` in case a full table scan is required.
  */
-export function selectForOr<
-  T extends PrimaryKeyIndexable<T>,
-  P extends PrimaryKeyProps<T>
->(table: Table<T, P>, or: Or<T>, cb: SelectCallback<T>, from?: T[P]): SelectResult<T> {
+export function selectForOr<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+  table: Table<T, P>,
+  or: Or<T>,
+  cb: SelectCallback<T>,
+  from?: T[P]
+): SelectResult<T> {
   if (or.OR.length === 0) {
     return { fullTableScan: false };
   }

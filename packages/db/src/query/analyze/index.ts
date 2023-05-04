@@ -1,5 +1,5 @@
 import { Table } from "../../core";
-import { And, Or, PrimaryKeyIndexable, PrimaryKeyProps, Where } from "../types";
+import { And, EntityWithPk, Or, PrimaryKeyProps, Where } from "../types";
 import { analyzeAnd } from "./and";
 import { analyzeOr } from "./or";
 import { analyzeWhere } from "./where";
@@ -7,7 +7,7 @@ import { analyzeWhere } from "./where";
 /**
  * @returns the theoretical complexity of a given filter.
  */
-export function analyze<T extends PrimaryKeyIndexable<T>, P extends PrimaryKeyProps<T>>(
+export function analyze<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>,
   filter: Where<T> | And<T> | Or<T>,
   from?: T[P]

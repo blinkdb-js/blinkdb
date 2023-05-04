@@ -1,12 +1,13 @@
 import { Table } from "../../core";
-import { And, PrimaryKeyIndexable, PrimaryKeyProps } from "../types";
+import { And, EntityWithPk, PrimaryKeyProps } from "../types";
 import { analyzeOr } from "./or";
 import { analyzeWhere } from "./where";
 
-export function analyzeAnd<
-  T extends PrimaryKeyIndexable<T>,
-  P extends PrimaryKeyProps<T>
->(table: Table<T, P>, and: And<T>, from?: T[P]): number {
+export function analyzeAnd<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+  table: Table<T, P>,
+  and: And<T>,
+  from?: T[P]
+): number {
   let minComplexity = Number.MAX_SAFE_INTEGER;
 
   if (and.AND.length === 0) return 0;

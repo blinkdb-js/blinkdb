@@ -1,5 +1,5 @@
 import BTree from "sorted-btree";
-import { AllMatchers, OrdProps } from "../../types";
+import { AllMatchers, Ordinal } from "../../types";
 import { SelectCallback } from "../types";
 import { selectForBetween } from "./between";
 import { selectForEq } from "./eq";
@@ -12,7 +12,7 @@ import { selectForLte } from "./lte";
 /**
  * Selects all items from `btree` that could possibly match the given `matcher`.
  */
-export function selectForMatcher<K extends OrdProps, E>(
+export function selectForMatcher<K extends Ordinal, E>(
   btree: BTree<K, E>,
   matcher: AllMatchers<K>,
   cb: SelectCallback<E>,
