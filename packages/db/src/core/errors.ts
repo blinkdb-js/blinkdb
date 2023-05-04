@@ -1,4 +1,5 @@
-import { EntityWithPk, PrimaryKeyProps, Query } from "../query/types";
+import { Query } from "../query/types";
+import { EntityWithPk, PrimaryKeyProps } from "../types";
 
 /**
  * Thrown if the primary key of an item being inserted is already present within the table.

@@ -1,5 +1,6 @@
 import BTree from "sorted-btree";
-import { AllMatchers, Ordinal } from "../../types";
+import { Ordinal } from "../../../types";
+import { AllMatchers } from "../../types";
 import { SelectCallback } from "../types";
 import { selectForBetween } from "./between";
 import { selectForEq } from "./eq";

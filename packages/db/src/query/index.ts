@@ -1,10 +1,11 @@
 import { BlinkKey, Table } from "../core";
+import { EntityWithPk, Ordinal, PrimaryKeyProps } from "../types";
 import { matches } from "./filter";
 import { limitItems } from "./limit";
 import { select } from "./select";
 import { SelectResult } from "./select/types";
 import { sortItems } from "./sort";
-import { EntityWithPk, Ordinal, PrimaryKeyProps, Query } from "./types";
+import { Query } from "./types";
 
 /**
  * retrieve all items matching the given `filter`.

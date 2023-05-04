@@ -1,5 +1,6 @@
 import { Table } from "../../core";
-import { And, EntityWithPk, Or, PrimaryKeyProps, Where } from "../types";
+import { EntityWithPk, PrimaryKeyProps } from "../../types";
+import { And, Or, Where } from "../types";
 import { selectForAnd } from "./and";
 import { selectForOr } from "./or";
 import { SelectCallback, SelectResult } from "./types";

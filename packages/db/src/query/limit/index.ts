@@ -1,6 +1,7 @@
 import { BlinkKey, Table } from "../../core";
+import { EntityWithPk, Ordinal, PrimaryKeyProps } from "../../types";
 import { compare } from "../compare";
-import { EntityWithPk, Limit, Ordinal, PrimaryKeyProps } from "../types";
+import { Limit } from "../types";
 
 /**
  * @returns all items from `items` limited according to the given `limit` object.

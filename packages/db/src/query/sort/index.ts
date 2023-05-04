@@ -1,7 +1,8 @@
 import { BlinkKey, Table } from "../../core";
+import { EntityWithPk, Ordinal, PrimaryKeyProps } from "../../types";
 import { compare } from "../compare";
 import { SelectResult } from "../select/types";
-import { EntityWithPk, Ordinal, PrimaryKeyProps, Sort } from "../types";
+import { Sort } from "../types";
 
 /**
  * @returns all items from `items` sorted according to the given `sort` object.

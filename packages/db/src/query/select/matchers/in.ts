@@ -1,7 +1,8 @@
 import equal from "fast-deep-equal";
 import BTree, { defaultComparator } from "sorted-btree";
+import { Ordinal } from "../../../types";
 import { getBiggerKey } from "../../compare";
-import { InMatcher, Ordinal } from "../../types";
+import { InMatcher } from "../../types";
 import { SelectCallback } from "../types";
 import { selectForEq } from "./eq";
 
