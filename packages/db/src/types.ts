@@ -47,3 +47,17 @@ export type PrimaryKeyProps<T> = keyof T &
  * An object with a primary key.
  */
 export type EntityWithPk<T> = Record<PrimaryKeyProps<T>, PrimaryKey>;
+
+/**
+ * Returns type T if T only contains valid properties.
+ */
+export type ValidEntity<T> = T extends ValidProperties<T> ? T : never;
+export type ValidProperties<T> = T extends Function | Symbol
+  ? never
+  : T extends Date
+  ? T
+  : T extends BigInt
+  ? T
+  : T extends object
+  ? { [K in keyof T]: ValidEntity<T[K]> }
+  : T;
