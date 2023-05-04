@@ -1,8 +1,6 @@
-name: Publish
+name: Build
 
-on:
-  release:
-    types: [created]
+on: [pull_request]
 
 jobs:
   build:
@@ -12,9 +10,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
-          registry-url: "https://registry.npmjs.org"
+          cache: "npm"
       - run: npm ci
       - run: npm run build
-      - run: npm run publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: npm run test-coverage
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
