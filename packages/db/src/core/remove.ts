@@ -33,6 +33,9 @@ export async function internalRemove<
   return internalRemoveMany(table, [entity]);
 }
 
+/**
+ * Only primary key properties of T
+ */
 export type Ids<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>> = {
   [K in P]: T[P];
 };
