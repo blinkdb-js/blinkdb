@@ -13,17 +13,17 @@ import {
   upsert,
   upsertMany,
 } from "../core";
-import { Filter, Query } from "../query/types";
+import { Filter, PrimaryKeyIndexable, PrimaryKeyProps, Query } from "../query/types";
 
 export type Hook<
-  T extends object = any,
-  P extends keyof T = keyof T,
+  T extends PrimaryKeyIndexable<T> = any,
+  P extends PrimaryKeyProps<T> = PrimaryKeyProps<T>,
   A extends HookAction = HookAction
 > = (context: HookContext<T, P, A>) => HookReturn<T, P, A> | Promise<HookReturn<T, P, A>>;
 
 export type HookContext<
-  T extends object = any,
-  P extends keyof T = keyof T,
+  T extends PrimaryKeyIndexable<T> = any,
+  P extends PrimaryKeyProps<T> = PrimaryKeyProps<T>,
   A extends HookAction = HookAction
 > = {
   action: A;
@@ -35,13 +35,13 @@ export type HookContext<
 };
 
 export type HookParams<
-  T extends object = any,
-  P extends keyof T = keyof T,
+  T extends PrimaryKeyIndexable<T> = any,
+  P extends PrimaryKeyProps<T> = PrimaryKeyProps<T>,
   A extends HookAction = HookAction
 > = Parameters<HookMethods<T, P>[A]>;
 export type HookReturn<
-  T extends object = any,
-  P extends keyof T = keyof T,
+  T extends PrimaryKeyIndexable<T> = any,
+  P extends PrimaryKeyProps<T> = PrimaryKeyProps<T>,
   A extends HookAction = HookAction
 > = Awaited<ReturnType<HookMethods<T, P>[A]>>;
 
@@ -63,7 +63,10 @@ export type HookAction =
   | "upsertMany"
   | "watch";
 
-export type HookMethods<T extends object = any, P extends keyof T = keyof T> = {
+export type HookMethods<
+  T extends PrimaryKeyIndexable<T> = any,
+  P extends PrimaryKeyProps<T> = PrimaryKeyProps<T>
+> = {
   clear: typeof clear<T, P>;
   count: (
     table: Table<T, P>,

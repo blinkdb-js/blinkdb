@@ -1,12 +1,12 @@
 import { BlinkKey, Table } from "../../core";
 import { compare } from "../compare";
 import { SelectResult } from "../select/types";
-import { OrdProps, Sort } from "../types";
+import { OrdProps, PrimaryKeyIndexable, PrimaryKeyProps, Sort } from "../types";
 
 /**
  * @returns all items from `items` sorted according to the given `sort` object.
  */
-export function sortItems<T extends object, P extends keyof T>(
+export function sortItems<T extends PrimaryKeyIndexable<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>,
   items: T[],
   sort: Sort<T>,

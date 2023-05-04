@@ -1,12 +1,12 @@
 import { middleware } from "../events/Middleware";
 import { get } from "../query";
-import { Filter } from "../query/types";
+import { Filter, PrimaryKeyIndexable, PrimaryKeyProps } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
+import { PrimaryKeyCannotBeModifiedError } from "./errors";
 import { Diff } from "./update";
 import { internalUpdateMany } from "./updateMany";
-import { PrimaryKeyCannotBeModifiedError } from "./errors";
 
 /**
  * Modifies all entities that match the given `filter` using the provided `callback`.
@@ -22,7 +22,10 @@ import { PrimaryKeyCannotBeModifiedError } from "./errors";
  *   return { ...user, age: user.age + 1 };
  * });
  */
-export async function updateWhere<T extends object, P extends keyof T>(
+export async function updateWhere<
+  T extends PrimaryKeyIndexable<T>,
+  P extends PrimaryKeyProps<T>
+>(
   table: Table<T, P>,
   filter: Filter<T>,
   callback: (item: T) => Diff<T, P> | Promise<Diff<T, P>>
@@ -34,7 +37,10 @@ export async function updateWhere<T extends object, P extends keyof T>(
   );
 }
 
-export async function internalUpdateWhere<T extends object, P extends keyof T>(
+export async function internalUpdateWhere<
+  T extends PrimaryKeyIndexable<T>,
+  P extends PrimaryKeyProps<T>
+>(
   table: Table<T, P>,
   filter: Filter<T>,
   callback: (item: T) => Diff<T, P> | Promise<Diff<T, P>>

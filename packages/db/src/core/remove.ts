@@ -1,4 +1,5 @@
 import { middleware } from "../events/Middleware";
+import { PrimaryKeyIndexable, PrimaryKeyProps } from "../query/types";
 import { Table } from "./createTable";
 import { internalRemoveMany } from "./removeMany";
 
@@ -14,10 +15,10 @@ import { internalRemoveMany } from "./removeMany";
  * // Remove Alice from the table
  * await remove(userTable, { id: userId });
  */
-export async function remove<T extends object, P extends keyof T>(
-  table: Table<T, P>,
-  entity: Ids<T, P>
-): Promise<boolean> {
+export async function remove<
+  T extends PrimaryKeyIndexable<T>,
+  P extends PrimaryKeyProps<T>
+>(table: Table<T, P>, entity: Ids<T, P>): Promise<boolean> {
   return middleware<T, P, "remove">(
     table,
     { action: "remove", params: [table, entity] },
@@ -25,11 +26,13 @@ export async function remove<T extends object, P extends keyof T>(
   );
 }
 
-export async function internalRemove<T extends object, P extends keyof T>(
-  table: Table<T, P>,
-  entity: Ids<T, P>
-): Promise<boolean> {
+export async function internalRemove<
+  T extends PrimaryKeyIndexable<T>,
+  P extends PrimaryKeyProps<T>
+>(table: Table<T, P>, entity: Ids<T, P>): Promise<boolean> {
   return internalRemoveMany(table, [entity]);
 }
 
-export type Ids<T, P extends keyof T> = { [K in P]-?: T[P] };
+export type Ids<T extends PrimaryKeyIndexable<T>, P extends PrimaryKeyProps<T>> = {
+  [K in P]: T[P];
+};

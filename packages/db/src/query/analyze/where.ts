@@ -1,12 +1,17 @@
 import { BlinkKey, Table } from "../../core";
-import { AllMatchers, OrdProps, Where } from "../types";
+import {
+  AllMatchers,
+  OrdProps,
+  PrimaryKeyIndexable,
+  PrimaryKeyProps,
+  Where,
+} from "../types";
 import { analyzeMatcher } from "./matchers";
 
-export function analyzeWhere<T extends object, P extends keyof T>(
-  table: Table<T, P>,
-  where: Where<T>,
-  from?: T[P]
-): number {
+export function analyzeWhere<
+  T extends PrimaryKeyIndexable<T>,
+  P extends PrimaryKeyProps<T>
+>(table: Table<T, P>, where: Where<T>, from?: T[P]): number {
   if (Object.keys(where).length === 0) return 0;
 
   let primaryKeyProperty = table[BlinkKey].options.primary;

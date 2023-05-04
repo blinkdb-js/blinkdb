@@ -1,7 +1,7 @@
 import BTree from "sorted-btree";
 import { Dispatcher } from "../events/Dispatcher";
 import { Hook } from "../events/types";
-import { OrdProps, PrimaryKeyProps } from "../query/types";
+import { OrdProps, PrimaryKeyIndexable, PrimaryKeyProps } from "../query/types";
 import { BlinkKey, Database } from "./createDB";
 
 /**
@@ -33,10 +33,16 @@ import { BlinkKey, Database } from "./createDB";
  * const db = createDB();
  * const userTable = createTable<User>(db, "users")();
  */
-export function createTable<T extends { id: string | number }>(
+export function createTable<T extends { id: string | number } & PrimaryKeyIndexable<T>>(
   db: Database,
   tableName: string
-): <P extends keyof T = "id">(options?: TableOptions<T, P>) => Table<ValidEntity<T>, P>;
+): <
+  P extends PrimaryKeyProps<T> & PrimaryKeyProps<ValidEntity<T>> = "id" &
+    PrimaryKeyProps<T> &
+    PrimaryKeyProps<ValidEntity<T>>
+>(
+  options?: TableOptions<T, P>
+) => Table<ValidEntity<T>, P>;
 
 /**
  * Creates a new table where entities can be inserted/updated/deleted/retrieved.
@@ -67,15 +73,18 @@ export function createTable<T extends { id: string | number }>(
  * const db = createDB();
  * const userTable = createTable<User>(db, "users")();
  */
-export function createTable<T extends object>(
+export function createTable<T extends PrimaryKeyIndexable<T>>(
   db: Database,
   tableName: string
-): <P extends PrimaryKeyProps<T>>(
+): <P extends PrimaryKeyProps<T> & PrimaryKeyProps<ValidEntity<T>>>(
   options: TableOptions<T, P>
 ) => Table<ValidEntity<T>, P>;
 
-export function createTable<T extends object>(db: Database, tableName: string) {
-  return <P extends PrimaryKeyProps<T>>(
+export function createTable<T extends PrimaryKeyIndexable<T>>(
+  db: Database,
+  tableName: string
+) {
+  return <P extends PrimaryKeyProps<T> & PrimaryKeyProps<ValidEntity<T>>>(
     options?: TableOptions<T, P>
   ): Table<ValidEntity<T>, P> => {
     const primaryBTree = new BTree();
@@ -115,7 +124,10 @@ export function createTable<T extends object>(db: Database, tableName: string) {
   };
 }
 
-export interface TableOptions<T extends object, P extends keyof T> {
+export interface TableOptions<
+  T extends PrimaryKeyIndexable<T>,
+  P extends PrimaryKeyProps<T>
+> {
   /**
    * The primary key of the entity.
    *
@@ -131,7 +143,7 @@ export interface TableOptions<T extends object, P extends keyof T> {
   indexes?: Exclude<keyof T, P>[];
 }
 
-export interface Table<T extends object, P extends keyof T> {
+export interface Table<T extends PrimaryKeyIndexable<T>, P extends PrimaryKeyProps<T>> {
   [BlinkKey]: {
     db: Database;
     tableName: string;

@@ -1,5 +1,5 @@
 import { middleware } from "../events/Middleware";
-import { OrdProps } from "../query/types";
+import { OrdProps, PrimaryKeyIndexable, PrimaryKeyProps } from "../query/types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
@@ -26,10 +26,10 @@ import { Diff } from "./update";
  *   { id: bobId, age: 45 }
  * ]);
  */
-export async function updateMany<T extends object, P extends keyof T>(
-  table: Table<T, P>,
-  diffs: Diff<T, P>[]
-): Promise<T[P][]> {
+export async function updateMany<
+  T extends PrimaryKeyIndexable<T>,
+  P extends PrimaryKeyProps<T>
+>(table: Table<T, P>, diffs: Diff<T, P>[]): Promise<T[P][]> {
   return middleware<T, P, "updateMany">(
     table,
     { action: "updateMany", params: [table, diffs] },
@@ -37,10 +37,10 @@ export async function updateMany<T extends object, P extends keyof T>(
   );
 }
 
-export async function internalUpdateMany<T extends object, P extends keyof T>(
-  table: Table<T, P>,
-  diffs: Diff<T, P>[]
-): Promise<T[P][]> {
+export async function internalUpdateMany<
+  T extends PrimaryKeyIndexable<T>,
+  P extends PrimaryKeyProps<T>
+>(table: Table<T, P>, diffs: Diff<T, P>[]): Promise<T[P][]> {
   const primaryKeys: T[P][] = [];
   const events: { oldEntity: T; newEntity: T }[] = [];
   for (const diff of diffs) {
