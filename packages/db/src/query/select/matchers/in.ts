@@ -1,11 +1,12 @@
 import equal from "fast-deep-equal";
 import BTree, { defaultComparator } from "sorted-btree";
+import { Ordinal } from "../../../types";
 import { getBiggerKey } from "../../compare";
-import { InMatcher, OrdProps } from "../../types";
+import { InMatcher } from "../../types";
 import { SelectCallback } from "../types";
 import { selectForEq } from "./eq";
 
-export function selectForIn<K extends OrdProps, E>(
+export function selectForIn<K extends Ordinal, E>(
   btree: BTree<K, E>,
   matcher: InMatcher<K>,
   cb: SelectCallback<E>,

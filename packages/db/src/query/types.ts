@@ -1,3 +1,5 @@
+import { EntityPropTypes, Eq, Ordinal, SimpleEq } from "../types";
+
 /**
  * Specifies what and how items should be returned from a query.
  *
@@ -57,7 +59,7 @@ export type Sort<T> = {
  * string, boolean, number, null, undefined, or date.
  */
 export type ValidSortKey<T> = {
-  [K in keyof T]: T[K] extends OrdProps ? K : never;
+  [K in keyof T]: T[K] extends Ordinal ? K : never;
 }[keyof T];
 
 /**
@@ -80,15 +82,15 @@ export type Limit<T, P extends keyof T> = {
  */
 export type Matchers<T, K extends keyof T> = T[K] extends (infer R)[] | undefined
   ? ArrMatchers<R> | EqMatchers<T[K]> | T[K]
-  : T[K] extends OrdProps & EqProps & SimpleEqProps
+  : T[K] extends Ordinal & Eq & SimpleEq
   ? OrdMatchers<T[K]> | EqMatchers<T[K]> | T[K]
-  : T[K] extends OrdProps & EqProps
+  : T[K] extends Ordinal & Eq
   ? OrdMatchers<T[K]> | EqMatchers<T[K]>
-  : T[K] extends EqProps & SimpleEqProps
+  : T[K] extends Eq & SimpleEq
   ? EqMatchers<T[K]> | T[K]
   : T[K] extends object | undefined
   ? ObjMatchers<T[K]> | EqMatchers<T[K]>
-  : T[K] extends ValidProps
+  : T[K] extends EntityPropTypes
   ? EqMatchers<T[K]>
   : never;
 
@@ -101,17 +103,17 @@ export type AllMatchers<T> = Matchers<{ t: T }, "t">;
  * With a orderable property, one can use
  * gt, gte, lt, lte, and between matchers.
  */
-export type OrdMatchers<T extends OrdProps> =
+export type OrdMatchers<T extends Ordinal> =
   | GtMatcher<T>
   | GteMatcher<T>
   | LtMatcher<T>
   | LteMatcher<T>
   | BetweenMatcher<T>;
-export type GtMatcher<T extends OrdProps> = { gt: T };
-export type GteMatcher<T extends OrdProps> = { gte: T };
-export type LtMatcher<T extends OrdProps> = { lt: T };
-export type LteMatcher<T extends OrdProps> = { lte: T };
-export type BetweenMatcher<T extends OrdProps> = { between: [T, T] };
+export type GtMatcher<T extends Ordinal> = { gt: T };
+export type GteMatcher<T extends Ordinal> = { gte: T };
+export type LtMatcher<T extends Ordinal> = { lt: T };
+export type LteMatcher<T extends Ordinal> = { lte: T };
+export type BetweenMatcher<T extends Ordinal> = { between: [T, T] };
 
 /**
  * With a property that supports equality, one can use
@@ -134,43 +136,3 @@ export type ContainsMatcher<T> = { contains: T };
 export type ObjMatchers<T> = {
   where: Where<T>;
 };
-
-/**
- * BlinkDB doesn't allow functions or Symbols as valid properties
- * in entities.
- */
-export type ValidProps =
-  | string
-  | boolean
-  | number
-  | null
-  | undefined
-  | BigInt
-  | Date
-  | unknown[]
-  | object;
-
-/**
- * Only some properties are orderable with >, >=, <, and <= operations.
- */
-export type OrdProps = string | number | null | undefined | BigInt | Date;
-
-/**
- * Only some properties are comparable by equality with `deepEqual(a, b)`.
- */
-export type EqProps = ValidProps;
-
-/**
- * Only some properties are comparable by simple equality with `a === b`.
- */
-export type SimpleEqProps = string | boolean | number | null | undefined | Date;
-
-/**
- * Select only string|number properties of a given object.
- */
-export type PrimaryKeyProps<T> = Exclude<
-  {
-    [Key in keyof T]: T[Key] extends string | number ? Key : never;
-  }[keyof T],
-  undefined
->;

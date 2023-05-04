@@ -1,14 +1,14 @@
 import BTree from "sorted-btree";
 import { Dispatcher } from "../events/Dispatcher";
 import { Hook } from "../events/types";
-import { OrdProps, PrimaryKeyProps } from "../query/types";
+import { EntityWithPk, Ordinal, PrimaryKeyProps, ValidEntity } from "../types";
 import { BlinkKey, Database } from "./createDB";
 
 /**
  * Creates a new table where entities can be inserted/updated/deleted/retrieved.
  *
  * The default primary key of a table is `id`. If your interface does not have
- * a `id` property or you'd like to change it to something else, use this snippet:
+ * a `id` property, or you'd like to change it to something else, use this snippet:
  *
  * ```
  * interface User {
@@ -33,18 +33,24 @@ import { BlinkKey, Database } from "./createDB";
  * const db = createDB();
  * const userTable = createTable<User>(db, "users")();
  */
-export function createTable<T extends { id: string | number }>(
+export function createTable<T extends { id: string | number } & EntityWithPk<T>>(
   db: Database,
   tableName: string
-): <P extends keyof T = "id">(options?: TableOptions<T, P>) => Table<ValidEntity<T>, P>;
+): <
+  P extends PrimaryKeyProps<T> & PrimaryKeyProps<ValidEntity<T>> = "id" &
+    PrimaryKeyProps<T> &
+    PrimaryKeyProps<ValidEntity<T>>
+>(
+  options?: TableOptions<T, P>
+) => Table<ValidEntity<T>, P>;
 
 /**
  * Creates a new table where entities can be inserted/updated/deleted/retrieved.
  *
- * The default primary key of a table is `id`. If your interface does not have
- * a `id` property or you'd like to change it to something else, use this snippet:
+ * The primary key of the table and other options are set
+ * with the `options` parameter.
  *
- * ```
+ * @example
  * interface User {
  *   uuid: string;
  *   name: string;
@@ -52,35 +58,23 @@ export function createTable<T extends { id: string | number }>(
  *
  * const db = createDB();
  * const userTable = createTable<User>(db, "users")({
- *   primary: "uuid" // whatever you want your primary key to be
+ *   primary: "uuid"
  * });
- * ```
- *
- * Other options can be supplied with the `options` parameter.
- *
- * @example
- * interface User {
- *   id: string;
- *   name: string;
- * }
- *
- * const db = createDB();
- * const userTable = createTable<User>(db, "users")();
  */
-export function createTable<T extends object>(
+export function createTable<T extends EntityWithPk<T>>(
   db: Database,
   tableName: string
-): <P extends PrimaryKeyProps<T>>(
+): <P extends PrimaryKeyProps<T> & PrimaryKeyProps<ValidEntity<T>>>(
   options: TableOptions<T, P>
 ) => Table<ValidEntity<T>, P>;
 
-export function createTable<T extends object>(db: Database, tableName: string) {
-  return <P extends PrimaryKeyProps<T>>(
+export function createTable<T extends EntityWithPk<T>>(db: Database, tableName: string) {
+  return <P extends PrimaryKeyProps<T> & PrimaryKeyProps<ValidEntity<T>>>(
     options?: TableOptions<T, P>
   ): Table<ValidEntity<T>, P> => {
     const primaryBTree = new BTree();
     primaryBTree.totalItemSize = 0;
-    const table: Table<ValidEntity<T>, P> = {
+    return {
       [BlinkKey]: {
         db,
         tableName,
@@ -111,11 +105,10 @@ export function createTable<T extends object>(db: Database, tableName: string) {
         },
       },
     };
-    return table;
   };
 }
 
-export interface TableOptions<T extends object, P extends keyof T> {
+export interface TableOptions<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>> {
   /**
    * The primary key of the entity.
    *
@@ -131,12 +124,12 @@ export interface TableOptions<T extends object, P extends keyof T> {
   indexes?: Exclude<keyof T, P>[];
 }
 
-export interface Table<T extends object, P extends keyof T> {
+export interface Table<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>> {
   [BlinkKey]: {
     db: Database;
     tableName: string;
     storage: {
-      primary: BTree<T[P] & OrdProps, T>;
+      primary: BTree<T[P], T>;
       indexes: IndexStorage<T>;
     };
     events: {
@@ -151,19 +144,5 @@ export interface Table<T extends object, P extends keyof T> {
 }
 
 type IndexStorage<T> = {
-  [Key in keyof T]?: BTree<T[Key] & OrdProps, T[]>;
+  [Key in keyof T]?: BTree<T[Key] & Ordinal, T[]>;
 };
-
-/**
- * Returns type T if T only contains valid properties.
- */
-type ValidEntity<T> = T extends ValidProperties<T> ? T : never;
-export type ValidProperties<T> = T extends Function | Symbol
-  ? never
-  : T extends Date
-  ? T
-  : T extends BigInt
-  ? T
-  : T extends object
-  ? { [K in keyof T]: ValidEntity<T[K]> }
-  : T;

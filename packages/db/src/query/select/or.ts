@@ -1,4 +1,5 @@
 import { BlinkKey, Table } from "../../core";
+import { EntityWithPk, PrimaryKeyProps } from "../../types";
 import { analyzeAnd } from "../analyze/and";
 import { analyzeWhere } from "../analyze/where";
 import { Or } from "../types";
@@ -11,7 +12,7 @@ import { selectForWhere } from "./where";
  *
  * @returns the selected items from the database, or `null` in case a full table scan is required.
  */
-export function selectForOr<T extends object, P extends keyof T>(
+export function selectForOr<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>,
   or: Or<T>,
   cb: SelectCallback<T>,

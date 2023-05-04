@@ -1,12 +1,13 @@
 import { BlinkKey, Table } from "../../core";
+import { EntityWithPk, Ordinal, PrimaryKeyProps } from "../../types";
 import { compare } from "../compare";
 import { SelectResult } from "../select/types";
-import { OrdProps, Sort } from "../types";
+import { Sort } from "../types";
 
 /**
  * @returns all items from `items` sorted according to the given `sort` object.
  */
-export function sortItems<T extends object, P extends keyof T>(
+export function sortItems<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>,
   items: T[],
   sort: Sort<T>,
@@ -38,8 +39,8 @@ export function sortItems<T extends object, P extends keyof T>(
  */
 export function sortWithSortQuery<T>(sort: Sort<T>): (a: T, b: T) => number {
   return (a, b) => {
-    const aKey = a[sort.key] as OrdProps;
-    const bKey = b[sort.key] as OrdProps;
+    const aKey = a[sort.key] as Ordinal;
+    const bKey = b[sort.key] as Ordinal;
     return sort.order === "asc" ? compare(aKey, bKey) : compare(bKey, aKey);
   };
 }

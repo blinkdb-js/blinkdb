@@ -1,15 +1,16 @@
 import { BlinkKey, Table } from "../core";
+import { EntityWithPk, PrimaryKeyProps } from "../types";
 import { matches } from "./filter";
 import { limitItems } from "./limit";
 import { select } from "./select";
 import { SelectResult } from "./select/types";
 import { sortItems } from "./sort";
-import { OrdProps, Query } from "./types";
+import { Query } from "./types";
 
 /**
  * retrieve all items matching the given `filter`.
  */
-export function get<T extends object, P extends keyof T>(
+export function get<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>,
   filter: Query<T, P>
 ): T[] {
@@ -34,7 +35,7 @@ export function get<T extends object, P extends keyof T>(
     if (filter.limit?.from) {
       const maxKey = btree.maxKey();
       if (maxKey) {
-        btree.forRange(filter.limit.from as T[P] & OrdProps, maxKey, true, (_, item) => {
+        btree.forRange(filter.limit.from, maxKey, true, (_, item) => {
           items.push(item);
         });
         skipFromStep = true;

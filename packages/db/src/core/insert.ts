@@ -1,4 +1,5 @@
 import { middleware } from "../events/Middleware";
+import { EntityWithPk, PrimaryKeyProps } from "../types";
 import { Table } from "./createTable";
 import { internalInsertMany } from "./insertMany";
 
@@ -14,9 +15,9 @@ import { internalInsertMany } from "./insertMany";
  * const bobId = await insert(userTable, { id: uuid(), name: "Bob", age: 45 });
  * const charlieId = await insert(userTable, { id: uuid(), name: "Charlie", age: 34 });
  */
-export async function insert<T extends object, P extends keyof T>(
+export async function insert<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>,
-  entity: Create<T, P>
+  entity: T
 ): Promise<T[P]> {
   return middleware<T, P, "insert">(
     table,
@@ -25,17 +26,10 @@ export async function insert<T extends object, P extends keyof T>(
   );
 }
 
-export async function internalInsert<T extends object, P extends keyof T>(
-  table: Table<T, P>,
-  entity: Create<T, P>
-): Promise<T[P]> {
+export async function internalInsert<
+  T extends EntityWithPk<T>,
+  P extends PrimaryKeyProps<T>
+>(table: Table<T, P>, entity: T): Promise<T[P]> {
   const ids = await internalInsertMany(table, [entity]);
   return ids[0];
 }
-
-/**
- * T with non-optional primary keys.
- */
-export type Create<T, P extends keyof T> = T & {
-  [Key in P]-?: T[P];
-};

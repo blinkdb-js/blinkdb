@@ -1,8 +1,9 @@
 import BTree from "sorted-btree";
-import { LteMatcher, OrdProps } from "../../types";
+import { Ordinal } from "../../../types";
+import { LteMatcher } from "../../types";
 import { SelectCallback } from "../types";
 
-export function selectForLte<K extends OrdProps, E>(
+export function selectForLte<K extends Ordinal, E>(
   btree: BTree<K, E>,
   matcher: LteMatcher<K>,
   cb: SelectCallback<E>,

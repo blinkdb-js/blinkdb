@@ -1,5 +1,5 @@
 import { middleware } from "../events/Middleware";
-import { OrdProps } from "../query/types";
+import { EntityWithPk, isOrdinal, PrimaryKeyProps } from "../types";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 import { Ids } from "./remove";
@@ -16,7 +16,7 @@ import { Ids } from "./remove";
  * // Remove Alice from the table
  * await remove(userTable, { id: userId });
  */
-export async function removeMany<T extends object, P extends keyof T>(
+export async function removeMany<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>,
   entities: Ids<T, P>[]
 ): Promise<boolean> {
@@ -27,15 +27,15 @@ export async function removeMany<T extends object, P extends keyof T>(
   );
 }
 
-export async function internalRemoveMany<T extends object, P extends keyof T>(
-  table: Table<T, P>,
-  entities: Ids<T, P>[]
-): Promise<boolean> {
+export async function internalRemoveMany<
+  T extends EntityWithPk<T>,
+  P extends PrimaryKeyProps<T>
+>(table: Table<T, P>, entities: Ids<T, P>[]): Promise<boolean> {
   const events: { entity: T }[] = [];
   let allEntitiesRemoved = true;
   for (const entity of entities) {
     const primaryKeyProperty = table[BlinkKey].options.primary;
-    const primaryKey = entity[primaryKeyProperty] as T[P] & OrdProps;
+    const primaryKey = entity[primaryKeyProperty];
 
     const indexes = table[BlinkKey].storage.indexes;
     if (Object.keys(indexes).length > 0) {
@@ -43,8 +43,8 @@ export async function internalRemoveMany<T extends object, P extends keyof T>(
       if (!item) return false;
       for (const property in indexes) {
         const btree = indexes[property]!;
-        const key = item[property] as T[typeof property] & OrdProps;
-        if (key === null || key === undefined) continue;
+        const key = item[property];
+        if (!isOrdinal(key)) continue;
 
         const items = btree.get(key)!;
         const deleteIndex = items.indexOf(item);

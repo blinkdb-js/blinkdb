@@ -1,12 +1,13 @@
 import BTree from "sorted-btree";
+import { Ordinal } from "../../types";
 import { compare, getBiggerKey } from "../compare";
-import { AllMatchers, OrdProps } from "../types";
+import { AllMatchers } from "../types";
 
 /**
  * Returns the theoretical complexity of a given matcher,
  * e.g. how many items will need to be evaluated approximately.
  */
-export function analyzeMatcher<T extends OrdProps>(
+export function analyzeMatcher<T extends Ordinal>(
   btree: BTree<T, unknown>,
   matcher: AllMatchers<T>,
   from?: T
@@ -42,7 +43,7 @@ export function analyzeMatcher<T extends OrdProps>(
 /**
  * returns the theoretical complexity of a gt/gte matcher.
  */
-function analyzeGtMatcher<K extends OrdProps>(
+function analyzeGtMatcher<K extends Ordinal>(
   key: K,
   btree: BTree<K, unknown>,
   from?: K
@@ -64,7 +65,7 @@ function analyzeGtMatcher<K extends OrdProps>(
 /**
  * returns the theoretical complexity of a lt/lte matcher.
  */
-function analyzeLtMatcher<K extends OrdProps>(
+function analyzeLtMatcher<K extends Ordinal>(
   key: K,
   btree: BTree<K, unknown>,
   from?: K
@@ -86,7 +87,7 @@ function analyzeLtMatcher<K extends OrdProps>(
 /**
  * returns the theoretical complexity of a between matcher.
  */
-function analyzeBetweenMatcher<K extends OrdProps>(
+function analyzeBetweenMatcher<K extends Ordinal>(
   min: K,
   max: K,
   btree: BTree<K, unknown>,

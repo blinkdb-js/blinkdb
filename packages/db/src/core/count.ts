@@ -2,6 +2,7 @@ import { middleware } from "../events/Middleware";
 import { get } from "../query";
 import { analyze } from "../query/analyze";
 import { Filter } from "../query/types";
+import { EntityWithPk, PrimaryKeyProps } from "../types";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 
@@ -14,7 +15,7 @@ import { Table } from "./createTable";
  * // Count how many entities exist in userTable
  * const count = await count(userTable);
  */
-export async function count<T extends object, P extends keyof T>(
+export async function count<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>
 ): Promise<number>;
 
@@ -35,13 +36,13 @@ export async function count<T extends object, P extends keyof T>(
  *   }
  * });
  */
-export async function count<T extends object, P extends keyof T>(
+export async function count<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>,
   filter: Filter<T>,
   options?: { exact: boolean }
 ): Promise<number>;
 
-export async function count<T extends object, P extends keyof T>(
+export async function count<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>,
   filter?: Filter<T>,
   options: { exact: boolean } = { exact: true }
@@ -56,7 +57,10 @@ export async function count<T extends object, P extends keyof T>(
   );
 }
 
-export async function internalCount<T extends object, P extends keyof T>(
+export async function internalCount<
+  T extends EntityWithPk<T>,
+  P extends PrimaryKeyProps<T>
+>(
   table: Table<T, P>,
   filter?: Filter<T>,
   options: { exact: boolean } = { exact: true }

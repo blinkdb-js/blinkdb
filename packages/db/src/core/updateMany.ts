@@ -1,5 +1,5 @@
 import { middleware } from "../events/Middleware";
-import { OrdProps } from "../query/types";
+import { EntityWithPk, isOrdinal, PrimaryKeyProps } from "../types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
@@ -26,7 +26,7 @@ import { Diff } from "./update";
  *   { id: bobId, age: 45 }
  * ]);
  */
-export async function updateMany<T extends object, P extends keyof T>(
+export async function updateMany<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>,
   diffs: Diff<T, P>[]
 ): Promise<T[P][]> {
@@ -37,15 +37,15 @@ export async function updateMany<T extends object, P extends keyof T>(
   );
 }
 
-export async function internalUpdateMany<T extends object, P extends keyof T>(
-  table: Table<T, P>,
-  diffs: Diff<T, P>[]
-): Promise<T[P][]> {
+export async function internalUpdateMany<
+  T extends EntityWithPk<T>,
+  P extends PrimaryKeyProps<T>
+>(table: Table<T, P>, diffs: Diff<T, P>[]): Promise<T[P][]> {
   const primaryKeys: T[P][] = [];
   const events: { oldEntity: T; newEntity: T }[] = [];
   for (const diff of diffs) {
     const primaryKeyProperty = table[BlinkKey].options.primary;
-    const primaryKey = diff[primaryKeyProperty] as T[P] & OrdProps;
+    const primaryKey = diff[primaryKeyProperty] as T[P];
 
     if (primaryKey === undefined || primaryKey === null) {
       throw new InvalidPrimaryKeyError(primaryKey);
@@ -63,21 +63,24 @@ export async function internalUpdateMany<T extends object, P extends keyof T>(
     for (key in diff) {
       if (key !== primaryKeyProperty) {
         item[key] = diff[key];
-        if (oldItem[key] !== item[key]) {
-          const btree = table[BlinkKey].storage.indexes[key as keyof T];
-          if (btree !== undefined) {
-            let oldIndexItems = btree.get(oldItem[key] as T[typeof key] & OrdProps)!;
+        const oldVal = oldItem[key as keyof T];
+        const newVal = item[key as keyof T];
+        if (oldVal !== item[key]) {
+          key = key as keyof T;
+          const btree = table[BlinkKey].storage.indexes[key];
+          if (btree !== undefined && isOrdinal(oldVal) && isOrdinal(newVal)) {
+            let oldIndexItems = btree.get(oldVal)!;
             const arrayIndex = oldIndexItems.indexOf(item);
             // This condition is only false if clone is disabled and the user changed the indexed property without calling update
             if (arrayIndex !== -1) {
               oldIndexItems.splice(arrayIndex, 1);
             }
 
-            const newIndexItems = btree.get(item[key] as T[typeof key] & OrdProps);
+            const newIndexItems = btree.get(newVal);
             if (newIndexItems !== undefined) {
               newIndexItems.push(item);
             } else {
-              btree.set(item[key] as T[typeof key] & OrdProps, [item]);
+              btree.set(newVal, [item]);
             }
           }
         }

@@ -1,8 +1,6 @@
-import { GteMatcher, OrdProps } from "../../types";
+import { Ordinal } from "../../../types";
+import { GteMatcher } from "../../types";
 
-export function matchesGte<T extends OrdProps>(
-  value: T,
-  matcher: GteMatcher<T>
-): boolean {
+export function matchesGte<T extends Ordinal>(value: T, matcher: GteMatcher<T>): boolean {
   return value! >= matcher.gte!;
 }

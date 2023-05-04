@@ -1,4 +1,5 @@
 import { Table } from "../../core";
+import { EntityWithPk, PrimaryKeyProps } from "../../types";
 import { analyzeOr } from "../analyze/or";
 import { analyzeWhere } from "../analyze/where";
 import { And } from "../types";
@@ -11,7 +12,7 @@ import { selectForWhere } from "./where";
  *
  * @returns the selected items from the database, or `null` in case a full table scan is required.
  */
-export function selectForAnd<T extends object, P extends keyof T>(
+export function selectForAnd<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>,
   and: And<T>,
   cb: SelectCallback<T>,

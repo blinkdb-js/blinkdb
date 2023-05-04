@@ -1,8 +1,7 @@
 import { middleware } from "../events/Middleware";
-import { OrdProps } from "../query/types";
+import { EntityWithPk, PrimaryKeyProps } from "../types";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
-import { Create } from "./insert";
 import { internalInsertMany } from "./insertMany";
 import { internalUpdateMany } from "./updateMany";
 
@@ -23,9 +22,9 @@ import { internalUpdateMany } from "./updateMany";
  *   { id: uuid(), age: 45 }
  * ]);
  */
-export async function upsertMany<T extends object, P extends keyof T>(
+export async function upsertMany<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>,
-  entities: Create<T, P>[]
+  entities: T[]
 ): Promise<T[P][]> {
   return middleware<T, P, "upsertMany">(
     table,
@@ -34,16 +33,16 @@ export async function upsertMany<T extends object, P extends keyof T>(
   );
 }
 
-export async function internalUpsertMany<T extends object, P extends keyof T>(
-  table: Table<T, P>,
-  entities: Create<T, P>[]
-): Promise<T[P][]> {
+export async function internalUpsertMany<
+  T extends EntityWithPk<T>,
+  P extends PrimaryKeyProps<T>
+>(table: Table<T, P>, entities: T[]): Promise<T[P][]> {
   // Split entities into items to create & items to update
   // reduces the number of outgoing events to 2
-  const items: { entity: Create<T, P>; method: "insert" | "update" }[] = [];
+  const items: { entity: T; method: "insert" | "update" }[] = [];
   const primaryKeyProperty = table[BlinkKey].options.primary;
   for (const entity of entities) {
-    const primaryKey = entity[primaryKeyProperty] as T[P] & OrdProps;
+    const primaryKey = entity[primaryKeyProperty];
     const primaryKeyExists = table[BlinkKey].storage.primary.has(primaryKey);
     items.push({ entity, method: primaryKeyExists ? "update" : "insert" });
   }
@@ -51,11 +50,11 @@ export async function internalUpsertMany<T extends object, P extends keyof T>(
   // Insert all items that need to be inserted, update all that need to be updated
   const itemsToInsert = items.filter((i) => i.method === "insert");
   const itemsToUpdate = items.filter((i) => i.method === "update");
-  const insertIds = await internalInsertMany(
+  const insertIds = await internalInsertMany<T, P>(
     table,
     itemsToInsert.map((i) => i.entity)
   );
-  const updateIds = await internalUpdateMany(
+  const updateIds = await internalUpdateMany<T, P>(
     table,
     itemsToUpdate.map((i) => i.entity)
   );

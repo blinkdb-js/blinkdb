@@ -1,10 +1,9 @@
 import { middleware } from "../events/Middleware";
-import { OrdProps } from "../query/types";
+import { EntityWithPk, isOrdinal, PrimaryKeyProps } from "../types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 import { PrimaryKeyAlreadyInUseError } from "./errors";
-import { Create } from "./insert";
 
 /**
  * Inserts new entities into `table`.
@@ -21,9 +20,9 @@ import { Create } from "./insert";
  *   { id: uuid(), name: "Charlie", age: 34 }
  * ]);
  */
-export async function insertMany<T extends object, P extends keyof T>(
+export async function insertMany<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>,
-  entities: Create<T, P>[]
+  entities: T[]
 ): Promise<T[P][]> {
   return middleware<T, P, "insertMany">(
     table,
@@ -32,15 +31,15 @@ export async function insertMany<T extends object, P extends keyof T>(
   );
 }
 
-export async function internalInsertMany<T extends object, P extends keyof T>(
-  table: Table<T, P>,
-  entities: Create<T, P>[]
-): Promise<T[P][]> {
+export async function internalInsertMany<
+  T extends EntityWithPk<T>,
+  P extends PrimaryKeyProps<T>
+>(table: Table<T, P>, entities: T[]): Promise<T[P][]> {
   const primaryKeys: T[P][] = [];
   const events: { entity: T }[] = [];
   for (const entity of entities) {
     const primaryKeyProperty = table[BlinkKey].options.primary;
-    const primaryKey = entity[primaryKeyProperty] as T[P] & OrdProps;
+    const primaryKey = entity[primaryKeyProperty];
 
     if (table[BlinkKey].storage.primary.has(primaryKey)) {
       throw new PrimaryKeyAlreadyInUseError(primaryKey);
@@ -54,8 +53,8 @@ export async function internalInsertMany<T extends object, P extends keyof T>(
     table[BlinkKey].storage.primary.totalItemSize++;
     for (const property in table[BlinkKey].storage.indexes) {
       const btree = table[BlinkKey].storage.indexes[property]!;
-      const key = entity[property] as T[typeof property] & OrdProps;
-      if (key === null || key === undefined) continue;
+      const key = entity[property];
+      if (!isOrdinal(key)) continue;
 
       const items = btree.get(key);
       if (items !== undefined) {

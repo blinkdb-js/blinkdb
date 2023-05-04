@@ -1,5 +1,6 @@
 import { BlinkKey, Table } from "../../core";
-import { AllMatchers, OrdProps, Where } from "../types";
+import { EntityWithPk, Ordinal, PrimaryKeyProps } from "../../types";
+import { AllMatchers, Where } from "../types";
 import { selectForMatcher } from "./matchers";
 import { SelectCallback, SelectResult } from "./types";
 
@@ -8,7 +9,7 @@ import { SelectCallback, SelectResult } from "./types";
  *
  * @returns the selected items from the database, or `null` in case a full table scan is required.
  */
-export function selectForWhere<T extends object, P extends keyof T>(
+export function selectForWhere<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>,
   filter: Where<T>,
   cb: SelectCallback<T>,
@@ -26,12 +27,7 @@ export function selectForWhere<T extends object, P extends keyof T>(
   if (primaryKeyProperty in filter) {
     const btree = table[BlinkKey].storage.primary;
     const matcher = filter[primaryKeyProperty];
-    selectForMatcher(
-      btree,
-      matcher as AllMatchers<T[P] & OrdProps>,
-      cb,
-      from as T[P] & OrdProps
-    );
+    selectForMatcher(btree, matcher as AllMatchers<T[P]>, cb, from as T[P]);
     return { rowsScanned: [primaryKeyProperty], fullTableScan: false };
   }
 
@@ -42,7 +38,7 @@ export function selectForWhere<T extends object, P extends keyof T>(
       const matcher = filter[property];
       selectForMatcher(
         btree,
-        matcher as AllMatchers<T[typeof property] & OrdProps>,
+        matcher as AllMatchers<T[typeof property] & Ordinal>,
         (items) => {
           for (const item of items) {
             cb(item);

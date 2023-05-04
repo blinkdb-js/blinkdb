@@ -1,8 +1,9 @@
 import { BlinkKey, Table } from "../../core";
-import { AllMatchers, OrdProps, Where } from "../types";
+import { EntityWithPk, Ordinal, PrimaryKeyProps } from "../../types";
+import { AllMatchers, Where } from "../types";
 import { analyzeMatcher } from "./matchers";
 
-export function analyzeWhere<T extends object, P extends keyof T>(
+export function analyzeWhere<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>,
   where: Where<T>,
   from?: T[P]
@@ -17,17 +18,13 @@ export function analyzeWhere<T extends object, P extends keyof T>(
     let complexity: number | undefined;
     if ((key as string) === primaryKeyProperty) {
       const btree = table[BlinkKey].storage.primary;
-      complexity = analyzeMatcher(
-        btree,
-        matcher as AllMatchers<T[P] & OrdProps>,
-        from as T[P] & OrdProps
-      );
+      complexity = analyzeMatcher(btree, matcher as AllMatchers<T[P]>, from);
     } else {
       const btree = table[BlinkKey].storage.indexes[key];
       if (btree) {
         const matcherComplexity = analyzeMatcher(
           btree,
-          matcher as AllMatchers<T[typeof key] & OrdProps>
+          matcher as AllMatchers<T[typeof key] & Ordinal>
         );
         const itemsPerNode = btree.totalItemSize / btree.size;
         complexity = Math.round(matcherComplexity * itemsPerNode);

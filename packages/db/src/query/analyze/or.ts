@@ -1,9 +1,10 @@
 import { Table } from "../../core";
+import { EntityWithPk, PrimaryKeyProps } from "../../types";
 import { Or } from "../types";
 import { analyzeAnd } from "./and";
 import { analyzeWhere } from "./where";
 
-export function analyzeOr<T extends object, P extends keyof T>(
+export function analyzeOr<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>,
   or: Or<T>,
   from?: T[P]

@@ -1,6 +1,7 @@
 import { middleware } from "../events/Middleware";
 import { get } from "../query";
 import { Query } from "../query/types";
+import { EntityWithPk, PrimaryKeyProps } from "../types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
@@ -13,7 +14,7 @@ import { Table } from "./createTable";
  * const userTable = createTable<User>(db, "users")();
  * const allUsers = await many(userTable);
  */
-export async function many<T extends object, P extends keyof T>(
+export async function many<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>
 ): Promise<T[]>;
 
@@ -36,12 +37,12 @@ export async function many<T extends object, P extends keyof T>(
  *   }
  * });
  */
-export async function many<T extends object, P extends keyof T>(
+export async function many<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>,
   query?: Query<T, P>
 ): Promise<T[]>;
 
-export async function many<T extends object, P extends keyof T>(
+export async function many<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
   table: Table<T, P>,
   query?: Query<T, P>
 ): Promise<T[]> {
@@ -52,10 +53,10 @@ export async function many<T extends object, P extends keyof T>(
   );
 }
 
-export async function internalMany<T extends object, P extends keyof T>(
-  table: Table<T, P>,
-  query?: Query<T, P>
-): Promise<T[]> {
+export async function internalMany<
+  T extends EntityWithPk<T>,
+  P extends PrimaryKeyProps<T>
+>(table: Table<T, P>, query?: Query<T, P>): Promise<T[]> {
   if (query === undefined) {
     const allItems = table[BlinkKey].storage.primary.valuesArray();
     return table[BlinkKey].db[BlinkKey].options.clone ? clone(allItems) : allItems;
