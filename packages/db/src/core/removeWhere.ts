@@ -3,7 +3,6 @@ import { get } from "../query";
 import { Filter } from "../query/types";
 import { EntityWithPk, PrimaryKeyProps } from "../types";
 import { Table } from "./createTable";
-import { Ids } from "./remove";
 import { internalRemoveMany } from "./removeMany";
 
 /**
@@ -35,5 +34,5 @@ export async function internalRemoveWhere<
   T extends EntityWithPk<T>,
   P extends PrimaryKeyProps<T>
 >(table: Table<T, P>, filter: Filter<T>): Promise<void> {
-  await internalRemoveMany(table, get(table, filter) as Ids<T, P>[]);
+  await internalRemoveMany<T, P>(table, get(table, filter));
 }
