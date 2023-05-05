@@ -6,10 +6,17 @@ import GithubIcon from '../components/icons/github-icon.astro';
 import NpmIcon from '../components/icons/npm-icon.astro';
 
 export type Props = BaseLayoutProps;
+
+const {
+  title,
+  article,
+  class: className,
+  ...attrs
+} = Astro.props;
 ---
 
-<BaseLayout class="flex flex-col sm:flex-row">
-  <Sidebar class="flex-initial justify-between sm:min-h-screen">
+<BaseLayout title={title} article={article} class="flex flex-col sm:flex-row">
+  <Sidebar light class="flex-initial justify-between sm:min-h-screen">
     <a href="/">
       <Logo class="h-10 w-10 transition-transform hover:scale-110" />
     </a>
@@ -18,7 +25,7 @@ export type Props = BaseLayoutProps;
       <a class="hover:bg-zinc-300 p-2 rounded-full" href="https://github.com/blinkdb-js/blinkdb"><GithubIcon class="h-6 w-6" /></a>
     </div>
   </Sidebar>
-  <div class="flex-auto">
+  <div class:list={["flex-auto", className]} {...attrs}>
     <slot />
   </div>
 </BaseLayout>

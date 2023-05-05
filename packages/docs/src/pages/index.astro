@@ -1,79 +1,61 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-import { Code } from "astro/components";
----
+import Benchmark from "../components/benchmark.astro";
+import Code from "../components/code.astro";
+import CoreLayout from "../layouts/CoreLayout.astro";
 
-<BaseLayout>
-  <div class="p-4 flex flex-col md:flex-row my-24 gap-10 md:my-36">
-    <div class="md:flex-1 md:basis-1/2">
-      <h1 class="text-5xl font-bold md:text-right">
-        <p>Your client-side data,</p>
-        <p>
-          <span class="underline decoration-blue-400 decoration-4">lightning fast</span>.
-        </p>
-      </h1>
-    </div>
-    <div class="md:basis-1/2 self-center">
-      <div
-        class="bg-[#22272e] px-4 sm:px-8 py-4 shadow shadow-blue-900 rounded-lg md:w-fit transition-transform hover:-translate-y-1 text-sm"
-      >
-        <Code
-          code={`// All users called Alice or Charlie
+const code = `
+// All users called Alice or Charlie
 // with an age greater than 24
 const items = await many(userTable, {
   where: {
     name: { in: ['Alice', 'Charlie'] },
     age: { gt: 24 }
   },
-});`}
-          lang="ts"
-          theme={"github-dark-dimmed"}
-        />
-      </div>
-      <div class="py-4">
-        {
-          [
-            { name: "blinkDB", time: 0.031 },
-            { name: "JS Map()", time: 3.053 },
-            { name: "lokijs", time: 4.803 },
-          ].map((i) => (
-            <div class="flex items-center space-x-2">
-              <div class="h-4" style={{ width: `calc(${Math.max(i.time, 0.5 / 3)} * 3em)` }}>
-                <div
-                  class="rounded-sm h-full bg-blue-400 animate-extendwidth"
-                  style={{ "animation-duration": `${i.time * 300}ms` }}
-                />
-              </div>
-              <span>
-                {i.name === "blinkDB" ? (
-                  <span class="font-bold">blinkDB ⚡</span>
-                ) : (
-                  i.name
-                )}
-                <span class="text-xs italic">({i.time}ms)</span>
-              </span>
-            </div>
-          ))
-        }
-        <span class="text-xs">above query for 100.000 items</span>
-      </div>
+});
+`.trim();
+---
+
+<CoreLayout>
+  <div class="relative">
+    <div class="bg relative p-12 pt-44 pb-24">
+      <div class="flex gap-8 justify-center items-end">
+        <div class="space-y-8 text-right">
+          <h1 class="text-5xl font-bold mt-4">
+            <p>Your clientside data,</p>
+            <p><span class="italic">blazingly fast</span> ⚡</p>
+          </h1>
+          <div class="max-w-prose text-lg text-gray-600 leading-tight">
+            blinkDB is an in-memory database optimized for
+            <a href="https://offlinefirst.org/" class="bg-gray-300 hover:bg-gray-400 px-0.5">offline first</a> web apps.
+            With full support for
+            <span class="bg-gray-300 hover:bg-gray-400 px-0.5">indexes</span>,
+            <span class="bg-gray-300 hover:bg-gray-400 px-0.5">queries</span>,
+            and popular frontend frameworks.
+          </div>
+        </div>
+        <div class="space-y-3">
+          <Code class="shadow-xl" lang="ts" code={code} theme="poimandres" />
+          <div class="absolute bg-gray-50 border border-gray-300 px-4 py-3 rounded-xl">
+            <Benchmark
+              title="above query for 100.000 items"
+              benchmarks={[
+                { name: "blinkDB", time: 0.031 },
+                { name: "JS Map()", time: 3.053 },
+                { name: "lokijs", time: 4.803 },
+              ]} 
+            />
+          </div>
+        </div>
+      </div> 
     </div>
   </div>
-  <div class="p-4 flex justify-center">
-    <div class="sm:text-center text-xl sm:text-3xl">
-      <p>
-        <span class="font-bold">blinkDB</span>
-        is a in-memory database optimized for
-        <span class="font-bold">large-scale storage</span>
-        on the <span class="font-bold">frontend</span>
-      </p>
-      <p>
-        - with full support for <a href="/docs/reference/createTable#primary-keys" class="underline decoration-blue-400">indexes</a
-        >,
-        <a href="/docs/filters" class="underline decoration-blue-400">queries</a>, and both
-        <span class="underline decoration-blue-400">unstructured</span> &
-        <span class="underline decoration-blue-400">relational data</span>.
-      </p>
-    </div>
-  </div>
-</BaseLayout>
+</CoreLayout>
+
+<style>
+  .bg {
+    background: 
+      linear-gradient(to bottom, white, white 30%, transparent),
+      radial-gradient(#888 0.65px, #f1f1f1 0.65px);
+    background-size: cover, 13px 13px;
+  }
+</style>
