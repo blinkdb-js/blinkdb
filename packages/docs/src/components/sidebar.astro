@@ -8,8 +8,8 @@ const { light, class: className, ...attrs } = Astro.props;
 
 <div class:list={[
   light ? "" : "bg-zinc-100",
-  "p-2 sm:p-3 sm:pt-4 sm:pb-5",
-  "flex sm:flex-col items-center",
+  "p-3 md:pb-5",
+  "flex md:flex-col items-center",
   className
 ]} {...attrs}>
   <slot />

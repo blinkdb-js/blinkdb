@@ -17,14 +17,14 @@ const items = await many(userTable, {
 
 <CoreLayout>
   <div class="relative">
-    <div class="bg relative p-12 pt-44 pb-24">
-      <div class="flex gap-8 justify-center items-end">
+    <div class="bg relative p-12 pt-22 sm:pt-44 pb-24">
+      <div class="flex flex-col lg:flex-row gap-8 justify-center lg:items-end">
         <div class="space-y-8 text-right">
-          <h1 class="text-5xl font-bold mt-4">
+          <h1 class="text-2xl sm:text-3xl md:text-5xl font-bold mt-4">
             <p>Your clientside data,</p>
             <p><span class="italic">blazingly fast</span> ⚡</p>
           </h1>
-          <div class="max-w-prose text-lg text-gray-600 leading-tight">
+          <div class="float-right max-w-prose sm:text-lg text-gray-600 leading-tight">
             blinkDB is an in-memory database optimized for
             <a href="https://offlinefirst.org/" class="bg-gray-300 hover:bg-gray-400 px-0.5">offline first</a> web apps.
             With full support for

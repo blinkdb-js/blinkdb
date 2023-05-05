@@ -10,10 +10,10 @@ export interface Props {
 const { benchmarks, title } = Astro.props;
 ---
 
-<div>
+<div class="space-y-1">
   {
     benchmarks.map((i) => (
-      <div class="flex items-center space-x-2">
+      <div class="flex flex-col-reverse sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
         <div class="h-2 relative" style={{ width: `calc(${Math.max(i.time, 0.5)} * 3em)` }}>
           <div
             class="absolute z-0 rounded-full h-full bg-blue-100 w-full"
@@ -23,7 +23,7 @@ const { benchmarks, title } = Astro.props;
             style={{ "animation-duration": `${i.time * 300}ms` }}
           />
         </div>
-        <span>
+        <span class="whitespace-nowrap">
           {i.name === "blinkDB" ? (
             <span class="font-bold">blinkDB ⚡</span>
           ) : (
