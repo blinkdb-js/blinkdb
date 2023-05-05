@@ -1,8 +1,8 @@
 ---
-export type Props = astroHTML.JSX.ImgHTMLAttributes;
+export type Props = astroHTML.JSX.SVGAttributes;
 
-import Logo from '../assets/logo.svg';
-const { alt, ...attrs } = Astro.props;
+import BlinkDbIcon from "./icons/blinkdb-icon.astro";
+const props = Astro.props;
 ---
 
-<img src={Logo} alt={alt ?? "BlinkDB Logo"} {...attrs} />
+<BlinkDbIcon {...props} />

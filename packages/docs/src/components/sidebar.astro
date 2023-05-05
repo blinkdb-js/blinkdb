@@ -7,7 +7,7 @@ const { light, class: className, ...attrs } = Astro.props;
 ---
 
 <div class:list={[
-  light ? "" : "bg-zinc-100",
+  light ? "dark:bg-gray-900" : "bg-gray-100 dark:bg-gray-800",
   "p-3 md:pb-5",
   "flex md:flex-col items-center",
   className
