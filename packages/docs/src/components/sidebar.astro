@@ -1,16 +1,16 @@
 ---
-export type Props = astroHTML.JSX.HTMLAttributes;
+export interface Props extends astroHTML.JSX.HTMLAttributes {
+  light?: boolean;
+};
 
-const { class: className, ...attrs } = Astro.props;
+const { light, class: className, ...attrs } = Astro.props;
 ---
 
-<div
-  class:list={[
-    "md:px-4 py-6 text-sm top-16 self-start min-w-40",
-    "h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden",
-    className,
-  ]}
-  {...attrs}
->
+<div class:list={[
+  light ? "" : "bg-zinc-100",
+  "p-2 sm:p-3 sm:pt-4 sm:pb-5",
+  "flex sm:flex-col items-center",
+  className
+]} {...attrs}>
   <slot />
 </div>

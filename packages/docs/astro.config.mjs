@@ -8,7 +8,7 @@ export default defineConfig({
   integrations: [tailwind(), mdx()],
   markdown: {
     shikiConfig: {
-      theme: "github-dark-dimmed",
+      theme: "poimandres",
     },
   },
 });
