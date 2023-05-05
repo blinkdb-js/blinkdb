@@ -15,12 +15,12 @@ const {
 } = Astro.props;
 ---
 
-<BaseLayout title={title} article={article} class="flex flex-col sm:flex-row">
-  <Sidebar light class="flex-initial justify-between sm:min-h-screen">
+<BaseLayout title={title} article={article} class="flex flex-col md:flex-row">
+  <Sidebar light class="flex-initial justify-between md:min-h-screen">
     <a href="/">
       <Logo class="h-10 w-10 transition-transform hover:scale-110" />
     </a>
-    <div class="flex sm:flex-col gap-2">
+    <div class="flex md:flex-col gap-2">
       <a class="hover:bg-zinc-300 p-2 rounded-full" href="https://www.npmjs.com/package/blinkdb"><NpmIcon class="h-6 w-6" /></a>
       <a class="hover:bg-zinc-300 p-2 rounded-full" href="https://github.com/blinkdb-js/blinkdb"><GithubIcon class="h-6 w-6" /></a>
     </div>
