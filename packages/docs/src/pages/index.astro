@@ -13,29 +13,31 @@ const items = await many(userTable, {
   },
 });
 `.trim();
+
+const linkCss = "bg-gray-300 hover:bg-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 px-0.5";
 ---
 
 <CoreLayout>
   <div class="relative">
-    <div class="bg relative p-12 pt-22 sm:pt-44 pb-24">
+    <div class="bg-gray-900 bg relative p-12 pt-22 sm:pt-44 pb-24">
       <div class="flex flex-col lg:flex-row gap-8 justify-center lg:items-end">
         <div class="space-y-8 text-right">
           <h1 class="text-2xl sm:text-3xl md:text-5xl font-bold mt-4">
             <p>Your clientside data,</p>
             <p><span class="italic">blazingly fast</span> ⚡</p>
           </h1>
-          <div class="float-right max-w-prose sm:text-lg text-gray-600 leading-tight">
+          <div class="float-right max-w-prose sm:text-lg text-gray-600 dark:text-gray-400 leading-tight">
             blinkDB is an in-memory database optimized for
-            <a href="https://offlinefirst.org/" class="bg-gray-300 hover:bg-gray-400 px-0.5">offline first</a> web apps.
+            <a href="https://offlinefirst.org/" class={linkCss}>offline first</a> web apps.
             With full support for
-            <span class="bg-gray-300 hover:bg-gray-400 px-0.5">indexes</span>,
-            <span class="bg-gray-300 hover:bg-gray-400 px-0.5">queries</span>,
+            <span class={linkCss}>indexes</span>,
+            <span class={linkCss}>queries</span>,
             and popular frontend frameworks.
           </div>
         </div>
         <div class="space-y-3">
           <Code class="shadow-xl" lang="ts" code={code} theme="poimandres" />
-          <div class="absolute bg-gray-50 border border-gray-300 px-4 py-3 rounded-xl">
+          <div class="absolute bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700 px-4 py-3 rounded-xl">
             <Benchmark
               title="above query for 100.000 items"
               benchmarks={[
@@ -57,5 +59,12 @@ const items = await many(userTable, {
       linear-gradient(to bottom, white, white 30%, transparent),
       radial-gradient(#888 0.65px, #f1f1f1 0.65px);
     background-size: cover, 13px 13px;
+  }
+  @media (prefers-color-scheme: dark) {
+    .bg {
+      background-image:
+        linear-gradient(to bottom, #111827, #111827 70%, transparent),
+        radial-gradient(#666 0.9px, #1f2937 0.9px);
+    }
   }
 </style>
