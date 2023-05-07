@@ -34,7 +34,7 @@ const {
     {article?.modified ?  <meta property="article:modified_time" content={article.modified.toISOString()} /> : null}
     <title>{title ? `BlinkDB - ${title}` : "BlinkDB"}</title>
   </head>
-  <body class:list={["dark:bg-gray-900 dark:text-white", className]} {...attrs}>
+  <body class:list={["dark:bg-gray-900 dark:text-white overflow-x-hidden", className]} {...attrs}>
     <slot />
   </body>
 </html>

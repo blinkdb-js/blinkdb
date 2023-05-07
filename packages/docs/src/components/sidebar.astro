@@ -1,13 +1,12 @@
 ---
-export interface Props extends astroHTML.JSX.HTMLAttributes {
-  light?: boolean;
-};
+export interface Props extends astroHTML.JSX.HTMLAttributes {};
 
-const { light, class: className, ...attrs } = Astro.props;
+const { class: className, ...attrs } = Astro.props;
 ---
 
 <div class:list={[
-  light ? "dark:bg-gray-900" : "bg-gray-100 dark:bg-gray-800",
+  "bg-gray-100 dark:bg-gray-800",
+  "backdrop-blur bg-opacity-70",
   "p-3 md:pb-5",
   "flex md:flex-col items-center",
   className
