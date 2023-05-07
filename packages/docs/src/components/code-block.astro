@@ -13,7 +13,7 @@ export interface Props extends astroHTML.JSX.HTMLAttributes {
 const { title, code, lang, theme, class: className, wrap, ...attrs } = Astro.props;
 ---
 
-<div class:list={["code bg-[#1b1e28] font-mono rounded-xl text-sm overflow-hidden flex flex-col", className]} {...attrs}>
+<div class:list={["code bg-[#1b1e28] font-mono rounded-xl text-xs sm:text-sm overflow-hidden flex flex-col", className]} {...attrs}>
   <div class="flex-initial border-b border-slate-700 p-3 flex items-center justify-between gap-2">
     {title ? <span class="text-xs text-slate-300">{title}</span> : null}
     <div class="flex gap-2">
