@@ -1,0 +1,27 @@
+---
+export type Props = astroHTML.JSX.SVGAttributes;
+
+const props: Props = Astro.props;
+---
+
+<svg
+  {...props}
+  fill="currentColor"
+  width="800px"
+  height="800px"
+  viewBox="0 0 24 24"
+  id="exchange"
+  data-name="Flat Line"
+  xmlns="http://www.w3.org/2000/svg"
+  class="icon flat-line"
+  ><polyline
+    id="primary"
+    points="7 17 4 14 20 14"
+    style="fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.4;"
+  ></polyline><polyline
+    id="primary-2"
+    data-name="primary"
+    points="17 7 20 10 4 10"
+    style="fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.4;"
+  ></polyline></svg
+>

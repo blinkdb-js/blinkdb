@@ -1,0 +1,28 @@
+---
+export interface Props extends astroHTML.JSX.SVGAttributes {
+  mainPathClass: string;
+}
+
+const { mainPathClass, ...attrs }: Props = Astro.props;
+---
+
+<svg
+  {...attrs}
+  fill="currentColor"
+  width="800px"
+  height="800px"
+  viewBox="0 0 24 24"
+  id="laptop-2"
+  data-name="Flat Line"
+  xmlns="http://www.w3.org/2000/svg"
+  class="icon flat-line"
+  ><path
+    class={mainPathClass}
+    id="secondary"
+    d="M20,13H4V4A1,1,0,0,1,5,3H19a1,1,0,0,1,1,1Zm1,4H3v3a1,1,0,0,0,1,1H20a1,1,0,0,0,1-1Z"
+    style="stroke-width: 1.4;"></path><path
+    id="primary"
+    d="M20,13H4V4A1,1,0,0,1,5,3H19a1,1,0,0,1,1,1Zm1,4H3v3a1,1,0,0,0,1,1H20a1,1,0,0,0,1-1Zm-1-4H4L3,17H21Z"
+    style="fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.4;"
+  ></path></svg
+>
