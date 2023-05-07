@@ -1,6 +1,11 @@
 ---
 import Benchmark from "../components/benchmark.astro";
-import Code from "../components/code.astro";
+import CodeBlock from "../components/code-block.astro";
+import LargeDatabaseIcon from "../components/icons/large-database-icon.astro";
+import LargeExchangeIcon from "../components/icons/large-exchange-icon.astro";
+import LargeLaptopIcon from "../components/icons/large-laptop-icon.astro";
+import StackSolidIcon from "../components/icons/stack-solid-icon.astro";
+import TypescriptIcon from "../components/icons/typescript-icon.astro";
 import CoreLayout from "../layouts/CoreLayout.astro";
 
 const code = `
@@ -14,12 +19,38 @@ const items = await many(userTable, {
 });
 `.trim();
 
-const linkCss = "bg-gray-300 hover:bg-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 px-0.5";
+const typeSafeTableCodePart1 = `
+export interface User {
+  id: number;
+  name: string;
+  age?: number;
+  posts?: { content: string }[];
+};
+`.trim();
+
+const typeSafeTableCodePart2 = `
+import { createDB, createTable, insertMany, uuid } from "blinkdb";
+import { User } from "./User.ts";
+
+// Set up the table
+const db = createDB();
+const userTable = createTable<User>(db, "users")();
+
+// Insert the users!
+await insertMany(userTable, [
+  { id: uuid(), name: "Alice", posts: [{ content: "Hello World! :)" }] },
+  { id: uuid(), name: "Bob", age: 24 },
+  // highlight-error-next-line
+  { id: uuid(), age: 25 } // ERROR: Property 'name' is missing
+]);
+`.trim();
+
+const linkCss = "bg-gray-300 hover:bg-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors duration-75";
 ---
 
 <CoreLayout>
-  <div class="relative">
-    <div class="bg-gray-900 bg relative p-12 pt-22 sm:pt-44 pb-24">
+  <div class="pt-22 lg:pt-44">
+    <div class="bg-gray-900 bg-dot-bottom relative p-12 pb-24">
       <div class="flex flex-col lg:flex-row gap-8 justify-center lg:items-end">
         <div class="space-y-8 text-right">
           <h1 class="text-2xl sm:text-3xl md:text-5xl font-bold mt-4">
@@ -28,15 +59,15 @@ const linkCss = "bg-gray-300 hover:bg-gray-400 dark:bg-gray-800 dark:hover:bg-gr
           </h1>
           <div class="float-right max-w-prose sm:text-lg text-gray-600 dark:text-gray-400 leading-tight">
             blinkDB is an in-memory database optimized for
-            <a href="https://offlinefirst.org/" class={linkCss}>offline first</a> web apps.
+            <a href="https://offlinefirst.org/" class:list={["px-0.5", linkCss]}>offline first</a> web apps.
             With full support for
-            <span class={linkCss}>indexes</span>,
-            <span class={linkCss}>queries</span>,
+            <span class:list={["px-0.5", linkCss]}>indexes</span>,
+            <span class:list={["px-0.5", linkCss]}>queries</span>,
             and popular frontend frameworks.
           </div>
         </div>
         <div class="space-y-3">
-          <Code class="shadow-xl" lang="ts" code={code} theme="poimandres" />
+          <CodeBlock class="shadow-xl dark:shadow-gray-800" lang="ts" code={code} theme="poimandres" />
           <div class="absolute bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700 px-4 py-3 rounded-xl">
             <Benchmark
               title="above query for 100.000 items"
@@ -50,18 +81,75 @@ const linkCss = "bg-gray-300 hover:bg-gray-400 dark:bg-gray-800 dark:hover:bg-gr
         </div>
       </div> 
     </div>
+    <div class="px-12 py-8 pt-28 sm:pt-20 lg:pt-8">
+      <div class="flex justify-center sm:justify-end lg:justify-start gap-4">
+        <a href="/guides" class:list={["px-4 py-2 rounded-full text-lg font-light min-w-[8ch] text-center", linkCss]}>Guides</a>
+        <a href="/docs" class:list={["px-4 py-2 rounded-full text-lg font-light min-w-[8ch] text-center", linkCss]}>Docs</a>
+        <a href="/docs/reference" class:list={["px-4 py-2 rounded-full text-lg font-light min-w-[8ch] text-center", linkCss]}>API</a>
+      </div>
+    </div>
+    <div class="px-12 py-24 sm:space-y-12 relative">
+      <div class="max-w-prose mx-auto flex justify-center gap-8 md:gap-16 dark:text-gray-200">
+        <LargeLaptopIcon class="h-32 w-32 lg:h-48 lg:w-48" mainPathClass="fill-gray-300 dark:fill-gray-700" />
+        <LargeExchangeIcon class="h-32 w-32 lg:h-48 lg:w-48" />
+        <LargeDatabaseIcon class="h-32 w-32 lg:h-48 lg:w-48" mainPathClass="fill-gray-300 dark:fill-gray-700" />
+      </div>
+      <div class="text-center space-y-8">
+        <h2 class="text-2xl sm:text-3xl md:text-5xl font-bold">
+          Use the right tool for the job.
+        </h2>
+        <div class="max-w-prose mx-auto sm:text-lg text-gray-800 dark:text-gray-400 leading-tight">
+          blinkDB makes it easy to query, persist, and sync large amounts of entities on the frontend - 
+          perfect for web apps designed to run offline.
+        </div>
+      </div>
+      <LargeLaptopIcon class="hidden xl:block h-96 w-96 absolute top-0 -left-44 opacity-30" mainPathClass="fill-gray-300 dark:fill-gray-700" />
+      <LargeDatabaseIcon class="hidden xl:block h-96 w-96 absolute top-0 -right-32 opacity-30" mainPathClass="fill-gray-300 dark:fill-gray-700" />
+    </div>
+    <div class="px-12 pt-24 pb-12 space-y-12">
+      <div class="max-w-7xl mx-auto space-y-8">
+        <div class="w-20 h-20 p-4 bg-blue-200 dark:bg-blue-800 text-blue-500 dark:text-blue-300 rounded-3xl flex justify-center items-center">
+          <StackSolidIcon />
+        </div>
+        <div class="space-y-3">
+          <h2 class="text-4xl font-bold">Guaranteed full type safety.</h2>
+          <p class="max-w-[80ch] sm:text-lg text-gray-600 dark:text-gray-400 leading-tight">
+            Fully typesafe entities. Automatic property inference in queries. BlinkDB is 100% written in Typescript,
+            and automatically prevents issues with incorrect or outdated types.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="p-12 bg-dot-top">
+      <div class="max-w-7xl mx-auto flex flex-col xl:flex-row gap-8 justify-center">
+        <CodeBlock class="" title="Post.ts" lang="ts" code={typeSafeTableCodePart2} theme="poimandres" />
+        <CodeBlock class="" title="User.ts" lang="ts" code={typeSafeTableCodePart1} theme="poimandres" />
+      </div>
+    </div>
   </div>
 </CoreLayout>
 
 <style>
-  .bg {
+  .bg-dot-top {
+    background:
+      linear-gradient(to top, white, white 30%, transparent),
+      radial-gradient(#888 0.65px, #f1f1f1 0.65px);
+    background-size: cover, 13px 13px;
+  }
+
+  .bg-dot-bottom {
     background: 
       linear-gradient(to bottom, white, white 30%, transparent),
       radial-gradient(#888 0.65px, #f1f1f1 0.65px);
     background-size: cover, 13px 13px;
   }
   @media (prefers-color-scheme: dark) {
-    .bg {
+    .bg-dot-top {
+      background-image:
+        linear-gradient(to top, #111827, #111827 70%, transparent),
+        radial-gradient(#666 0.9px, #1f2937 0.9px);
+    }
+    .bg-dot-bottom {
       background-image:
         linear-gradient(to bottom, #111827, #111827 70%, transparent),
         radial-gradient(#666 0.9px, #1f2937 0.9px);
