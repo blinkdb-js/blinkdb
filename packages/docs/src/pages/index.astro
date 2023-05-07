@@ -1,11 +1,12 @@
 ---
 import Benchmark from "../components/benchmark.astro";
 import CodeBlock from "../components/code-block.astro";
+import DbSolidIcon from "../components/icons/db-solid-icon.astro";
+import EyeSolidIcon from "../components/icons/eye-solid-icon.astro";
 import LargeDatabaseIcon from "../components/icons/large-database-icon.astro";
 import LargeExchangeIcon from "../components/icons/large-exchange-icon.astro";
 import LargeLaptopIcon from "../components/icons/large-laptop-icon.astro";
 import StackSolidIcon from "../components/icons/stack-solid-icon.astro";
-import TypescriptIcon from "../components/icons/typescript-icon.astro";
 import CoreLayout from "../layouts/CoreLayout.astro";
 
 const code = `
@@ -43,6 +44,51 @@ await insertMany(userTable, [
   // highlight-error-next-line
   { id: uuid(), age: 25 } // ERROR: Property 'name' is missing
 ]);
+`.trim();
+
+const querySort = `
+// First user in the alphabet
+// who's younger than 30yrs
+const items = await first(userTable, {
+  where: {
+    age: { lt: 30 }
+  },
+  sort: {
+    key: "name",
+    order: "asc"
+  }
+});
+`.trim();
+
+const queryLimit = `
+// Just user 10-20 please :)
+const items = await many(userTable, {
+  limit: {
+    take: 10,
+    skip: 10
+  }
+});
+`.trim();
+
+const watchWatchCode = `
+// React to changes on the userTable
+await watch(userTable, { where: { name: "Alice" } }, (aliceUsers) => {
+  console.log("Users named Alice: ", aliceUsers.length);
+});
+`.trim();
+
+const watchInsertCode = `
+export const AddEntityButton = () => {
+  const onButtonClick = () => {
+    await insert(userTable, { name: "Alice", age: 25 });
+  };
+
+  return (
+    <button onClick={onButtonClick}>
+      Click Me
+    </button>
+  );
+};
 `.trim();
 
 const linkCss = "bg-gray-300 hover:bg-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors duration-75";
@@ -106,28 +152,110 @@ const linkCss = "bg-gray-300 hover:bg-gray-400 dark:bg-gray-800 dark:hover:bg-gr
       <LargeLaptopIcon class="hidden xl:block h-96 w-96 absolute top-0 -left-44 opacity-30" mainPathClass="fill-gray-300 dark:fill-gray-700" />
       <LargeDatabaseIcon class="hidden xl:block h-96 w-96 absolute top-0 -right-32 opacity-30" mainPathClass="fill-gray-300 dark:fill-gray-700" />
     </div>
-    <div class="px-12 pt-24 pb-12 space-y-12">
-      <div class="max-w-7xl mx-auto space-y-8">
-        <div class="w-20 h-20 p-4 bg-blue-200 dark:bg-blue-800 text-blue-500 dark:text-blue-300 rounded-3xl flex justify-center items-center">
-          <StackSolidIcon />
+    <div class="space-y-20 pt-24 md:space-y-28 lg:space-y-48">
+      <div>
+        <div class="px-12 pb-12 space-y-12">
+          <div class="max-w-7xl mx-auto space-y-8">
+            <div class="w-20 h-20 p-4 bg-blue-200 dark:bg-blue-800 text-blue-500 dark:text-blue-300 rounded-3xl flex justify-center items-center">
+              <StackSolidIcon />
+            </div>
+            <div class="space-y-3">
+              <h2 class="text-3xl md:text-4xl font-bold">Full type safety.</h2>
+              <p class="max-w-[80ch] sm:text-lg text-gray-600 dark:text-gray-400 leading-tight">
+                Fully typesafe entities. Automatic property inference in queries. BlinkDB is 100% written in Typescript,
+                and automatically prevents issues with incorrect or outdated types.
+              </p>
+            </div>
+          </div>
         </div>
-        <div class="space-y-3">
-          <h2 class="text-4xl font-bold">Guaranteed full type safety.</h2>
-          <p class="max-w-[80ch] sm:text-lg text-gray-600 dark:text-gray-400 leading-tight">
-            Fully typesafe entities. Automatic property inference in queries. BlinkDB is 100% written in Typescript,
-            and automatically prevents issues with incorrect or outdated types.
-          </p>
+        <div class="p-12 bg-dot-top">
+          <div class="max-w-7xl mx-auto flex flex-wrap gap-8 justify-center">
+            <CodeBlock class="flex-auto" title="main.ts" lang="ts" code={typeSafeTableCodePart2} theme="poimandres" />
+            <CodeBlock class="flex-auto" title="User.ts" lang="ts" code={typeSafeTableCodePart1} theme="poimandres" />
+          </div>
         </div>
       </div>
-    </div>
-    <div class="p-12 bg-dot-top">
-      <div class="max-w-7xl mx-auto flex flex-col xl:flex-row gap-8 justify-center">
-        <CodeBlock class="" title="Post.ts" lang="ts" code={typeSafeTableCodePart2} theme="poimandres" />
-        <CodeBlock class="" title="User.ts" lang="ts" code={typeSafeTableCodePart1} theme="poimandres" />
+      <div>
+        <div class="px-12 pb-12 space-y-12">
+          <div class="max-w-7xl mx-auto space-y-8">
+            <div class="w-20 h-20 p-4 bg-amber-200 dark:bg-amber-800 text-amber-600 dark:text-amber-300 rounded-3xl flex justify-center items-center">
+              <DbSolidIcon />
+            </div>
+            <div class="space-y-3">
+              <h2 class="text-3xl md:text-4xl font-bold">Powerful queries.</h2>
+              <p class="max-w-[80ch] sm:text-lg text-gray-600 dark:text-gray-400 leading-tight">
+                Filter, sort, and paginate directly in BlinkDB like in any other database.
+                Automatically take advantage of indexes. Use batch & in-place update/remove operations.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="p-12 bg-dot-top">
+          <div class="max-w-7xl mx-auto flex flex-wrap gap-8 justify-center">
+            <CodeBlock class="flex-auto" title="filter.ts" lang="ts" code={code} theme="poimandres" />
+            <CodeBlock class="flex-auto" title="sort.ts" lang="ts" code={querySort} theme="poimandres" />
+            <CodeBlock class="flex-auto" title="limit.ts" lang="ts" code={queryLimit} theme="poimandres" />
+          </div>
+        </div>
       </div>
-    </div>
+      <div>
+        <div class="px-12 pb-12 space-y-12">
+          <div class="max-w-7xl mx-auto space-y-8">
+            <div class="w-20 h-20 p-4 bg-lime-200 dark:bg-lime-700 text-lime-600 dark:text-lime-300 rounded-3xl flex justify-center items-center">
+              <EyeSolidIcon />
+            </div>
+            <div class="space-y-3">
+              <h2 class="text-3xl md:text-4xl font-bold">Completely realtime.</h2>
+              <p class="max-w-[80ch] sm:text-lg text-gray-600 dark:text-gray-400 leading-tight">
+                React to changes in your database as soon as they occur. Keep your UI always
+                up-to-date with the current state.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="p-12 bg-dot-top">
+          <div class="max-w-7xl mx-auto grid grid-cols-3 md:grid-cols-5 grid-flow-row-dense gap-8">
+            <CodeBlock class="col-span-3 overflow-auto" title="watch.ts" lang="ts" code={watchWatchCode} theme="poimandres" />
+            <CodeBlock class="col-span-3" title="button.tsx" lang="tsx" code={watchInsertCode} theme="poimandres" />
+            <div class="col-span-3 md:col-span-2 p-3 bg-gray-200 dark:bg-gray-800 rounded-xl flex justify-center items-center">
+              <button
+                class:list={[
+                  "px-3 py-2 rounded",
+                  "bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors duration-75",
+                  "shadow",
+                  "watch-console-trigger"
+                ]}
+              >Click Me</button>
+            </div>
+            <div class="col-span-3 md:col-span-2 bg-gray-200 dark:bg-gray-800 rounded-xl">
+              <p class="p-3 text-xs font-mono border-b border-b-gray-400 dark:border-b-gray-600 text-gray-500">Console log</p>
+              <div class="p-3">
+                <code class="watch-console-output block max-h-24 md:max-h-52 h-full overflow-auto">
+                </code>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
   </div>
 </CoreLayout>
+
+<script>
+  const triggers = document.getElementsByClassName("watch-console-trigger");
+  const listeners = document.getElementsByClassName("watch-console-output");
+  let count = 0;
+  for(const trigger of triggers) {
+    trigger.addEventListener("mousedown", () => {
+      count++;
+      for(const listener of listeners) {
+        if(listener instanceof HTMLElement) {
+          listener.innerText += `Users named Alice: ${count}\n`;
+          listener.scrollTop = listener.scrollHeight;
+        }
+      }
+    });
+  }
+</script>
 
 <style>
   .bg-dot-top {
