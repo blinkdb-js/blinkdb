@@ -1,14 +1,13 @@
 ---
 import Benchmark from "../components/benchmark.astro";
 import CodeBlock from "../components/code-block.astro";
-import Footer from "../components/footer.astro";
 import DbSolidIcon from "../components/icons/db-solid-icon.astro";
 import EyeSolidIcon from "../components/icons/eye-solid-icon.astro";
 import LargeDatabaseIcon from "../components/icons/large-database-icon.astro";
 import LargeExchangeIcon from "../components/icons/large-exchange-icon.astro";
 import LargeLaptopIcon from "../components/icons/large-laptop-icon.astro";
 import StackSolidIcon from "../components/icons/stack-solid-icon.astro";
-import CoreLayout from "../layouts/CoreLayout.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
 
 const code = `
 // All users called Alice or Charlie
@@ -95,7 +94,7 @@ export const AddEntityButton = () => {
 const linkCss = "bg-gray-300 hover:bg-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors duration-75";
 ---
 
-<CoreLayout>
+<BaseLayout>
   <div class="pt-22 lg:pt-44">
     <div class="bg-gray-900 bg-dot-bottom relative p-12 pb-24">
       <div class="flex flex-col lg:flex-row gap-8 justify-center lg:items-end">
@@ -250,7 +249,7 @@ const linkCss = "bg-gray-300 hover:bg-gray-400 dark:bg-gray-800 dark:hover:bg-gr
       </div>
     </div>
   </div>
-</CoreLayout>
+</BaseLayout>
 
 <script>
   const triggers = document.getElementsByClassName("watch-console-trigger");
