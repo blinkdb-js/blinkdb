@@ -1,11 +1,14 @@
 ---
-import BaseLayout, { Props as BaseLayoutProps } from './BaseLayout.astro';
-import Sidebar from '../components/sidebar.astro';
-import Logo from '../components/logo.astro';
-import GithubIcon from '../components/icons/github-icon.astro';
-import NpmIcon from '../components/icons/npm-icon.astro';
+import Logo from "../assets/logo.svg";
 
-export type Props = BaseLayoutProps;
+
+export interface Props extends astroHTML.JSX.HTMLAttributes {
+  title?: string;
+  article?: {
+    published?: Date;
+    modified?: Date;
+  }
+}
 
 const {
   title,
@@ -15,17 +18,24 @@ const {
 } = Astro.props;
 ---
 
-<BaseLayout title={title} article={article} class="flex flex-col md:flex-row">
-  <Sidebar class="flex-initial justify-between md:h-[100vh] md:sticky top-0 left-0 z-10">
-    <a href="/">
-      <Logo class="h-10 w-10 transition-transform hover:scale-110" />
-    </a>
-    <div class="flex md:flex-col gap-2">
-      <a class="hover:bg-gray-300 dark:hover:bg-gray-700 p-2 rounded-full" href="https://www.npmjs.com/package/blinkdb"><NpmIcon class="h-6 w-6" /></a>
-      <a class="hover:bg-gray-300 dark:hover:bg-gray-700 p-2 rounded-full" href="https://github.com/blinkdb-js/blinkdb"><GithubIcon class="h-6 w-6" /></a>
-    </div>
-  </Sidebar>
-  <div class:list={["flex-auto", className]} {...attrs}>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <meta property="og:title" content={title ?? "BlinkDB"} />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:image" content={Logo} />
+    <meta property="og:type" content={article ? "article" : "website"} />
+    {article?.published ?  <meta property="article:published_time" content={article.published.toISOString()} /> : null}
+    {article?.modified ?  <meta property="article:modified_time" content={article.modified.toISOString()} /> : null}
+    <title>{title ? `BlinkDB - ${title}` : "BlinkDB"}</title>
+  </head>
+  <body class:list={["dark:bg-gray-900 dark:text-white overflow-x-hidden", className]} {...attrs}>
     <slot />
-  </div>
-</BaseLayout>
+  </body>
+</html>
+
