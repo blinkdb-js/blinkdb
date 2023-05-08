@@ -1,6 +1,7 @@
 ---
 import Benchmark from "../components/benchmark.astro";
 import CodeBlock from "../components/code-block.astro";
+import Footer from "../components/footer.astro";
 import DbSolidIcon from "../components/icons/db-solid-icon.astro";
 import EyeSolidIcon from "../components/icons/eye-solid-icon.astro";
 import LargeDatabaseIcon from "../components/icons/large-database-icon.astro";
@@ -237,6 +238,17 @@ const linkCss = "bg-gray-300 hover:bg-gray-400 dark:bg-gray-800 dark:hover:bg-gr
           </div>
         </div>
       </div>
+    </div>
+    <div class="px-12 py-24">
+      <div class="max-w-7xl mx-auto flex justify-between text-gray-600 dark:text-gray-400">
+        <div class="divide-x-2 divide-gray-200 dark:divide-gray-800">
+          <a class="px-4 hover:text-black dark:hover:text-white" href="/guides">Guides</a>
+          <a class="px-4 hover:text-black dark:hover:text-white" href="/docs">Docs</a>
+          <a class="px-4 hover:text-black dark:hover:text-white" href="/reference">API</a>
+        </div>
+        <div>blinkDB © 2023</div>
+      </div>
+    </div>
   </div>
 </CoreLayout>
 
