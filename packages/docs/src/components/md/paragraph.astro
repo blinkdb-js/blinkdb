@@ -1,0 +1,7 @@
+---
+const { class: className, ...attrs } = Astro.props;
+---
+
+<p class={`leading-snug ${className ?? ''}`} {...attrs}>
+  <slot />
+</p>

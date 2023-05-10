@@ -1,0 +1,7 @@
+---
+const { class: className, ...attrs } = Astro.props;
+---
+
+<ol class={`ml-5 list-decimal ${className ?? ''}`} {...attrs}>
+  <slot />
+</ol>

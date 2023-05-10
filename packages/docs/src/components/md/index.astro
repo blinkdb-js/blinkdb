@@ -1,0 +1,39 @@
+---
+import H1 from './h1.astro';
+import H2 from './h2.astro';
+import H3 from './h3.astro';
+import H4 from './h4.astro';
+import H5 from './h5.astro';
+import Paragraph from "./paragraph.astro";
+import Pre from "./pre.astro";
+import Table from "./table.astro";
+import Th from "./th.astro";
+import Td from "./td.astro";
+import A from "./a.astro";
+import Hr from "./hr.astro";
+import Li from "./li.astro";
+import Ol from "./ol.astro";
+import Ul from "./ul.astro";
+import Code from "./code.astro";
+import BlockQuote from "./blockquote.astro";
+
+export const components = {
+  a: A,
+  blockquote: BlockQuote,
+  h1: H1,
+  h2: H2,
+  h3: H3,
+  h4: H4,
+  h5: H5,
+  hr: Hr,
+  p: Paragraph,
+  pre: Pre,
+  code: Code,
+  table: Table,
+  th: Th,
+  td: Td,
+  li: Li,
+  ol: Ol,
+  ul: Ul
+};
+---

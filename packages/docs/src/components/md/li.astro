@@ -1,0 +1,7 @@
+---
+const { class: className, ...attrs } = Astro.props;
+---
+
+<li class={`my-0.5 ${className ?? ''}`} {...attrs}>
+  <slot />
+</li>

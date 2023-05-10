@@ -1,0 +1,7 @@
+---
+const { class: className, ...attrs } = Astro.props;
+---
+
+<td class={`p-4 ${className ?? ''}`} {...attrs}>
+  <slot />
+</td>
