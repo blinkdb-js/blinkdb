@@ -4,6 +4,7 @@ import DocsLayout from '../../../layouts/DocsLayout.astro';
 import { components } from "../../../components/md/index.astro";
 import Sticky from '../../../components/sticky.astro';
 import CardLink from '../../../components/card-link.astro';
+import Footer from '../../../components/footer.astro';
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection('reference');
@@ -44,6 +45,7 @@ const linkCss = "bg-gray-300 hover:bg-gray-400 dark:bg-gray-800 dark:hover:bg-gr
     </Sticky>
     <div class="w-[80ch] mb-24 p-4 space-y-5">
       <Content components={components} />
+      <Footer class="!mt-20"/>
     </div>
     <Sticky class="w-52 hidden xl:block p-4">
       other sidebar
