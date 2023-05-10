@@ -8,10 +8,10 @@ title: "CRUD"
 Just like any other database, BlinkDB gives you the ability to **C**reate, **R**ead, **U**pdate and **D**elete
 items in a table.
 
-- You can add entities to the table (with [`insert()`](/docs/reference/insert), [`insertMany()`](/docs/reference/insertMany) & more),
+- You can add entities to the table (with [`insert()`](/docs/reference/insert), [`insertMany()`](/docs/reference/insertmany) & more),
 - query entities within it (with [`first()`](/docs/reference/first), [`many()`](/docs/reference/many) & [`one()`](/docs/reference/one)),
-- update database entities (with [`update()`](/docs/reference/update), [`updateMany()`](/docs/reference/updateMany), [`updateWhere()`](/docs/reference/updateWhere) & more),
-- and delete them (with [`remove()`](/docs/reference/remove), [`removeMany()`](/docs/reference/removeMany) & [`removeWhere()`](/docs/reference/removeWhere)).
+- update database entities (with [`update()`](/docs/reference/update), [`updateMany()`](/docs/reference/updatemany), [`updateWhere()`](/docs/reference/updatewhere) & more),
+- and delete them (with [`remove()`](/docs/reference/remove), [`removeMany()`](/docs/reference/removemany) & [`removeWhere()`](/docs/reference/removewhere)).
 
 ## Creating entities
 
@@ -37,7 +37,7 @@ const bobId = await insert(userTable, { id: uuid(), name: 'Bob', age: 21 });
 
 ### Creating many entities at once
 
-If you are inserting many items in bulk, use the more performant [`insertMany()`](/docs/reference/insertMany) instead.
+If you are inserting many items in bulk, use the more performant [`insertMany()`](/docs/reference/insertmany) instead.
 
 ```ts
 const [aliceId, bobId, charlieId] = await insertMany(userTable, [
@@ -115,7 +115,7 @@ await update(userTable, { id: userId, age: 16 });
 
 ### Updating many entities at once
 
-Updating many items at once can also be done with [`updateMany()`](/docs/reference/updateMany).
+Updating many items at once can also be done with [`updateMany()`](/docs/reference/updatemany).
 
 ```ts
 const userTable = createTable<User>(db, "users")();
@@ -162,10 +162,10 @@ The provided callback will then be called with every item that matches `someFilt
 
 ### Updating nonexistent entities
 
-[`update()`](/docs/reference/update) & [`updateMany()`](/docs/reference/updateMany) will throw if you provide a primary key
+[`update()`](/docs/reference/update) & [`updateMany()`](/docs/reference/updatemany) will throw if you provide a primary key
 which does not yet exist in the database.
 
-If you like to update an entity, but are not sure if it even exists in the database yet, you can use [`upsert()`](/docs/reference/upsert) & [`upsertMany()`](/docs/reference/upsertMany).
+If you like to update an entity, but are not sure if it even exists in the database yet, you can use [`upsert()`](/docs/reference/upsert) & [`upsertMany()`](/docs/reference/upsertmany).
 These methods will update the entities if they exist within the database, or insert them if they don't.
 
 ```ts
@@ -192,7 +192,7 @@ await remove(userTable, { id: userId });
 
 ### Deleting many entities at once
 
-Similar to bulk inserting and updating, you can also remove items in bulk with [`removeMany()`](/docs/reference/removeMany).
+Similar to bulk inserting and updating, you can also remove items in bulk with [`removeMany()`](/docs/reference/removemany).
 
 ```ts
 const userTable = createTable<User>(db, "users")();
@@ -211,7 +211,7 @@ await removeMany(userTable, [
 
 ### Deleting items that match a given filter
 
-And removing all items that match a given filter can be done with [`removeWhere()`](/docs/reference/removeWhere).
+And removing all items that match a given filter can be done with [`removeWhere()`](/docs/reference/removewhere).
 
 ```ts
 // Remove all users named "Charlie"
