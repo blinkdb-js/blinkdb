@@ -2,6 +2,7 @@
 import { CollectionEntry, getCollection } from 'astro:content';
 import DocsLayout from '../../../layouts/DocsLayout.astro';
 import { components } from "../../../components/md/index.astro";
+import Sticky from '../../../components/sticky.astro';
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection('reference');
@@ -17,25 +18,62 @@ export interface Props {
 
 const { entry, entries } = Astro.props;
 const { Content } = await entry.render();
+
+const linkCss = "bg-gray-300 hover:bg-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors duration-75";
 ---
 
-<DocsLayout bodyClassName="overflow-scroll" title={entry.data.title}>
-  <div class="flex gap-6 justify-center text-gray-700 dark:text-gray-300 ">
-    <div class="w-52 p-4">
+<DocsLayout bodyClassName="overflow-y-scroll" title={entry.data.title}>
+  <div class="px-4 py-3 bg-dot-top">
+    <div class="flex gap-4">
+      <a href="/guides" class:list={["px-4 py-2 rounded-full text-lg font-light min-w-[8ch] text-center", linkCss]}>Guides</a>
+      <a href="/docs" class:list={["px-4 py-2 rounded-full text-lg font-light min-w-[8ch] text-center", linkCss]}>Docs</a>
+      <a href="/docs/reference" class:list={["px-4 py-2 rounded-full text-lg font-light min-w-[8ch] text-center", linkCss]}>API</a>
+    </div>
+  </div>
+  <div class="flex gap-6 justify-center items-start text-gray-700 dark:text-gray-300">
+    <Sticky class="w-52 p-4">
       <details open>
-        <summary class="font-mono font-bold tracking-tight uppercase text-black dark:text-white cursor-pointer">Reference</summary>
+        <summary class="font-mono font-bold tracking-tight uppercase text-black dark:text-white cursor-pointer">API</summary>
         <ul class="text-sm ml-3">
           {entries.map(e => (
             <li class="p-0.5"><a href={e.slug}>{e.data.title}</a></li>
           ))}
         </ul>
       </details>
-    </div>
+    </Sticky>
     <div class="w-[80ch] mb-24 p-4 space-y-5">
       <Content components={components} />
     </div>
-    <div class="w-52 hidden xl:block p-4">
+    <Sticky class="w-52 hidden xl:block p-4">
       other sidebar
-    </div>
+    </Sticky>
   </div>
 </DocsLayout>
+
+<style>
+  .bg-dot-top {
+    background:
+      linear-gradient(to top, white, white 30%, transparent),
+      radial-gradient(#888 0.65px, #f1f1f1 0.65px);
+    background-size: cover, 13px 13px;
+  }
+
+  .bg-dot-bottom {
+    background: 
+      linear-gradient(to bottom, white, white 30%, transparent),
+      radial-gradient(#888 0.65px, #f1f1f1 0.65px);
+    background-size: cover, 13px 13px;
+  }
+  @media (prefers-color-scheme: dark) {
+    .bg-dot-top {
+      background-image:
+        linear-gradient(to top, #111827, #111827 70%, transparent),
+        radial-gradient(#666 0.9px, #1f2937 0.9px);
+    }
+    .bg-dot-bottom {
+      background-image:
+        linear-gradient(to bottom, #111827, #111827 70%, transparent),
+        radial-gradient(#666 0.9px, #1f2937 0.9px);
+    }
+  }
+</style>
