@@ -1,5 +1,6 @@
 ---
 import Benchmark from "../components/benchmark.astro";
+import CardLink from "../components/card-link.astro";
 import CodeBlock from "../components/code-block.astro";
 import DbSolidIcon from "../components/icons/db-solid-icon.astro";
 import EyeSolidIcon from "../components/icons/eye-solid-icon.astro";
@@ -129,9 +130,9 @@ const linkCss = "bg-gray-300 hover:bg-gray-400 dark:bg-gray-800 dark:hover:bg-gr
     </div>
     <div class="px-12 py-8 pt-28 sm:pt-20 lg:pt-8">
       <div class="flex justify-center sm:justify-end lg:justify-start gap-4">
-        <a href="/guides" class:list={["px-4 py-2 rounded-full text-lg font-light min-w-[8ch] text-center", linkCss]}>Guides</a>
-        <a href="/docs" class:list={["px-4 py-2 rounded-full text-lg font-light min-w-[8ch] text-center", linkCss]}>Docs</a>
-        <a href="/docs/reference" class:list={["px-4 py-2 rounded-full text-lg font-light min-w-[8ch] text-center", linkCss]}>API</a>
+        <CardLink href="/guides">Guides</CardLink>
+        <CardLink href="/docs">Docs</CardLink>
+        <CardLink href="/docs/reference">API</CardLink>
       </div>
     </div>
     <div class="px-12 py-24 sm:space-y-12 relative">
