@@ -3,6 +3,7 @@ import { CollectionEntry, getCollection } from 'astro:content';
 import DocsLayout from '../../../layouts/DocsLayout.astro';
 import { components } from "../../../components/md/index.astro";
 import Sticky from '../../../components/sticky.astro';
+import CardLink from '../../../components/card-link.astro';
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection('reference');
@@ -25,9 +26,9 @@ const linkCss = "bg-gray-300 hover:bg-gray-400 dark:bg-gray-800 dark:hover:bg-gr
 <DocsLayout bodyClassName="overflow-y-scroll" title={entry.data.title}>
   <div class="px-4 py-3 bg-dot-top from-white dark:from-gray-900 to-gray-100 dark:to-gray-800">
     <div class="flex gap-4">
-      <a href="/guides" class:list={["px-4 py-2 rounded-full text-lg font-light min-w-[8ch] text-center", linkCss]}>Guides</a>
-      <a href="/docs" class:list={["px-4 py-2 rounded-full text-lg font-light min-w-[8ch] text-center", linkCss]}>Docs</a>
-      <a href="/docs/reference" class:list={["px-4 py-2 rounded-full text-lg font-light min-w-[8ch] text-center", linkCss]}>API</a>
+      <CardLink href="/guides">Guides</CardLink>
+      <CardLink href="/docs">Docs</CardLink>
+      <CardLink href="/docs/reference">API</CardLink>
     </div>
   </div>
   <div class="flex gap-6 justify-center items-start text-gray-700 dark:text-gray-300">
