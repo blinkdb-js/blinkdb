@@ -6,18 +6,36 @@ import { components } from "../../../components/md/index.astro";
 export async function getStaticPaths() {
   const blogEntries = await getCollection('reference');
   return blogEntries.map(entry => ({
-    params: { slug: entry.slug }, props: { entry },
+    params: { slug: entry.slug }, props: { entry, entries: blogEntries },
   }));
 }
 
 export interface Props {
-  entry: CollectionEntry<"reference">
+  entry: CollectionEntry<"reference">;
+  entries: CollectionEntry<"reference">[];
 };
 
-const { entry } = Astro.props;
+const { entry, entries } = Astro.props;
 const { Content } = await entry.render();
 ---
 
-<DocsLayout title={entry.data.title}>
-  <Content components={components} />
+<DocsLayout bodyClassName="overflow-scroll" title={entry.data.title}>
+  <div class="flex gap-6 justify-center text-gray-700 dark:text-gray-300 ">
+    <div class="w-52 p-4">
+      <details open>
+        <summary class="font-mono font-bold tracking-tight uppercase text-black dark:text-white cursor-pointer">Reference</summary>
+        <ul class="text-sm ml-3">
+          {entries.map(e => (
+            <li class="p-0.5"><a href={e.slug}>{e.data.title}</a></li>
+          ))}
+        </ul>
+      </details>
+    </div>
+    <div class="w-[80ch] mb-24 p-4 space-y-5">
+      <Content components={components} />
+    </div>
+    <div class="w-52 hidden xl:block p-4">
+      other sidebar
+    </div>
+  </div>
 </DocsLayout>
