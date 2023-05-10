@@ -5,17 +5,20 @@ import Logo from '../components/logo.astro';
 import GithubIcon from '../components/icons/github-icon.astro';
 import NpmIcon from '../components/icons/npm-icon.astro';
 
-export type Props = BaseLayoutProps;
+export interface Props extends BaseLayoutProps {
+  bodyClassName?: string;
+}
 
 const {
   title,
   article,
   class: className,
+  bodyClassName,
   ...attrs
 } = Astro.props;
 ---
 
-<CoreLayout title={title} article={article} class="flex flex-col md:flex-row">
+<CoreLayout title={title} article={article} class={`flex flex-col md:flex-row ${bodyClassName ?? ''}`}>
   <Sidebar class="flex-initial justify-between md:h-[100vh] md:sticky top-0 left-0 z-10">
     <a href="/">
       <Logo class="h-10 w-10 transition-transform hover:scale-110" />
