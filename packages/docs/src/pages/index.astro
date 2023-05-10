@@ -96,7 +96,7 @@ const linkCss = "bg-gray-300 hover:bg-gray-400 dark:bg-gray-800 dark:hover:bg-gr
 
 <BaseLayout>
   <div class="pt-22 lg:pt-44">
-    <div class="bg-gray-900 bg-dot-bottom relative p-12 pb-24">
+    <div class="bg-dot-bottom from-white dark:from-gray-900 to-gray-100 dark:to-gray-800 relative p-12 pb-24">
       <div class="flex flex-col lg:flex-row gap-8 justify-center lg:items-end">
         <div class="space-y-8 text-right">
           <h1 class="text-2xl sm:text-3xl md:text-5xl font-bold mt-4">
@@ -168,7 +168,7 @@ const linkCss = "bg-gray-300 hover:bg-gray-400 dark:bg-gray-800 dark:hover:bg-gr
             </div>
           </div>
         </div>
-        <div class="p-12 bg-dot-top">
+        <div class="p-12 bg-dot-top from-white dark:from-gray-900 to-gray-100 dark:to-gray-800 ">
           <div class="max-w-7xl mx-auto flex flex-wrap gap-8 justify-center">
             <CodeBlock class="flex-auto" title="main.ts" lang="ts" code={typeSafeTableCodePart2} theme="poimandres" />
             <CodeBlock class="flex-auto" title="User.ts" lang="ts" code={typeSafeTableCodePart1} theme="poimandres" />
@@ -190,7 +190,7 @@ const linkCss = "bg-gray-300 hover:bg-gray-400 dark:bg-gray-800 dark:hover:bg-gr
             </div>
           </div>
         </div>
-        <div class="p-12 bg-dot-top">
+        <div class="p-12 bg-dot-top from-white dark:from-gray-900 to-gray-100 dark:to-gray-800 ">
           <div class="max-w-7xl mx-auto flex flex-wrap gap-8 justify-center">
             <CodeBlock class="flex-auto" title="filter.ts" lang="ts" code={code} theme="poimandres" />
             <CodeBlock class="flex-auto" title="sort.ts" lang="ts" code={querySort} theme="poimandres" />
@@ -213,7 +213,7 @@ const linkCss = "bg-gray-300 hover:bg-gray-400 dark:bg-gray-800 dark:hover:bg-gr
             </div>
           </div>
         </div>
-        <div class="p-12 bg-dot-top">
+        <div class="p-12 bg-dot-top from-white dark:from-gray-900 to-gray-100 dark:to-gray-800 ">
           <div class="max-w-7xl mx-auto grid grid-cols-3 md:grid-cols-5 grid-flow-row-dense gap-8">
             <CodeBlock class="col-span-3 overflow-auto" title="watch.ts" lang="ts" code={watchWatchCode} theme="poimandres" />
             <CodeBlock class="col-span-3" title="button.tsx" lang="tsx" code={watchInsertCode} theme="poimandres" />
@@ -267,31 +267,3 @@ const linkCss = "bg-gray-300 hover:bg-gray-400 dark:bg-gray-800 dark:hover:bg-gr
     });
   }
 </script>
-
-<style>
-  .bg-dot-top {
-    background:
-      linear-gradient(to top, white, white 30%, transparent),
-      radial-gradient(#888 0.65px, #f1f1f1 0.65px);
-    background-size: cover, 13px 13px;
-  }
-
-  .bg-dot-bottom {
-    background: 
-      linear-gradient(to bottom, white, white 30%, transparent),
-      radial-gradient(#888 0.65px, #f1f1f1 0.65px);
-    background-size: cover, 13px 13px;
-  }
-  @media (prefers-color-scheme: dark) {
-    .bg-dot-top {
-      background-image:
-        linear-gradient(to top, #111827, #111827 70%, transparent),
-        radial-gradient(#666 0.9px, #1f2937 0.9px);
-    }
-    .bg-dot-bottom {
-      background-image:
-        linear-gradient(to bottom, #111827, #111827 70%, transparent),
-        radial-gradient(#666 0.9px, #1f2937 0.9px);
-    }
-  }
-</style>
