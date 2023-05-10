@@ -23,7 +23,7 @@ const linkCss = "bg-gray-300 hover:bg-gray-400 dark:bg-gray-800 dark:hover:bg-gr
 ---
 
 <DocsLayout bodyClassName="overflow-y-scroll" title={entry.data.title}>
-  <div class="px-4 py-3 bg-dot-top">
+  <div class="px-4 py-3 bg-dot-top from-white dark:from-gray-900 to-gray-100 dark:to-gray-800">
     <div class="flex gap-4">
       <a href="/guides" class:list={["px-4 py-2 rounded-full text-lg font-light min-w-[8ch] text-center", linkCss]}>Guides</a>
       <a href="/docs" class:list={["px-4 py-2 rounded-full text-lg font-light min-w-[8ch] text-center", linkCss]}>Docs</a>
@@ -49,31 +49,3 @@ const linkCss = "bg-gray-300 hover:bg-gray-400 dark:bg-gray-800 dark:hover:bg-gr
     </Sticky>
   </div>
 </DocsLayout>
-
-<style>
-  .bg-dot-top {
-    background:
-      linear-gradient(to top, white, white 30%, transparent),
-      radial-gradient(#888 0.65px, #f1f1f1 0.65px);
-    background-size: cover, 13px 13px;
-  }
-
-  .bg-dot-bottom {
-    background: 
-      linear-gradient(to bottom, white, white 30%, transparent),
-      radial-gradient(#888 0.65px, #f1f1f1 0.65px);
-    background-size: cover, 13px 13px;
-  }
-  @media (prefers-color-scheme: dark) {
-    .bg-dot-top {
-      background-image:
-        linear-gradient(to top, #111827, #111827 70%, transparent),
-        radial-gradient(#666 0.9px, #1f2937 0.9px);
-    }
-    .bg-dot-bottom {
-      background-image:
-        linear-gradient(to bottom, #111827, #111827 70%, transparent),
-        radial-gradient(#666 0.9px, #1f2937 0.9px);
-    }
-  }
-</style>
