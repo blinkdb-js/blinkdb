@@ -1,0 +1,23 @@
+---
+import { CollectionEntry, getCollection } from 'astro:content';
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { components } from "../../../components/md/index.astro";
+
+export async function getStaticPaths() {
+  const blogEntries = await getCollection('reference');
+  return blogEntries.map(entry => ({
+    params: { slug: entry.slug }, props: { entry },
+  }));
+}
+
+export interface Props {
+  entry: CollectionEntry<"reference">
+};
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<DocsLayout title={entry.data.title}>
+  <Content components={components} />
+</DocsLayout>

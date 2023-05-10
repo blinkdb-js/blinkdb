@@ -1,0 +1,7 @@
+---
+const { class: className, ...attrs } = Astro.props;
+---
+
+<hr class={`border-gray-200 dark:border-gray-800 ${className ?? ''}`} {...attrs}>
+  <slot />
+</hr>

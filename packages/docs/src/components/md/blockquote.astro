@@ -1,0 +1,7 @@
+---
+const { class: className, ...attrs } = Astro.props;
+---
+
+<blockquote class={`border-l-2 border-gray-300 dark:border-gray-700 pl-3 ${className ?? ''}`} {...attrs}>
+  <slot />
+</blockquote>

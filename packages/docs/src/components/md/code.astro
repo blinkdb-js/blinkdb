@@ -1,0 +1,22 @@
+---
+const { class: className, ...attrs } = Astro.props;
+---
+
+<code class={`blinkdb-code ${className ?? ''}`} {...attrs}><slot /></code>
+
+<style is:global>
+  .blinkdb-code {
+    @apply px-1 py-0.5 text-sm bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md text-black dark:text-white;
+  }
+  a > .blinkdb-code,
+  pre > .blinkdb-code {
+    @apply p-0 text-inherit bg-inherit border-0 rounded-none;
+  }
+  h1 > .blinkdb-code,
+  h2 > .blinkdb-code,
+  h3 > .blinkdb-code,
+  h4 > .blinkdb-code,
+  h5 > .blinkdb-code {
+    font-size: inherit;
+  }
+</style>

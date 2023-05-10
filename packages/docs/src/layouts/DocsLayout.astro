@@ -1,24 +1,13 @@
 ---
 import BaseLayout, { Props as BaseLayoutProps } from './BaseLayout.astro';
-import Sidebar from '../components/sidebar.astro';
-import Logo from '../components/logo.astro';
-import GithubIcon from '../components/icons/github-icon.astro';
-import NpmIcon from '../components/icons/npm-icon.astro';
 
 export type Props = BaseLayoutProps;
+
+const props = Astro.props;
 ---
 
-<BaseLayout class="flex flex-col sm:flex-row">
-  <Sidebar class="flex-initial justify-between sm:min-h-screen">
-    <a href="/">
-      <Logo class="h-10 w-10 transition-transform hover:scale-110" />
-    </a>
-    <div class="flex sm:flex-col gap-2">
-      <a class="hover:bg-gray-300 dark:hover:bg-gray-700 p-2 rounded-full" href="https://www.npmjs.com/package/blinkdb"><NpmIcon class="h-6 w-6" /></a>
-      <a class="hover:bg-gray-300 dark:hover:bg-gray-700 p-2 rounded-full" href="https://github.com/blinkdb-js/blinkdb"><GithubIcon class="h-6 w-6" /></a>
-    </div>
-  </Sidebar>
-  <div class="flex-auto">
+<BaseLayout {...props}>
+  <div class="max-w-[80ch] mx-auto mt-4 mb-24 p-4 text-gray-700 dark:text-gray-300 space-y-5">
     <slot />
   </div>
 </BaseLayout>
