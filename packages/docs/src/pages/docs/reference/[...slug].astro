@@ -19,7 +19,7 @@ export interface Props {
 };
 
 const { entry, entries } = Astro.props;
-const { Content } = await entry.render();
+const { Content, headings } = await entry.render();
 ---
 
 <DocsLayout bodyClassName="overflow-y-scroll" title={entry.data.title}>
@@ -46,7 +46,15 @@ const { Content } = await entry.render();
       <Footer class="!mt-20"/>
     </div>
     <Sticky class="w-52 hidden xl:block p-4">
-      other sidebar
+      {headings.length > 3 && (
+        <div class="text-sm">
+          {headings.map(h => (
+            <div class={["ml-0", "ml-2", "ml-4", "ml-6", "ml-8"].at(h.depth - 1) + " p-0.5"}>
+              <a class={h.depth === 1 ? 'font-bold font-mono tracking-tight text-black dark:text-white' : ''} href={`${entry.slug}#${h.slug}`}>{h.text}</a>
+            </div>
+          ))}
+        </div>
+      )}
     </Sticky>
   </div>
 </DocsLayout>
