@@ -4,13 +4,14 @@ export interface Props {
   benchmarks: {
     name: string;
     time: number;
-  }[]
+  }[],
+  class?: string;
 }
 
-const { benchmarks, title } = Astro.props;
+const { class: className, benchmarks, title } = Astro.props;
 ---
 
-<div class="space-y-1">
+<div class:list={["space-y-1", className]}>
   {
     benchmarks.map((i) => (
       <div class="flex flex-col-reverse sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
