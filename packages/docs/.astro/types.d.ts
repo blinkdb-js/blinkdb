@@ -114,6 +114,57 @@ declare module "astro:content" {
   >;
 
   const entryMap: {
+    docs: {
+      "changes.mdx": {
+        id: "changes.mdx";
+        slug: "changes";
+        body: string;
+        collection: "docs";
+        data: InferEntrySchema<"docs">;
+      } & { render(): Render[".mdx"] };
+      "crud.mdx": {
+        id: "crud.mdx";
+        slug: "crud";
+        body: string;
+        collection: "docs";
+        data: InferEntrySchema<"docs">;
+      } & { render(): Render[".mdx"] };
+      "filters.mdx": {
+        id: "filters.mdx";
+        slug: "filters";
+        body: string;
+        collection: "docs";
+        data: InferEntrySchema<"docs">;
+      } & { render(): Render[".mdx"] };
+      "index.mdx": {
+        id: "index.mdx";
+        slug: "index";
+        body: string;
+        collection: "docs";
+        data: InferEntrySchema<"docs">;
+      } & { render(): Render[".mdx"] };
+      "installation.mdx": {
+        id: "installation.mdx";
+        slug: "installation";
+        body: string;
+        collection: "docs";
+        data: InferEntrySchema<"docs">;
+      } & { render(): Render[".mdx"] };
+      "middleware.mdx": {
+        id: "middleware.mdx";
+        slug: "middleware";
+        body: string;
+        collection: "docs";
+        data: InferEntrySchema<"docs">;
+      } & { render(): Render[".mdx"] };
+      "tables.mdx": {
+        id: "tables.mdx";
+        slug: "tables";
+        body: string;
+        collection: "docs";
+        data: InferEntrySchema<"docs">;
+      } & { render(): Render[".mdx"] };
+    };
     reference: {
       "clear.mdx": {
         id: "clear.mdx";
