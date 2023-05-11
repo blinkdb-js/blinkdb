@@ -20,8 +20,6 @@ export interface Props {
 
 const { entry, entries } = Astro.props;
 const { Content } = await entry.render();
-
-const linkCss = "bg-gray-300 hover:bg-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors duration-75";
 ---
 
 <DocsLayout bodyClassName="overflow-y-scroll" title={entry.data.title}>
