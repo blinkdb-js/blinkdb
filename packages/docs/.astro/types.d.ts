@@ -150,6 +150,13 @@ declare module "astro:content" {
         collection: "reference";
         data: InferEntrySchema<"reference">;
       } & { render(): Render[".mdx"] };
+      "index.mdx": {
+        id: "index.mdx";
+        slug: "index";
+        body: string;
+        collection: "reference";
+        data: InferEntrySchema<"reference">;
+      } & { render(): Render[".mdx"] };
       "insert.mdx": {
         id: "insert.mdx";
         slug: "insert";

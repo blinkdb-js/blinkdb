@@ -8,11 +8,13 @@ import Footer from '../../../components/footer.astro';
 import MenuIcon from '../../../components/icons/menu-icon.astro';
 import Hr from '../../../components/md/hr.astro';
 import XIcon from '../../../components/icons/x-icon.astro';
+import H2 from '../../../components/md/h2.astro';
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection('reference');
   return blogEntries.map(entry => ({
-    params: { slug: entry.slug }, props: { entry, entries: blogEntries },
+    params: { slug: entry.slug !== "index" ? entry.slug : undefined },
+    props: { entry, entries: blogEntries.filter(e => e.slug !== "index") },
   }));
 }
 
@@ -46,7 +48,7 @@ const { Content, headings } = await entry.render();
           </div>
           <ul class="text-sm grid grid-cols-[repeat(auto-fill,minmax(140px,1fr))] w-full justify-center">
             {entries.map(e => (
-              <li class="py-1"><a href={e.slug}>{e.data.title}</a></li>
+              <li class="py-1 underline"><a href={`/docs/reference/${e.slug}`}>{e.data.title}</a></li>
             ))}
           </ul>
           <Hr />
@@ -60,13 +62,23 @@ const { Content, headings } = await entry.render();
         <summary class="font-mono font-bold tracking-tight uppercase text-black dark:text-white cursor-pointer">API</summary>
         <ul class="text-sm ml-3">
           {entries.map(e => (
-            <li class="p-0.5"><a href={e.slug}>{e.data.title}</a></li>
+            <li class="p-0.5"><a href={`/docs/reference/${e.slug}`}>{e.data.title}</a></li>
           ))}
         </ul>
       </details>
     </Sticky>
     <div class="w-[min(100%,_80ch)] mb-24 p-4 space-y-5">
       <Content components={components} />
+      {entry.slug === "index" && (
+        <div>
+          <H2>Content</H2>
+          <ul class="grid grid-cols-[repeat(auto-fill,minmax(140px,1fr))] w-full justify-center">
+            {entries.map(e => (
+              <li class="py-1 underline"><a href={`/docs/reference/${e.slug}`}>{e.data.title}</a></li>
+            ))}
+          </ul>
+        </div>
+      )}
       <Footer class="!mt-20"/>
     </div>
     <Sticky class="w-52 p-4 hidden xl:block">
@@ -74,7 +86,10 @@ const { Content, headings } = await entry.render();
         <div class="text-sm">
           {headings.map(h => (
             <div class={["ml-0", "ml-2", "ml-4", "ml-6", "ml-8"].at(h.depth - 1) + " p-0.5"}>
-              <a class={h.depth === 1 ? 'font-bold font-mono tracking-tight text-black dark:text-white' : ''} href={`${entry.slug}#${h.slug}`}>{h.text}</a>
+              <a
+                class={h.depth === 1 ? 'font-bold font-mono tracking-tight text-black dark:text-white' : ''}
+                href={`/docs/reference/${entry.slug}#${h.slug}`}
+              >{h.text}</a>
             </div>
           ))}
         </div>
