@@ -2,6 +2,8 @@
 import { CollectionEntry, getCollection } from 'astro:content';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import { components } from "../../components/md/index.astro";
+import ArrowLeftIcon from '../../components/icons/arrow-left-icon.astro';
+import ArrowRightIcon from '../../components/icons/arrow-right-icon.astro';
 
 export async function getStaticPaths() {
   const entries = await getCollection('docs');
@@ -28,6 +30,15 @@ const sortAccordingTo = <T extends CollectionEntry<'docs'>>(entries: T[], order:
   return newEntries;
 }
 
+const entryWithOffset = <T extends CollectionEntry<'docs'>>(entries: T[], entry: T, offset: number): T|undefined => {
+  const index = entries.findIndex(e => e.slug === entry.slug);
+  const newIndex = index + offset;
+  if(newIndex < 0 || newIndex >= entries.length) {
+    return undefined;
+  }
+  return entries[newIndex];
+}
+
 const sortedEntries = sortAccordingTo(entries, [
   "index",
   "installation",
@@ -37,6 +48,9 @@ const sortedEntries = sortAccordingTo(entries, [
   "changes",
   "middleware"
 ]);
+
+const prevEntry = entryWithOffset(sortedEntries, entry, -1);
+const nextEntry = entryWithOffset(sortedEntries, entry, 1);
 ---
 
 <DocsLayout bodyClassName="overflow-y-scroll" title={entry.data.title}>
@@ -67,4 +81,24 @@ const sortedEntries = sortAccordingTo(entries, [
   )}
 
   <Content components={components} />
+  <div class="!my-20 grid grid-cols-1 sm:grid-cols-2 gap-2 sm:divide-x-2 divide-gray-200 dark:divide-gray-800 font-semibold">
+    {prevEntry && (
+      <a
+        class="sm:col-start-1 px-4 py-2 flex items-center gap-3"
+        href={prevEntry.slug === "index" ? '/docs' : `/docs/${prevEntry.slug}`}
+      >
+        <ArrowLeftIcon class="w-6 h-6 text-gray-500" />
+        <span class="mb-0.5 text-gray-800 dark:text-gray-50">{prevEntry.data.title}</span>
+      </a>
+    )}
+    {nextEntry && (
+      <a
+        class="sm:col-start-2 px-4 py-2 flex items-center gap-3 justify-end"
+        href={nextEntry.slug === "index" ? '/docs' : `/docs/${nextEntry.slug}`}
+      >
+        <span class="mb-0.5 text-gray-800 dark:text-gray-50">{nextEntry.data.title}</span>
+        <ArrowRightIcon class="w-6 h-6 text-gray-500" />
+      </a>
+    )}
+  </div>
 </DocsLayout>
