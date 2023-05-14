@@ -1,0 +1,20 @@
+---
+title: "insert()"
+---
+
+# insert()
+
+Inserts a new entity into a table, and returns the primary key of the inserted entity.
+
+An exception is thrown if the given primary key already exists within the table.
+
+```ts
+const aliceId = await insert(userTable, { id: uuid(), name: "Alice", age: 23 });
+```
+
+| Parameter | Description                                                           |
+| --------- | --------------------------------------------------------------------- |
+| `table`   | The table created by [`createTable()`](/docs/reference/createtable) . |
+| `item`    | The item to insert into the table.                                    |
+
+Consider [`insertMany()`](/docs/reference/insertmany) if you want to insert many items in parallel.

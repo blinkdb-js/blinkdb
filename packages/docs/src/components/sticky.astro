@@ -1,0 +1,9 @@
+---
+export interface Props extends astroHTML.JSX.HTMLAttributes {};
+
+const { class: className, ...attrs } = Astro.props;
+---
+
+<div class:list={["sticky top-0", className]} {...attrs}>
+  <slot />
+</div>

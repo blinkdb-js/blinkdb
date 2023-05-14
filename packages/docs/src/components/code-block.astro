@@ -1,0 +1,24 @@
+---
+import type * as shiki from 'shiki';
+import Code from "./code/code.astro";
+import CodeBlockWrapper from './code-block-wrapper.astro';
+
+export interface Props extends astroHTML.JSX.HTMLAttributes {
+  title?: string;
+  code: string;
+  lang: shiki.Lang;
+  theme?: shiki.IThemeRegistration;
+  wrap?: boolean
+}
+
+const { title, code, lang, theme, class: className, wrap, ...attrs } = Astro.props;
+---
+
+<CodeBlockWrapper title={title} class={className}>
+  <Code
+    code={code}
+    lang={lang}
+    theme={theme}
+    wrap={wrap}
+  />
+</CodeBlockWrapper>

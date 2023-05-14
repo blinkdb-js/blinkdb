@@ -1,0 +1,5 @@
+---
+const { class: className, ...attrs } = Astro.props;
+---
+
+<a class={`p-0.5 bg-gray-200 hover:bg-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors duration-75 ${className ?? ''}`} {...attrs}><slot /></a>

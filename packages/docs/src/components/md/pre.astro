@@ -1,0 +1,8 @@
+---
+import CodeBlockWrapper from "../code-block-wrapper.astro";
+const { class: className, ...attrs } = Astro.props;
+---
+
+<CodeBlockWrapper class={`${className ?? ''}`} {...attrs}>
+  <pre><slot /></pre>
+</CodeBlockWrapper>

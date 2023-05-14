@@ -1,0 +1,7 @@
+---
+const { class: className, ...attrs } = Astro.props;
+---
+
+<table class={`w-full text-sm rounded-md border-separate border-spacing-0 border border-gray-200 dark:border-gray-700 ${className ?? ''}`} {...attrs}>
+  <slot />
+</table>

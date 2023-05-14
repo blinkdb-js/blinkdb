@@ -1,0 +1,46 @@
+---
+title: "count()"
+---
+
+# count()
+
+Counts the amount of entities in a table. If a [filter](/docs/filters) is supplied, blinkDB will
+only count how many items match the filter - if not given, the total number of items in the table
+is returned.
+
+```ts
+// Get the total number of users
+const userCount = await count(userTable);
+// Get the number of users called Bob
+const usersNamedBobCount = await count(userTable, {
+  where: {
+    name: "Bob",
+  },
+});
+```
+
+| Parameter | Description                                                                                       |
+| --------- | ------------------------------------------------------------------------------------------------- |
+| `table`   | The table created by [`createTable()`](/docs/reference/createtable) .                             |
+| `filter`  | Optional. If given, only items matching the filter will be counted. See [filters](/docs/filters). |
+
+| Option                  | Description                                                                  |
+| ----------------------- | ---------------------------------------------------------------------------- |
+| `exact` (default: true) | If the count should be exact, or estimated. See [Performance](#performance). |
+
+## Performance
+
+If no filter is given, `count()` will return in O(1) time.
+
+If you specify a filter, BlinkDB will first retrieve all items, and then count how many items have been retrieved.
+If you have a very large table (> 10.000 items), and prefer performance over accuracy, consider using `{ exact: false }`. This
+will use a more performant but less accurate method.
+
+```ts
+// Estimate the number of users called Bob
+const usersNamedBobCount = await count(userTable, {
+  where: {
+    name: "Bob",
+  },
+}, { exact: false });
+```

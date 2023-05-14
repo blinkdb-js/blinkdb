@@ -1,0 +1,53 @@
+---
+title: "one()"
+---
+
+# one()
+
+Retrieves one entity from the table.
+
+This is similar to [`first()`](/docs/reference/first) in the sense that it retrieves only the first matching entity, but:
+
+- it throws an exception if no entity was found
+- it throws an exception if more than one entity matched the filter
+
+This makes it perfect for retrieving entities by their primary id, which are unique by default.
+
+```ts
+let alice: User;
+// Retrieve directly by id
+alice = await one(userTable, "alice-uuid");
+// Retrieve with filter (equivalent to the line above!)
+alice = await one(userTable, {
+  where: {
+    id: "alice-uuid"
+  }
+});
+```
+
+| Parameter    | Description                                                                                               |
+|--------------|-----------------------------------------------------------------------------------------------------------|
+| `table`      | The table created by [`createTable()`](/docs/reference/createtable) .                                     |
+| `filterOrId` | Either a filter or an id. The item returned will be the first one to match. See [filters](/docs/filters). |
+
+## Retrieve by primary id
+
+In case an id is given as the second parameter, `one()` will return either the entity with a matching primary id,
+or throw as detailed above.
+
+```ts
+const alice = await one(userTable, "alice-uuid");
+```
+
+## Retrieve by filter
+
+If the second parameter is a [filter](/docs/filters), `one()` returns the item that matches the filter,
+or throws if no or more than one item is available.
+
+```ts
+const alice = await one(userTable, {
+  where: {
+    id: "alice-uuid"
+  }
+});
+```

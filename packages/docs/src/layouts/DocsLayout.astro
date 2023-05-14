@@ -1,152 +1,63 @@
 ---
-import NavMenu from "../components/nav-menu.astro";
-import PageMenuItem from "../components/page-menu-item.astro";
-import Sidebar from "../components/sidebar.astro";
-import BaseLayout from "./BaseLayout.astro";
+import BaseLayout, { Props as BaseLayoutProps } from './BaseLayout.astro';
+import CardLink from '../components/card-link.astro';
+import MenuIcon from '../components/icons/menu-icon.astro';
+import Hr from '../components/md/hr.astro';
+import XIcon from '../components/icons/x-icon.astro';
+import Sticky from '../components/sticky.astro';
+import Footer from '../components/footer.astro';
+import H2 from '../components/md/h2.astro';
 
-export interface Props {
-  frontmatter?: {
-    title: string;
-    url: string;
-  };
-  headings: { depth: number; slug: string; text: string }[];
-}
+export type Props = BaseLayoutProps;
 
-const { frontmatter, headings } = Astro.props;
+const props = Astro.props;
 ---
 
-<BaseLayout title={frontmatter?.title} condensed={true}>
-  <div
-    class="mx-auto flex flex-col-reverse md:flex-row max-w-7xl justify-between gap-5 h-full"
-  >
-    <Sidebar
-      class="whitespace-nowrap md:sticky px-8 md:px-4 bg-white md:bg-none border-t w-full md:w-fit flex-shrink-0"
-    >
-      <NavMenu class="md:w-44" />
-    </Sidebar>
-    <div class="p-2 sm:p-4 flex-auto max-w-[80ch] markdown"><slot /></div>
-    <Sidebar class="hidden lg:block w-44 sticky flex-shrink-0">
-      {
-        headings.length > 3 &&
-          headings.map((h) => (
-            <PageMenuItem href={frontmatter.url + "#" + h.slug} indent={h.depth}>
-              {h.text}
-            </PageMenuItem>
-          ))
-      }
-    </Sidebar>
+<BaseLayout {...props}>
+  <div class="px-4 py-3 bg-dot-top from-white dark:from-gray-900 to-gray-100 dark:to-gray-800">
+    <div class="hidden lg:flex gap-4">
+      <CardLink href="/docs">Docs</CardLink>
+      <CardLink href="/docs/reference">API</CardLink>
+    </div>
+    <div class="flex lg:hidden">
+      <details class="w-full flex details-menu">
+        <summary class="float-right list-none cursor-pointer">
+          <MenuIcon data-menu="closed" class="w-8 h-10" />
+          <XIcon data-menu="open" class="hidden w-8 h-10" />
+        </summary>
+        <div class="space-y-5">
+          <div class="flex gap-4">
+            <CardLink href="/docs">Docs</CardLink>
+            <CardLink href="/docs/reference">API</CardLink>
+          </div>
+          <ul class="text-sm grid grid-cols-[repeat(auto-fill,minmax(140px,1fr))] w-full justify-center underline">
+            <slot name="links"></slot>
+          </ul>
+          <Hr />
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <div class="flex gap-6 justify-center items-start text-gray-700 dark:text-gray-300">
+    <Sticky class="w-52 p-4 hidden lg:block">
+      <slot name="sidebar-left"></slot>
+    </Sticky>
+    <div class="w-[min(100%,_80ch)] mb-24 p-4 space-y-5">
+      <slot />
+      <Footer class="!mt-20"/>
+    </div>
+    <Sticky class="w-52 p-4 hidden xl:block">
+      <slot name="sidebar-right"></slot>
+    </Sticky>
   </div>
 </BaseLayout>
 
-<style is:global>
-  .markdown {
-    @apply text-gray-800;
+<style>
+  .details-menu[open] *[data-menu="closed"] {
+    display: none;
   }
-
-  .markdown > :first-child {
-    @apply mt-4;
-  }
-
-  .markdown :not(pre) > code {
-    @apply px-1 py-0.5 rounded bg-slate-200 text-sm;
-  }
-
-  .markdown a > code {
-    @apply inline-block text-blue-600 hover:text-blue-400 font-bold;
-  }
-
-  .markdown h1 {
-    @apply text-4xl mt-12 mb-6 font-display tracking-wide font-bold text-black;
-  }
-
-  .markdown h1 > code {
-    @apply text-4xl;
-  }
-
-  .markdown h2 {
-    @apply text-2xl mt-8 mb-4 font-display tracking-wide font-bold text-black;
-  }
-
-  .markdown h2 > code {
-    @apply text-2xl;
-  }
-
-  .markdown h3 {
-    @apply text-xl mt-6 mb-3 font-display tracking-wide font-bold text-black;
-  }
-
-  .markdown h3 > code {
-    @apply text-xl;
-  }
-
-  .markdown h4 {
-    @apply text-xl mt-4 mb-2 font-display tracking-wide font-bold text-black;
-  }
-
-  .markdown h4 > code {
-    @apply text-xl;
-  }
-
-  .markdown h5 {
-    @apply text-lg mt-4 mb-2 font-display tracking-wide font-bold text-black;
-  }
-
-  .markdown h5 > code {
-    @apply text-lg;
-  }
-
-  .markdown h1::before,
-  .markdown h2::before,
-  .markdown h3::before,
-  .markdown h4::before,
-  .markdown h5::before {
-    @apply block h-20 -mt-20 invisible;
-    content: "";
-  }
-
-  .markdown p {
-    @apply mt-6 mb-3;
-    line-height: calc(1ex / 0.32);
-  }
-
-  .markdown ul {
-    @apply list-disc ml-8 py-2;
-  }
-
-  .markdown ol {
-    @apply list-decimal ml-8 py-2;
-  }
-
-  .markdown li::marker {
-    @apply text-gray-400;
-  }
-
-  .markdown a {
-    @apply underline decoration-blue-400 decoration-2 hover:decoration-blue-200;
-  }
-
-  .markdown blockquote {
-    @apply my-8 pl-4 border-l-4 border-l-slate-300;
-  }
-
-  .markdown pre {
-    background-color: #22272e;
-    @apply px-3 py-4 rounded-lg shadow-2xl w-full text-sm mt-3 mb-3 mr-3;
-  }
-
-  .markdown table {
-    @apply my-8 w-full text-sm rounded border;
-  }
-
-  .markdown th {
-    @apply bg-slate-100 text-left p-4 border-b;
-  }
-
-  .markdown td {
-    @apply p-4;
-  }
-
-  .markdown hr {
-    @apply my-8;
+  .details-menu[open] *[data-menu="open"] {
+    display: block;
   }
 </style>

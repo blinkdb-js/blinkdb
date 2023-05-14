@@ -1,0 +1,12 @@
+---
+export type Props = astroHTML.JSX.SVGAttributes;
+
+const props: Props = Astro.props;
+---
+
+<svg {...props} viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+  <path d="M 450.614 248.285 C 450.614 284.444 441.018 318.361 424.235 347.63 L 250.614 170.853 L 76.993 347.63 C 60.21 318.361 50.614 284.444 50.614 248.285 C 50.614 137.828 140.157 48.285 250.614 48.285 C 361.071 48.285 450.614 137.828 450.614 248.285 Z" style="fill-rule: nonzero; fill: none; paint-order: fill; stroke: currentColor; stroke-width: 40px;"/>
+  <path d="M 371.272 408.865 C 304.114 456.948 195.886 456.948 128.727 408.865" style="stroke: currentColor; fill: none; stroke-width: 40px;"/>
+  <path d="M 250 226.987 L 500 481.987 L 0 481.987 L 250 226.987 Z" style="fill: none; stroke-width: 50px;"/>
+  <path d="M 250 264.234 L 262.728 311.506 L 310 324.234 L 262.728 336.962 L 250 384.234 L 237.272 336.962 L 190 324.234 L 237.272 311.506 Z" style="fill: currentColor; fill-rule: nonzero; stroke: currentColor; stroke-width: 10px; stroke-linecap: round; stroke-miterlimit: 3;"/>
+</svg>

@@ -1,0 +1,37 @@
+---
+title: "Overview"
+---
+
+import Benchmark from "../../components/benchmark.astro";
+
+# Overview
+
+> No matter if you're using [Redux](https://redux.js.org/), [MobX](https://mobx.js.org/README.html), or just a simple JS `Map()` in your Frontend -
+> These storage methods are not optimized for large-scale data, often buckling under the weight of having to handle
+> a couple thousand objects at once. So, **why not bring the queries, indices, convenience and raw speed of databases to the frontend?**
+
+<div class="!my-12 space-y-4">
+```ts
+// All users called Alice or Charlie
+// with an age greater than 24
+const items = await many(userTable, {
+  where: {
+    name: { in: ['Alice', 'Charlie'] },
+    age: { gt: 24 }
+  },
+});
+```
+
+<Benchmark
+  title={'retrieving all users named "Alice" or "Charlie" for an array of 100.000 items'}
+  benchmarks={[
+    { name: "blinkDB", time: 0.031 },
+    { name: "JS Map()", time: 3.053 },
+    { name: "lokijs", time: 4.803 },
+  ]} 
+/>
+</div>
+
+**blinkDB** is a strongly optimized, blazingly fast database just for your frontend. It uses the same
+techniques & data structures as existing databases in order to speed up the retrieval of items,
+resulting in incredible performance, regardless if you're working with **10.000** or **1.000.000** database entities.

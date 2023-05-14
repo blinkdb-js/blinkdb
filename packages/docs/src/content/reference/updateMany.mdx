@@ -1,0 +1,24 @@
+---
+title: "updateMany()"
+---
+
+# updateMany()
+
+Updates entities in the table, and returns the primary ids of the updated items.
+
+An exception is thrown if an entity has not been inserted into the table before,
+e.g. if the primary key of an entity was not found.
+
+```ts
+// Set the age of alice, bob, and charlie to 20
+const [aliceId, bobId, charlieId] = await updateMany(userTable, [
+  { id: "alice-uuid", age: 20 },
+  { id: "bob-uuid", age: 20 },
+  { id: "charlie-uuid", age: 20 }
+]);
+```
+
+| Parameter | Description                                                           |
+| --------- | --------------------------------------------------------------------- |
+| `table`   | The table created by [`createTable()`](/docs/reference/createtable) . |
+| `items`    | The items (or for each item, primary key + some properties) to update.    |

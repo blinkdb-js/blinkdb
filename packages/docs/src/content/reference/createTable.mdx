@@ -1,0 +1,92 @@
+---
+title: "createTable()"
+---
+
+# createTable()
+
+Creates a new table where entities can be inserted/updated/deleted/retrieved.
+
+```ts
+interface User {
+  id: string;
+  name: string;
+  age?: number;
+}
+
+const userTable = createTable<User>(db, "users")();
+```
+
+| Parameter | Description                                                        |
+| --------- | ------------------------------------------------------------------ |
+| `db`      | The database created by [`createDB()`](/docs/reference/createdb) . |
+| `name`    | Name of your table. For future usage.                              |
+
+| Option    | Description                                                                       |
+| --------- | --------------------------------------------------------------------------------- |
+| `primary` | The primary key of the entity. See [Primary Keys](#primary-keys)                  |
+| `indexes` | Fields of the entity on which an index should be created. See [Indexes](#indexes) |
+
+## Valid Entities
+
+The interface you pass to `createTable()` defines what properties are available on your entity.
+Valid property types are primitives (`string`, `boolean`, `number`, `null`, `undefined`, `BigInt`), `Date`s,
+arrays, and complex objects. You cannot use symbols or functions as a type.
+
+```ts
+interface ValidEntity {
+  name: string;
+  isDeleted: boolean;
+  age: number;
+  surname: string | null;
+  likesPizza: boolean | undefined;
+  ageInMs: BigInt;
+  createdAt: Date;
+  nicknames: string[];
+  some: {
+    nested: {
+      object: boolean;
+    };
+  };
+}
+```
+
+## Primary keys
+
+BlinkDB automatically assumes that the primary key of a table is `id` , if not otherwise supplied:
+
+```ts
+// `uuid` should be the primary id
+interface Task {
+  uuid: string;
+  name?: string;
+  description?: string;
+}
+
+const userTable = createTable<Task>(db, "tasks")({
+  primary: "uuid",
+});
+```
+
+## Indexes
+
+Indexes are a valuable performance improvement for databases by reducing the amount of items scanned per query.
+To use them effectively, specify properties here that are often used in filters when you call
+[`first()`](/docs/reference/first) / [`one()`](/docs/reference/one) / [`many()`](/docs/reference/many) / [`watch()`](/docs/reference/watch) -
+This will increase speed for queries drastically, with only a small performance hit on writes.
+
+At startup, BlinkDB will automatically create a primary key index for you.
+
+```ts
+interface User {
+  id: string;
+  // Email will often be used in filters, better create an index
+  email: string;
+  // No need for an index on Age - it won't be specified much in filters
+  age: number;
+}
+
+const userTable = createTable<Task>(db, "tasks")({
+  primary: "uuid",
+  indexes: ["email"],
+});
+```

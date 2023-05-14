@@ -1,8 +1,8 @@
 ---
-export interface Props extends astroHTML.JSX.ImgHTMLAttributes {};
+export type Props = astroHTML.JSX.SVGAttributes;
 
-import Logo from '../assets/logo.svg';
-const { ...attrs } = Astro.props;
+import BlinkDbIcon from "./icons/blinkdb-icon.astro";
+const props = Astro.props;
 ---
 
-<img src={Logo} alt="BlinkDB Logo" {...attrs} />
+<BlinkDbIcon {...props} />

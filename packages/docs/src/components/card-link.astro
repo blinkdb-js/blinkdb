@@ -1,0 +1,14 @@
+---
+export interface Props extends astroHTML.JSX.LinkHTMLAttributes {};
+
+const { class: className, ...attrs } = Astro.props;
+---
+
+<a
+  class:list={[
+    "px-4 py-2 rounded-full text-lg font-light min-w-[8ch] text-center cursor-pointer",
+    "bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors duration-75",
+    className
+  ]}
+  {...attrs}
+><slot /></a>

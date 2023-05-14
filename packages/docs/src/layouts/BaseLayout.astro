@@ -1,27 +1,34 @@
 ---
-import "@fontsource/fredoka";
-import "@fontsource/inter";
-import "@fontsource/source-code-pro";
+import CoreLayout, { Props as BaseLayoutProps } from './CoreLayout.astro';
+import Sidebar from '../components/sidebar.astro';
+import Logo from '../components/logo.astro';
+import GithubIcon from '../components/icons/github-icon.astro';
+import NpmIcon from '../components/icons/npm-icon.astro';
 
-import Navbar, { Props as NavbarProps } from "../components/navbar.astro";
-
-export interface Props extends NavbarProps {
-  title?: string;
+export interface Props extends BaseLayoutProps {
+  bodyClassName?: string;
 }
 
-const { title, frontmatter, ...attrs } = Astro.props;
+const {
+  title,
+  article,
+  class: className,
+  bodyClassName,
+  ...attrs
+} = Astro.props;
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>{title ? `BlinkDB - ${title}` : "BlinkDB"}</title>
-  </head>
-  <body class="overflow-y-scroll h-full">
-    <Navbar {...attrs} />
-    <div class="mt-16"><slot /></div>
-  </body>
-</html>
+<CoreLayout title={title} article={article} class={`flex flex-col md:flex-row ${bodyClassName ?? ''}`}>
+  <Sidebar class="flex-initial justify-between md:h-[100vh] md:sticky top-0 left-0 z-10">
+    <a href="/">
+      <Logo class="h-10 w-10 transition-transform hover:scale-110" />
+    </a>
+    <div class="flex md:flex-col gap-2">
+      <a class="hover:bg-gray-300 dark:hover:bg-gray-700 p-2 rounded-full" href="https://www.npmjs.com/package/blinkdb"><NpmIcon class="h-6 w-6" /></a>
+      <a class="hover:bg-gray-300 dark:hover:bg-gray-700 p-2 rounded-full" href="https://github.com/blinkdb-js/blinkdb"><GithubIcon class="h-6 w-6" /></a>
+    </div>
+  </Sidebar>
+  <div class:list={["flex-auto", className]} {...attrs}>
+    <slot />
+  </div>
+</CoreLayout>

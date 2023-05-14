@@ -1,0 +1,21 @@
+---
+title: "removeWhere()"
+---
+
+# removeWhere()
+
+Removes all entities that match the given filter.
+
+```ts
+// Remove all users older than 15
+await removeMany(userTable, {
+  where: {
+    age: { gt: 15 },
+  },
+});
+```
+
+| Parameter | Description                                                                      |
+| --------- | -------------------------------------------------------------------------------- |
+| `table`   | The table created by [`createTable()`](/docs/reference/createtable) .            |
+| `filter`  | Only items which match the filter will be removed. See [filters](/docs/filters). |

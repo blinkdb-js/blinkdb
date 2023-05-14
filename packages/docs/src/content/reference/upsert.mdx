@@ -1,0 +1,23 @@
+---
+title: "upsert()"
+---
+
+# upsert()
+
+Inserts an entity into the table, or updates it if an entity with the given primary key already exists.
+
+Returns the primary key of the inserted/updated item.
+
+```ts
+// Insert a new entity
+const aliceId = await upsert(userTable, { id: uuid(), name: "Alice", age: 23 });
+// Update the entity we just created
+await upsert(userTable, { id: aliceId, name: "Alice", age: 16 });
+```
+
+| Parameter | Description                                                           |
+| --------- | --------------------------------------------------------------------- |
+| `table`   | The table created by [`createTable()`](/docs/reference/createtable) . |
+| `item`    | The item to insert/update.                                            |
+
+Consider [`upsertMany()`](/docs/reference/upsertmany) if you want to upsert many items at once.

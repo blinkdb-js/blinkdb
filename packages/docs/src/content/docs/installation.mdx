@@ -1,0 +1,35 @@
+---
+title: "Installation"
+---
+
+# Installation
+
+The easiest way to get started with BlinkDB is to install it in your project with Yarn:
+
+```bash
+yarn add blinkdb
+```
+
+If you prefer NPM, you can instead use
+
+```bash
+npm i blinkdb
+```
+
+## Configure TS
+
+While it isn't strictly necessary, in order to ensure complete type safety,
+set the following fields in your `tsconfig.json`:
+
+```json
+{
+  ... ,
+  "compilerOptions": {
+    ... ,
+    // Enables `exactOptionalPropertyTypes`
+    "strictNullChecks": true,
+    // Prevents you from updating entity fields with `undefined`
+    "exactOptionalPropertyTypes": true
+  },
+}
+```

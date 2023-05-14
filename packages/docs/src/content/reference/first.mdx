@@ -1,0 +1,53 @@
+---
+title: "first()"
+---
+
+# first()
+
+Retrieves the first entity from the table that matches the given filter, or `null` if no entity matches.
+
+```ts
+const firstUserNamedBob = await first(userTable, {
+  where: {
+    name: "Bob"
+  }
+});
+```
+
+| Parameter    | Description                                                                                                                               |
+|--------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| `table`      | The table created by [`createTable()`](/docs/reference/createtable) .                                                                     |
+| `filterOrId` | Optional. Can be either a filter or primary id. If given, the item returned will be the first one to match. See [filters](/docs/filters). |
+
+## Retrieve first item in table
+
+If no second parameter is supplied, `first()` will return the first item in the table.
+
+```ts
+const firstUser = await first(userTable);
+```
+
+What exactly is meant by the "first" item in the table depends upon the insertion order, so the result is not exactly
+deterministic. Still, this is sometimes useful for tables that only ever stores zero or one entity.
+
+## Retrieve item by primary id
+
+If an id is given as the second parameter, `first()` will return either the entity with a matching primary id or `null`
+if no such entity exists.
+
+```ts
+const aliceUser = await first(userTable, "alice-uuid");
+```
+
+## Retrieve first item that matches a filter
+
+If a [filter](/docs/filters) is provided as the second parameter, `first()` returns the first item that matches the filter (or `null` if
+no item in the table matches the filter).
+
+```ts
+const firstUserNamedAlice = await first(userTable, {
+  where: {
+    name: "Alice"
+  }
+});
+```

@@ -1,0 +1,39 @@
+---
+export interface Props {
+  title: string;
+  benchmarks: {
+    name: string;
+    time: number;
+  }[],
+  class?: string;
+}
+
+const { class: className, benchmarks, title } = Astro.props;
+---
+
+<div class:list={["space-y-1", className]}>
+  {
+    benchmarks.map((i) => (
+      <div class="flex flex-col-reverse sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
+        <div class="h-2 relative" style={{ width: `calc(${Math.max(i.time, 0.5)} * 3em)` }}>
+          <div
+            class="absolute z-0 rounded-full h-full bg-blue-100 dark:bg-gray-700 w-full"
+          />
+          <div
+            class="absolute z-10 rounded-full h-full w-full bg-blue-400 animate-extendwidth"
+            style={{ "animation-duration": `${i.time * 300}ms` }}
+          />
+        </div>
+        <span class="whitespace-nowrap">
+          {i.name === "blinkDB" ? (
+            <span class="font-bold">blinkDB ⚡</span>
+          ) : (
+            i.name
+          )}
+          <span class="text-xs italic">({i.time}ms)</span>
+        </span>
+      </div>
+    ))
+  }
+  <span class="text-xs">{title}</span>
+</div>

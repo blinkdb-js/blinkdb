@@ -1,79 +1,263 @@
 ---
+import Benchmark from "../components/benchmark.astro";
+import CardLink from "../components/card-link.astro";
+import CodeBlock from "../components/code-block.astro";
+import Footer from "../components/footer.astro";
+import DbSolidIcon from "../components/icons/db-solid-icon.astro";
+import EyeSolidIcon from "../components/icons/eye-solid-icon.astro";
+import LargeDatabaseIcon from "../components/icons/large-database-icon.astro";
+import LargeExchangeIcon from "../components/icons/large-exchange-icon.astro";
+import LargeLaptopIcon from "../components/icons/large-laptop-icon.astro";
+import StackSolidIcon from "../components/icons/stack-solid-icon.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { Code } from "astro/components";
----
 
-<BaseLayout>
-  <div class="p-4 flex flex-col md:flex-row my-24 gap-10 md:my-36">
-    <div class="md:flex-1 md:basis-1/2">
-      <h1 class="text-5xl font-bold font-display md:text-right">
-        <p>Your client-side data,</p>
-        <p>
-          <span class="underline decoration-blue-400 decoration-4">lightning fast</span>.
-        </p>
-      </h1>
-    </div>
-    <div class="md:basis-1/2 self-center">
-      <div
-        class="bg-[#22272e] px-4 sm:px-8 py-4 shadow shadow-blue-900 rounded-lg md:w-fit transition-transform hover:-translate-y-1 text-sm"
-      >
-        <Code
-          code={`// All users called Alice or Charlie
+const code = `
+// All users called Alice or Charlie
 // with an age greater than 24
 const items = await many(userTable, {
   where: {
     name: { in: ['Alice', 'Charlie'] },
     age: { gt: 24 }
   },
-});`}
-          lang="ts"
-          theme={"github-dark-dimmed"}
-        />
-      </div>
-      <div class="py-4">
-        {
-          [
-            { name: "blinkDB", time: 0.031 },
-            { name: "JS Map()", time: 3.053 },
-            { name: "lokijs", time: 4.803 },
-          ].map((i) => (
-            <div class="flex items-center space-x-2">
-              <div class="h-4" style={{ width: `calc(${Math.max(i.time, 0.5 / 3)} * 3em)` }}>
-                <div
-                  class="rounded-sm h-full bg-blue-400 animate-extendwidth"
-                  style={{ "animation-duration": `${i.time * 300}ms` }}
-                />
-              </div>
-              <span>
-                {i.name === "blinkDB" ? (
-                  <span class="font-bold">blinkDB ⚡</span>
-                ) : (
-                  i.name
-                )}
-                <span class="text-xs italic">({i.time}ms)</span>
-              </span>
-            </div>
-          ))
-        }
-        <span class="text-xs">above query for 100.000 items</span>
+});
+`.trim();
+
+const typeSafeTableCodePart1 = `
+export interface User {
+  id: number;
+  name: string;
+  age?: number;
+  posts?: { content: string }[];
+};
+`.trim();
+
+const typeSafeTableCodePart2 = `
+import { createDB, createTable, insertMany, uuid } from "blinkdb";
+import { User } from "./User.ts";
+
+// Set up the table
+const db = createDB();
+const userTable = createTable<User>(db, "users")();
+
+// Insert the users!
+await insertMany(userTable, [
+  { id: uuid(), name: "Alice", posts: [{ content: "Hello World! :)" }] },
+  { id: uuid(), name: "Bob", age: 24 },
+  // highlight-error-next-line
+  { id: uuid(), age: 25 } // ERROR: Property 'name' is missing
+]);
+`.trim();
+
+const querySort = `
+// First user in the alphabet
+// who's younger than 30yrs
+const items = await first(userTable, {
+  where: {
+    age: { lt: 30 }
+  },
+  sort: {
+    key: "name",
+    order: "asc"
+  }
+});
+`.trim();
+
+const queryLimit = `
+// Just user 10-20 please :)
+const items = await many(userTable, {
+  limit: {
+    take: 10,
+    skip: 10
+  }
+});
+`.trim();
+
+const watchWatchCode = `
+// React to changes on the userTable
+await watch(userTable, { where: { name: "Alice" } }, (aliceUsers) => {
+  console.log("Users named Alice: ", aliceUsers.length);
+});
+`.trim();
+
+const watchInsertCode = `
+export const AddEntityButton = () => {
+  const onButtonClick = () => {
+    await insert(userTable, { name: "Alice", age: 25 });
+  };
+
+  return (
+    <button onClick={onButtonClick}>
+      Click Me
+    </button>
+  );
+};
+`.trim();
+
+const linkCss = "bg-gray-300 hover:bg-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors duration-75";
+---
+
+<BaseLayout>
+  <div class="pt-22 lg:pt-44">
+    <div class="bg-dot-bottom from-white dark:from-gray-900 to-gray-100 dark:to-gray-800 relative p-12 pb-24">
+      <div class="flex flex-col lg:flex-row gap-8 justify-center lg:items-end">
+        <div class="space-y-8 text-right">
+          <h1 class="text-2xl sm:text-3xl md:text-5xl font-bold mt-4">
+            <p>Your clientside data,</p>
+            <p><span class="italic">blazingly fast</span> ⚡</p>
+          </h1>
+          <div class="float-right max-w-prose sm:text-lg text-gray-600 dark:text-gray-400 leading-tight">
+            blinkDB is an in-memory database optimized for
+            <a href="https://offlinefirst.org/" class:list={["px-0.5", linkCss]}>offline first</a> web apps.
+            With full support for
+            <span class:list={["px-0.5", linkCss]}>indexes</span>,
+            <span class:list={["px-0.5", linkCss]}>queries</span>,
+            and popular frontend frameworks.
+          </div>
+        </div>
+        <div class="space-y-3">
+          <CodeBlock class="shadow-xl dark:shadow-gray-800" lang="ts" code={code} theme="poimandres" />
+          <div class="absolute bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700 px-4 py-3 rounded-xl">
+            <Benchmark
+              title="above query for 100.000 items"
+              benchmarks={[
+                { name: "blinkDB", time: 0.031 },
+                { name: "JS Map()", time: 3.053 },
+                { name: "lokijs", time: 4.803 },
+              ]} 
+            />
+          </div>
+        </div>
+      </div> 
+    </div>
+    <div class="px-12 py-8 pt-28 sm:pt-20 lg:pt-8">
+      <div class="flex justify-center sm:justify-end lg:justify-start gap-4">
+        <CardLink href="/docs">Docs</CardLink>
+        <CardLink href="/docs/reference">API</CardLink>
       </div>
     </div>
-  </div>
-  <div class="p-4 flex justify-center">
-    <div class="font-display sm:text-center text-xl sm:text-3xl">
-      <p>
-        <span class="font-bold">blinkDB</span>
-        is a in-memory database optimized for
-        <span class="font-bold">large-scale storage</span>
-        on the <span class="font-bold">frontend</span>
-      </p>
-      <p>
-        - with full support for <a href="/docs/reference/createTable#primary-keys" class="underline decoration-blue-400">indexes</a
-        >,
-        <a href="/docs/filters" class="underline decoration-blue-400">queries</a>, and both
-        <span class="underline decoration-blue-400">unstructured</span> &
-        <span class="underline decoration-blue-400">relational data</span>.
-      </p>
+    <div class="px-12 py-24 sm:space-y-12 relative">
+      <div class="max-w-prose mx-auto flex justify-center gap-8 md:gap-16 dark:text-gray-200">
+        <LargeLaptopIcon class="h-32 w-32 lg:h-48 lg:w-48" mainPathClass="fill-gray-300 dark:fill-gray-700" />
+        <LargeExchangeIcon class="h-32 w-32 lg:h-48 lg:w-48" />
+        <LargeDatabaseIcon class="h-32 w-32 lg:h-48 lg:w-48" mainPathClass="fill-gray-300 dark:fill-gray-700" />
+      </div>
+      <div class="text-center space-y-8">
+        <h2 class="text-2xl sm:text-3xl md:text-5xl font-bold">
+          Use the right tool for the job.
+        </h2>
+        <div class="max-w-prose mx-auto sm:text-lg text-gray-800 dark:text-gray-400 leading-tight">
+          blinkDB makes it easy to query, persist, and sync large amounts of entities on the frontend - 
+          perfect for web apps designed to run offline.
+        </div>
+      </div>
+      <LargeLaptopIcon class="hidden xl:block h-96 w-96 absolute top-0 -left-44 opacity-30" mainPathClass="fill-gray-300 dark:fill-gray-700" />
+      <LargeDatabaseIcon class="hidden xl:block h-96 w-96 absolute top-0 -right-32 opacity-30" mainPathClass="fill-gray-300 dark:fill-gray-700" />
+    </div>
+    <div class="space-y-20 pt-24 md:space-y-28 lg:space-y-48">
+      <div>
+        <div class="px-12 pb-12 space-y-12">
+          <div class="max-w-7xl mx-auto space-y-8">
+            <div class="w-20 h-20 p-4 bg-blue-200 dark:bg-blue-800 text-blue-500 dark:text-blue-300 rounded-3xl flex justify-center items-center">
+              <StackSolidIcon />
+            </div>
+            <div class="space-y-3">
+              <h2 class="text-3xl md:text-4xl font-bold">Full type safety.</h2>
+              <p class="max-w-[80ch] sm:text-lg text-gray-600 dark:text-gray-400 leading-tight">
+                Fully typesafe entities. Automatic property inference in queries. BlinkDB is 100% written in Typescript,
+                and automatically prevents issues with incorrect or outdated types.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="p-12 bg-dot-top from-white dark:from-gray-900 to-gray-100 dark:to-gray-800 ">
+          <div class="max-w-7xl mx-auto flex flex-wrap gap-8 justify-center">
+            <CodeBlock class="flex-auto" title="main.ts" lang="ts" code={typeSafeTableCodePart2} theme="poimandres" />
+            <CodeBlock class="flex-auto" title="User.ts" lang="ts" code={typeSafeTableCodePart1} theme="poimandres" />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="px-12 pb-12 space-y-12">
+          <div class="max-w-7xl mx-auto space-y-8">
+            <div class="w-20 h-20 p-4 bg-amber-200 dark:bg-amber-800 text-amber-600 dark:text-amber-300 rounded-3xl flex justify-center items-center">
+              <DbSolidIcon />
+            </div>
+            <div class="space-y-3">
+              <h2 class="text-3xl md:text-4xl font-bold">Powerful queries.</h2>
+              <p class="max-w-[80ch] sm:text-lg text-gray-600 dark:text-gray-400 leading-tight">
+                Filter, sort, and paginate directly in BlinkDB like in any other database.
+                Automatically take advantage of indexes. Use batch & in-place update/remove operations.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="p-12 bg-dot-top from-white dark:from-gray-900 to-gray-100 dark:to-gray-800 ">
+          <div class="max-w-7xl mx-auto flex flex-wrap gap-8 justify-center">
+            <CodeBlock class="flex-auto" title="filter.ts" lang="ts" code={code} theme="poimandres" />
+            <CodeBlock class="flex-auto" title="sort.ts" lang="ts" code={querySort} theme="poimandres" />
+            <CodeBlock class="flex-auto" title="limit.ts" lang="ts" code={queryLimit} theme="poimandres" />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="px-12 pb-12 space-y-12">
+          <div class="max-w-7xl mx-auto space-y-8">
+            <div class="w-20 h-20 p-4 bg-lime-200 dark:bg-lime-700 text-lime-600 dark:text-lime-300 rounded-3xl flex justify-center items-center">
+              <EyeSolidIcon />
+            </div>
+            <div class="space-y-3">
+              <h2 class="text-3xl md:text-4xl font-bold">Completely realtime.</h2>
+              <p class="max-w-[80ch] sm:text-lg text-gray-600 dark:text-gray-400 leading-tight">
+                React to changes in your database as soon as they occur. Keep your UI always
+                up-to-date with the current state.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="p-12 bg-dot-top from-white dark:from-gray-900 to-gray-100 dark:to-gray-800 ">
+          <div class="max-w-7xl mx-auto grid grid-cols-3 md:grid-cols-5 grid-flow-row-dense gap-8">
+            <CodeBlock class="col-span-3 overflow-auto" title="watch.ts" lang="ts" code={watchWatchCode} theme="poimandres" />
+            <CodeBlock class="col-span-3" title="button.tsx" lang="tsx" code={watchInsertCode} theme="poimandres" />
+            <div class="col-span-3 md:col-span-2 p-3 bg-gray-200 dark:bg-gray-800 rounded-xl flex justify-center items-center">
+              <button
+                class:list={[
+                  "px-3 py-2 rounded",
+                  "bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors duration-75",
+                  "shadow",
+                  "watch-console-trigger"
+                ]}
+              >Click Me</button>
+            </div>
+            <div class="col-span-3 md:col-span-2 bg-gray-200 dark:bg-gray-800 rounded-xl">
+              <p class="p-3 text-xs font-mono border-b border-b-gray-400 dark:border-b-gray-600 text-gray-500">Console log</p>
+              <div class="p-3">
+                <code class="watch-console-output block max-h-24 md:max-h-52 h-full overflow-auto">
+                </code>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="px-12 py-24">
+      <Footer />
     </div>
   </div>
 </BaseLayout>
+
+<script>
+  const triggers = document.getElementsByClassName("watch-console-trigger");
+  const listeners = document.getElementsByClassName("watch-console-output");
+  let count = 0;
+  for(const trigger of triggers) {
+    trigger.addEventListener("mousedown", () => {
+      count++;
+      for(const listener of listeners) {
+        if(listener instanceof HTMLElement) {
+          listener.innerText += `Users named Alice: ${count}\n`;
+          listener.scrollTop = listener.scrollHeight;
+        }
+      }
+    });
+  }
+</script>

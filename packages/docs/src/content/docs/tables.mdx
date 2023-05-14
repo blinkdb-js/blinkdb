@@ -1,0 +1,40 @@
+---
+title: "Creating Tables"
+---
+
+# Creating Tables
+
+Once you've [installed blinkDB](/docs/installation), you can create your own database.
+
+```ts
+import { createDB } from "blinkdb";
+
+const db = createDB();
+```
+
+Similar to a relational database, entities are stored in Tables in blinkDB.
+You can create them with `createTable<Interface>(db, <name>)()` (be sure to 
+call `createTable` twice, like in the example below). Each table contains
+entities of a certain type.
+
+Every table requires a TS interface/type that specifies what entities in that
+table look like. You can use almost all typescript types in your entity definition
+(see the list of valid property types [here](/docs/reference/createTable#valid-entities)).
+
+```ts
+import { createDB, createTable } from "blinkdb";
+
+interface User {
+  id: string;
+  name: string;
+  age?: number;
+}
+
+const db = createDB();
+const table = createTable<User>(db, "users")();
+```
+
+- [What if I want to use another primary key?](/docs/reference/createTable#primary-keys)
+- [What if I want to use indexes?](/docs/reference/createTable#indexes)
+
+🥳🎉 Congratulations - it's that simple! You can now [create, query, update, and delete items](/docs/crud).
