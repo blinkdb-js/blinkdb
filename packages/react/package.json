@@ -1,0 +1,16 @@
+{
+  "name": "@blinkdb/react",
+  "version": "0.0.1",
+  "description": "Auxiliary package for BlinkDB & React",
+  "main": "dist/index.js",
+  "module": "src/index.ts",
+  "author": "",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "blinkdb": "^0.12.0",
+    "react": "^18.0.0"
+  }
+}
