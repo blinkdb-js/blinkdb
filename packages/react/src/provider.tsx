@@ -1,3 +1,4 @@
+import React from 'react';
 import { createDB, Database } from "blinkdb";
 import { Model } from "./types";
 import { DbContext, ModelContext } from "./context";
