@@ -50,7 +50,7 @@ type PrimaryKey = string | number;
 /**
  * Select only properties valid for a primary key of a given object.
  */
-export type PrimaryKeyProps<T> = keyof T &
+export type PrimaryKeyOf<T> = keyof T &
   {
     [Key in keyof T]: T[Key] extends PrimaryKey ? Key : never;
   }[keyof T];
@@ -58,7 +58,7 @@ export type PrimaryKeyProps<T> = keyof T &
 /**
  * An object with a primary key.
  */
-export type EntityWithPk<T> = Record<PrimaryKeyProps<T>, PrimaryKey>;
+export type Entity<T> = Record<PrimaryKeyOf<T>, PrimaryKey>;
 
 /**
  * Returns type T if T only contains valid properties.

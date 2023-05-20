@@ -1,5 +1,5 @@
 import { BlinkKey, Table } from "../../core";
-import { EntityWithPk, Ordinal, PrimaryKeyProps } from "../../types";
+import { Entity, Ordinal, PrimaryKeyOf } from "../../types";
 import { AllMatchers, Where } from "../types";
 import { selectForMatcher } from "./matchers";
 import { SelectCallback, SelectResult } from "./types";
@@ -9,7 +9,7 @@ import { SelectCallback, SelectResult } from "./types";
  *
  * @returns the selected items from the database, or `null` in case a full table scan is required.
  */
-export function selectForWhere<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+export function selectForWhere<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   filter: Where<T>,
   cb: SelectCallback<T>,

@@ -1,5 +1,5 @@
 import { Query } from "../query/types";
-import { EntityWithPk, PrimaryKeyProps } from "../types";
+import { Entity, PrimaryKeyOf } from "../types";
 
 /**
  * Thrown if the primary key of an item being inserted is already present within the table.
@@ -32,8 +32,8 @@ export class PrimaryKeyCannotBeModifiedError<T> extends Error {
  * Thrown if a table retrieval method expects to find exactly one item, but finds none.
  */
 export class ItemNotFoundError<
-  T extends EntityWithPk<T>,
-  P extends PrimaryKeyProps<T>
+  T extends Entity<T>,
+  P extends PrimaryKeyOf<T>
 > extends Error {
   constructor(public readonly queryOrId: Query<T, P> | T[P]) {
     super(`No item found for query "${queryOrId}".`);
@@ -44,8 +44,8 @@ export class ItemNotFoundError<
  * Thrown if a table retrieval method expects to find exactly one item, but finds more than one.
  */
 export class MoreThanOneItemFoundError<
-  T extends EntityWithPk<T>,
-  P extends PrimaryKeyProps<T>
+  T extends Entity<T>,
+  P extends PrimaryKeyOf<T>
 > extends Error {
   constructor(public readonly queryOrId: Query<T, P> | T[P]) {
     super(`More than one item found for query "${queryOrId}".`);

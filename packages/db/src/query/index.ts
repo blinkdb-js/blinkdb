@@ -1,5 +1,5 @@
 import { BlinkKey, Table } from "../core";
-import { EntityWithPk, PrimaryKeyProps } from "../types";
+import { Entity, PrimaryKeyOf } from "../types";
 import { matches } from "./filter";
 import { limitItems } from "./limit";
 import { select } from "./select";
@@ -10,7 +10,7 @@ import { Query } from "./types";
 /**
  * retrieve all items matching the given `filter`.
  */
-export function get<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+export function get<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   filter: Query<T, P>
 ): T[] {

@@ -14,17 +14,17 @@ import {
   upsertMany,
 } from "../core";
 import { Filter, Query } from "../query/types";
-import { EntityWithPk, PrimaryKeyProps } from "../types";
+import { Entity, PrimaryKeyOf } from "../types";
 
 export type Hook<
-  T extends EntityWithPk<T> = any,
-  P extends PrimaryKeyProps<T> = PrimaryKeyProps<T>,
+  T extends Entity<T> = any,
+  P extends PrimaryKeyOf<T> = PrimaryKeyOf<T>,
   A extends HookAction = HookAction
 > = (context: HookContext<T, P, A>) => HookReturn<T, P, A> | Promise<HookReturn<T, P, A>>;
 
 export type HookContext<
-  T extends EntityWithPk<T> = any,
-  P extends PrimaryKeyProps<T> = PrimaryKeyProps<T>,
+  T extends Entity<T> = any,
+  P extends PrimaryKeyOf<T> = PrimaryKeyOf<T>,
   A extends HookAction = HookAction
 > = {
   action: A;
@@ -36,13 +36,13 @@ export type HookContext<
 };
 
 export type HookParams<
-  T extends EntityWithPk<T> = any,
-  P extends PrimaryKeyProps<T> = PrimaryKeyProps<T>,
+  T extends Entity<T> = any,
+  P extends PrimaryKeyOf<T> = PrimaryKeyOf<T>,
   A extends HookAction = HookAction
 > = Parameters<HookMethods<T, P>[A]>;
 export type HookReturn<
-  T extends EntityWithPk<T> = any,
-  P extends PrimaryKeyProps<T> = PrimaryKeyProps<T>,
+  T extends Entity<T> = any,
+  P extends PrimaryKeyOf<T> = PrimaryKeyOf<T>,
   A extends HookAction = HookAction
 > = Awaited<ReturnType<HookMethods<T, P>[A]>>;
 
@@ -65,8 +65,8 @@ export type HookAction =
   | "watch";
 
 export type HookMethods<
-  T extends EntityWithPk<T> = any,
-  P extends PrimaryKeyProps<T> = PrimaryKeyProps<T>
+  T extends Entity<T> = any,
+  P extends PrimaryKeyOf<T> = PrimaryKeyOf<T>
 > = {
   clear: typeof clear<T, P>;
   count: (

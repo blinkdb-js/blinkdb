@@ -1,7 +1,7 @@
 import { middleware } from "../events/Middleware";
 import { get } from "../query";
 import { Query } from "../query/types";
-import { EntityWithPk, PrimaryKeyProps } from "../types";
+import { Entity, PrimaryKeyOf } from "../types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
@@ -15,7 +15,7 @@ import { Table } from "./createTable";
  * // Retrieve the first user
  * const firstUser = await first(userTable);
  */
-export async function first<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+export async function first<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>
 ): Promise<T | null>;
 
@@ -28,7 +28,7 @@ export async function first<T extends EntityWithPk<T>, P extends PrimaryKeyProps
  * // Retrieve the first user named 'Alice'
  * const firstUser = await first(userTable, { where: { name: "Alice" } });
  */
-export async function first<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+export async function first<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   query: Query<T, P>
 ): Promise<T | null>;
@@ -42,12 +42,12 @@ export async function first<T extends EntityWithPk<T>, P extends PrimaryKeyProps
  * // Retrieve the 'Alice' user by their id
  * const firstUser = await first(userTable, 'alice-uuid');
  */
-export async function first<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+export async function first<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   id: T[P]
 ): Promise<T | null>;
 
-export async function first<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+export async function first<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   queryOrId?: Query<T, P> | T[P]
 ): Promise<T | null> {
@@ -59,8 +59,8 @@ export async function first<T extends EntityWithPk<T>, P extends PrimaryKeyProps
 }
 
 export async function internalFirst<
-  T extends EntityWithPk<T>,
-  P extends PrimaryKeyProps<T>
+  T extends Entity<T>,
+  P extends PrimaryKeyOf<T>
 >(table: Table<T, P>, queryOrId?: Query<T, P> | T[P]): Promise<T | null> {
   if (queryOrId === undefined) {
     const btree = table[BlinkKey].storage.primary;
