@@ -8,7 +8,7 @@ import { Table } from "./createTable";
 import { ItemNotFoundError, MoreThanOneItemFoundError } from "./errors";
 
 /**
- * Retrieves the first entity from `table` matching the given `id`.
+ * Retrieves the entity from `table` matching the given `id`.
  *
  * @throws if no item matches the given id.
  *
@@ -24,7 +24,7 @@ export async function one<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
 ): Promise<T>;
 
 /**
- * Retrieves the first entity from `table` matching the given `filter`.
+ * Retrieves the entity from `table` matching the given `filter`.
  *
  * @throws if no item or more than one item matches the filter.
  *
