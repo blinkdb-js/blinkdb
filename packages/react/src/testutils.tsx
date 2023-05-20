@@ -21,9 +21,14 @@ export const model = (db: Database) => ({
 
 export type Model = ModelOf<typeof model>;
 
+export interface WrapperProps {
+  db?: BlinkDbProviderProps<any>["db"];
+  model?: BlinkDbProviderProps<any>["model"];
+}
+
 export const createWrapper = (db: BlinkDbProviderProps<any>["db"], model: BlinkDbProviderProps<any>["model"]) => {
-  return ({ children }: PropsWithChildren<{}>) => (
-    <BlinkDbProvider db={db} model={model}>{children}</BlinkDbProvider>
+  return (props: PropsWithChildren<WrapperProps>) => (
+    <BlinkDbProvider db={props.db ?? db} model={props.model ?? model}>{props.children}</BlinkDbProvider>
   )
 };
 
