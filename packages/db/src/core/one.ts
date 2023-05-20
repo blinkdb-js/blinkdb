@@ -1,7 +1,7 @@
 import { middleware } from "../events/Middleware";
 import { get } from "../query";
 import { Query } from "../query/types";
-import { EntityWithPk, PrimaryKeyProps } from "../types";
+import { Entity, PrimaryKeyOf } from "../types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
@@ -18,7 +18,7 @@ import { ItemNotFoundError, MoreThanOneItemFoundError } from "./errors";
  * // Retrieve the user with id 10
  * const userWithId = await one(userTable, 10);
  */
-export async function one<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+export async function one<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   id: T[P]
 ): Promise<T>;
@@ -34,12 +34,12 @@ export async function one<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T
  * // Retrieve the user with id 10
  * const userWithId = await one(userTable, { where: { id: 10 } });
  */
-export async function one<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+export async function one<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   query: Query<T, P>
 ): Promise<T>;
 
-export async function one<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+export async function one<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   queryOrId: Query<T, P> | T[P]
 ): Promise<T> {
@@ -51,8 +51,8 @@ export async function one<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T
 }
 
 export async function internalOne<
-  T extends EntityWithPk<T>,
-  P extends PrimaryKeyProps<T>
+  T extends Entity<T>,
+  P extends PrimaryKeyOf<T>
 >(table: Table<T, P>, queryOrId: Query<T, P> | T[P]): Promise<T> {
   if (typeof queryOrId !== "object") {
     let entity = table[BlinkKey].storage.primary.get(queryOrId) ?? null;

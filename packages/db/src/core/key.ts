@@ -1,4 +1,4 @@
-import { EntityWithPk, PrimaryKeyProps } from "../types";
+import { Entity, PrimaryKeyOf } from "../types";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 import { Diff } from "./update";
@@ -13,7 +13,7 @@ import { Diff } from "./update";
  * });
  * const pk = key(userTable); // => "uuid"
  */
-export function key<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+export function key<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>
 ): P;
 
@@ -23,7 +23,7 @@ export function key<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
  * @example
  * const pk = key(userTable, { id: "random-uuid", name: "Alice", age: 23 });
  */
-export function key<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+export function key<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   item: Diff<T, P>
 ): T[P];
@@ -37,7 +37,7 @@ export function key<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
  *   { id: "random-uuid-2", name: "Bob", age: 49 }
  * ]);
  */
-export function key<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+export function key<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   item: Diff<T, P>[]
 ): T[P][];
@@ -53,7 +53,7 @@ export function key<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
  *   }
  * }));
  */
-export function key<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+export function key<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   item: Promise<Diff<T, P>>
 ): Promise<T[P]>;
@@ -70,12 +70,12 @@ export function key<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
  *   }
  * }));
  */
-export function key<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+export function key<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   item: Promise<Diff<T, P>[]>
 ): Promise<T[P][]>;
 
-export function key<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+export function key<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   item?: T | T[] | Promise<T> | Promise<T[]>
 ): P | T[P] | T[P][] | Promise<T[P] | T[P][]> {

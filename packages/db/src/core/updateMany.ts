@@ -1,5 +1,5 @@
 import { middleware } from "../events/Middleware";
-import { EntityWithPk, isOrdinal, PrimaryKeyProps } from "../types";
+import { Entity, isOrdinal, PrimaryKeyOf } from "../types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
@@ -26,7 +26,7 @@ import { Diff } from "./update";
  *   { id: bobId, age: 45 }
  * ]);
  */
-export async function updateMany<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+export async function updateMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   diffs: Diff<T, P>[]
 ): Promise<T[P][]> {
@@ -38,8 +38,8 @@ export async function updateMany<T extends EntityWithPk<T>, P extends PrimaryKey
 }
 
 export async function internalUpdateMany<
-  T extends EntityWithPk<T>,
-  P extends PrimaryKeyProps<T>
+  T extends Entity<T>,
+  P extends PrimaryKeyOf<T>
 >(table: Table<T, P>, diffs: Diff<T, P>[]): Promise<T[P][]> {
   const primaryKeys: T[P][] = [];
   const events: { oldEntity: T; newEntity: T }[] = [];

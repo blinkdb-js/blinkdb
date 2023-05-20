@@ -1,5 +1,5 @@
 import { middleware } from "../events/Middleware";
-import { EntityWithPk, isOrdinal, PrimaryKeyProps } from "../types";
+import { Entity, isOrdinal, PrimaryKeyOf } from "../types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
@@ -20,7 +20,7 @@ import { PrimaryKeyAlreadyInUseError } from "./errors";
  *   { id: uuid(), name: "Charlie", age: 34 }
  * ]);
  */
-export async function insertMany<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+export async function insertMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   entities: T[]
 ): Promise<T[P][]> {
@@ -32,8 +32,8 @@ export async function insertMany<T extends EntityWithPk<T>, P extends PrimaryKey
 }
 
 export async function internalInsertMany<
-  T extends EntityWithPk<T>,
-  P extends PrimaryKeyProps<T>
+  T extends Entity<T>,
+  P extends PrimaryKeyOf<T>
 >(table: Table<T, P>, entities: T[]): Promise<T[P][]> {
   const primaryKeys: T[P][] = [];
   const events: { entity: T }[] = [];

@@ -1,5 +1,5 @@
 import { middleware } from "../events/Middleware";
-import { EntityWithPk, isOrdinal, PrimaryKeyProps } from "../types";
+import { Entity, isOrdinal, PrimaryKeyOf } from "../types";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 import { Ids } from "./remove";
@@ -16,7 +16,7 @@ import { Ids } from "./remove";
  * // Remove Alice from the table
  * await remove(userTable, { id: userId });
  */
-export async function removeMany<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+export async function removeMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   entities: Ids<T, P>[]
 ): Promise<boolean> {
@@ -28,8 +28,8 @@ export async function removeMany<T extends EntityWithPk<T>, P extends PrimaryKey
 }
 
 export async function internalRemoveMany<
-  T extends EntityWithPk<T>,
-  P extends PrimaryKeyProps<T>
+  T extends Entity<T>,
+  P extends PrimaryKeyOf<T>
 >(table: Table<T, P>, entities: Ids<T, P>[]): Promise<boolean> {
   const events: { entity: T }[] = [];
   let allEntitiesRemoved = true;

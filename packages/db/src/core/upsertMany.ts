@@ -1,5 +1,5 @@
 import { middleware } from "../events/Middleware";
-import { EntityWithPk, PrimaryKeyProps } from "../types";
+import { Entity, PrimaryKeyOf } from "../types";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 import { internalInsertMany } from "./insertMany";
@@ -22,7 +22,7 @@ import { internalUpdateMany } from "./updateMany";
  *   { id: uuid(), age: 45 }
  * ]);
  */
-export async function upsertMany<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+export async function upsertMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   entities: T[]
 ): Promise<T[P][]> {
@@ -34,8 +34,8 @@ export async function upsertMany<T extends EntityWithPk<T>, P extends PrimaryKey
 }
 
 export async function internalUpsertMany<
-  T extends EntityWithPk<T>,
-  P extends PrimaryKeyProps<T>
+  T extends Entity<T>,
+  P extends PrimaryKeyOf<T>
 >(table: Table<T, P>, entities: T[]): Promise<T[P][]> {
   // Split entities into items to create & items to update
   // reduces the number of outgoing events to 2

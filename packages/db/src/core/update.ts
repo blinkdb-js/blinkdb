@@ -1,5 +1,5 @@
 import { middleware } from "../events/Middleware";
-import { EntityWithPk, PrimaryKeyProps } from "../types";
+import { Entity, PrimaryKeyOf } from "../types";
 import { Table } from "./createTable";
 import { internalUpdateMany } from "./updateMany";
 
@@ -17,7 +17,7 @@ import { internalUpdateMany } from "./updateMany";
  * // Increase the age of Alice
  * await update(userTable, { id: userId, age: 16 });
  */
-export async function update<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+export async function update<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   diff: Diff<T, P>
 ): Promise<T[P]> {
@@ -29,13 +29,13 @@ export async function update<T extends EntityWithPk<T>, P extends PrimaryKeyProp
 }
 
 export async function internalUpdate<
-  T extends EntityWithPk<T>,
-  P extends PrimaryKeyProps<T>
+  T extends Entity<T>,
+  P extends PrimaryKeyOf<T>
 >(table: Table<T, P>, diff: Diff<T, P>): Promise<T[P]> {
   const ids = await internalUpdateMany(table, [diff]);
   return ids[0];
 }
 
-export type Diff<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>> = Partial<T> & {
+export type Diff<T extends Entity<T>, P extends PrimaryKeyOf<T>> = Partial<T> & {
   [Key in P]: T[P];
 };

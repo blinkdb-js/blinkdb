@@ -1,5 +1,5 @@
 import { BlinkKey, Table } from "../../core";
-import { EntityWithPk, Ordinal, PrimaryKeyProps } from "../../types";
+import { Entity, Ordinal, PrimaryKeyOf } from "../../types";
 import { compare } from "../compare";
 import { SelectResult } from "../select/types";
 import { Sort } from "../types";
@@ -7,7 +7,7 @@ import { Sort } from "../types";
 /**
  * @returns all items from `items` sorted according to the given `sort` object.
  */
-export function sortItems<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+export function sortItems<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   items: T[],
   sort: Sort<T>,

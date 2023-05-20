@@ -1,5 +1,5 @@
 import { BlinkKey, Table } from "../core";
-import { EntityWithPk, PrimaryKeyProps } from "../types";
+import { Entity, PrimaryKeyOf } from "../types";
 import {
   Hook,
   HookAction,
@@ -17,8 +17,8 @@ import {
  * @param impl the implementation that will be called if the last hook calls `next()`.
  */
 export function middleware<
-  T extends EntityWithPk<T> = any,
-  P extends PrimaryKeyProps<T> = PrimaryKeyProps<T>,
+  T extends Entity<T> = any,
+  P extends PrimaryKeyOf<T> = PrimaryKeyOf<T>,
   A extends HookAction = HookAction
 >(
   hooks: Hook<T, P, A>[],
@@ -37,8 +37,8 @@ export function middleware<
  * @param impl the implementation that will be called if the last hook calls `next()`.
  */
 export function middleware<
-  T extends EntityWithPk<T> = any,
-  P extends PrimaryKeyProps<T> = PrimaryKeyProps<T>,
+  T extends Entity<T> = any,
+  P extends PrimaryKeyOf<T> = PrimaryKeyOf<T>,
   A extends HookAction = HookAction
 >(
   table: Table<T, P>,
@@ -47,8 +47,8 @@ export function middleware<
 ): HookReturn<T, P, A> | Promise<HookReturn<T, P, A>>;
 
 export function middleware<
-  T extends EntityWithPk<T> = any,
-  P extends PrimaryKeyProps<T> = PrimaryKeyProps<T>,
+  T extends Entity<T> = any,
+  P extends PrimaryKeyOf<T> = PrimaryKeyOf<T>,
   A extends HookAction = HookAction
 >(
   hooksOrTable: Hook<T, P, A>[] | Table<T, P>,
@@ -73,8 +73,8 @@ export function middleware<
 }
 
 function executeHook<
-  T extends EntityWithPk<T> = any,
-  P extends PrimaryKeyProps<T> = PrimaryKeyProps<T>,
+  T extends Entity<T> = any,
+  P extends PrimaryKeyOf<T> = PrimaryKeyOf<T>,
   A extends HookAction = HookAction
 >(
   hooks: Hook<T, P, A>[],

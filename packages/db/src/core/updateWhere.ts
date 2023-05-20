@@ -1,7 +1,7 @@
 import { middleware } from "../events/Middleware";
 import { get } from "../query";
 import { Filter } from "../query/types";
-import { EntityWithPk, PrimaryKeyProps } from "../types";
+import { Entity, PrimaryKeyOf } from "../types";
 import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
@@ -24,8 +24,8 @@ import { internalUpdateMany } from "./updateMany";
  * });
  */
 export async function updateWhere<
-  T extends EntityWithPk<T>,
-  P extends PrimaryKeyProps<T>
+  T extends Entity<T>,
+  P extends PrimaryKeyOf<T>
 >(
   table: Table<T, P>,
   filter: Filter<T>,
@@ -39,8 +39,8 @@ export async function updateWhere<
 }
 
 export async function internalUpdateWhere<
-  T extends EntityWithPk<T>,
-  P extends PrimaryKeyProps<T>
+  T extends Entity<T>,
+  P extends PrimaryKeyOf<T>
 >(
   table: Table<T, P>,
   filter: Filter<T>,

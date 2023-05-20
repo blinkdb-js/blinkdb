@@ -1,12 +1,12 @@
 import { BlinkKey, Table } from "../../core";
-import { EntityWithPk, PrimaryKeyProps } from "../../types";
+import { Entity, PrimaryKeyOf } from "../../types";
 import { compare } from "../compare";
 import { Limit } from "../types";
 
 /**
  * @returns all items from `items` limited according to the given `limit` object.
  */
-export function limitItems<T extends EntityWithPk<T>, P extends PrimaryKeyProps<T>>(
+export function limitItems<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   items: T[],
   limit: Limit<T, P>,
