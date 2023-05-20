@@ -56,6 +56,7 @@ export function useFirst<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
 
   return {
     ...result,
-    data: result.data ? (result.data[0] ?? null) : undefined
+    data: result.data ? (result.data[0] ?? null) : undefined,
+    error: undefined
   } as QueryResult<T | null>;
 }

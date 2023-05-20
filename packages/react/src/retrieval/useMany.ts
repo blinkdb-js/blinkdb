@@ -65,6 +65,7 @@ export function useMany<
 
   return {
     data: state,
-    state: state === undefined ? "loading" : "done"
+    state: state === undefined ? "loading" : "done",
+    error: undefined
   } as QueryResult<T[]>;
 }
