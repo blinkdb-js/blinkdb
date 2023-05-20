@@ -1,12 +1,7 @@
 import React from "react";
 import { renderHook } from '@testing-library/react';
-import { BlinkDbProvider } from "./provider";
-import { PropsWithChildren } from "react";
 import { useDB } from "./useDB";
-
-const wrapper = ({ children }: PropsWithChildren<{}>) => (
-  <BlinkDbProvider model={{}}>{children}</BlinkDbProvider>
-);
+import { blinkDbWrapper } from "../testutils";
 
 describe('', () => {
   let consoleErrorFn: jest.SpyInstance;
@@ -25,6 +20,6 @@ describe('', () => {
 });
 
 test('returns db if defined', () => {
-  const { result } = renderHook(() => useDB(), { wrapper });
+  const { result } = renderHook(() => useDB(), { wrapper: blinkDbWrapper });
   expect(result.current).not.toBeNull();
 });
