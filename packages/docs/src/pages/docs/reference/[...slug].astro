@@ -3,6 +3,7 @@ import { CollectionEntry, getCollection } from 'astro:content';
 import DocsLayout from '../../../layouts/DocsLayout.astro';
 import { components } from "../../../components/md/index.astro";
 import H2 from '../../../components/md/h2.astro';
+import SidebarGroup from '../../../components/sidebar-group.astro';
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection('reference');
@@ -26,14 +27,13 @@ const { Content, headings } = await entry.render();
     <li slot="links" class="py-1"><a href={`/docs/reference/${e.slug}`}>{e.data.title}</a></li>
   ))}
 
-  <details slot="sidebar-left" open>
-    <summary class="font-mono font-bold tracking-tight uppercase text-black dark:text-white cursor-pointer">API</summary>
-    <ul class="text-sm ml-3">
+  <div slot="sidebar-left">
+    <SidebarGroup title="blinkdb" href="/docs/reference">
       {entries.map(e => (
         <li class="p-0.5"><a href={`/docs/reference/${e.slug}`}>{e.data.title}</a></li>
       ))}
-    </ul>
-  </details>
+    </SidebarGroup>
+  </div>
 
   {headings.length > 3 && (
     <div slot="sidebar-right" class="text-sm">
