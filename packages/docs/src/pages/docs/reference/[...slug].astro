@@ -4,6 +4,7 @@ import DocsLayout from '../../../layouts/DocsLayout.astro';
 import { components } from "../../../components/md/index.astro";
 import H2 from '../../../components/md/h2.astro';
 import SidebarGroup from '../../../components/sidebar-group.astro';
+import HeadingList from '../../../components/heading-list.astro';
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection('reference');
@@ -35,18 +36,9 @@ const { Content, headings } = await entry.render();
     </SidebarGroup>
   </div>
 
-  {headings.length > 3 && (
-    <div slot="sidebar-right" class="text-sm">
-      {headings.map(h => (
-        <div class={["ml-0", "ml-2", "ml-4", "ml-6", "ml-8"].at(h.depth - 1) + " p-0.5"}>
-          <a
-            class={h.depth === 1 ? 'font-bold font-mono tracking-tight text-black dark:text-white' : ''}
-            href={`/docs/reference/${entry.slug}#${h.slug}`}
-          >{h.text}</a>
-        </div>
-      ))}
-    </div>
-  )}
+  <div slot="sidebar-right">
+    <HeadingList headings={headings} />
+  </div>
 
   <Content components={components} />
   {entry.slug === "index" && (

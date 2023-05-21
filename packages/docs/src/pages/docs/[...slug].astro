@@ -5,6 +5,7 @@ import { components } from "../../components/md/index.astro";
 import ArrowLeftIcon from '../../components/icons/arrow-left-icon.astro';
 import ArrowRightIcon from '../../components/icons/arrow-right-icon.astro';
 import SidebarGroup from '../../components/sidebar-group.astro';
+import HeadingList from '../../components/heading-list.astro';
 
 export async function getStaticPaths() {
   const entries = await getCollection('docs');
@@ -67,18 +68,9 @@ const nextEntry = entryWithOffset(sortedEntries, entry, 1);
     </SidebarGroup>
   </div>
 
-  {headings.length > 3 && (
-    <div slot="sidebar-right" class="text-sm">
-      {headings.map(h => (
-        <div class={["ml-0", "ml-2", "ml-4", "ml-6", "ml-8"].at(h.depth - 1) + " p-0.5"}>
-          <a
-            class={h.depth === 1 ? 'font-bold font-mono tracking-tight text-black dark:text-white' : ''}
-            href={`${entry.slug === "index" ? '/docs' : `/docs/${entry.slug}`}#${h.slug}`}
-          >{h.text}</a>
-        </div>
-      ))}
-    </div>
-  )}
+  <div slot="sidebar-right">
+    <HeadingList headings={headings} />
+  </div>
 
   <Content components={components} />
   <div class="!my-20 grid grid-cols-1 sm:grid-cols-2 gap-2 sm:divide-x-2 divide-gray-200 dark:divide-gray-800 font-semibold">
