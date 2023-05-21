@@ -4,6 +4,7 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 import { components } from "../../components/md/index.astro";
 import ArrowLeftIcon from '../../components/icons/arrow-left-icon.astro';
 import ArrowRightIcon from '../../components/icons/arrow-right-icon.astro';
+import SidebarGroup from '../../components/sidebar-group.astro';
 
 export async function getStaticPaths() {
   const entries = await getCollection('docs');
@@ -58,14 +59,13 @@ const nextEntry = entryWithOffset(sortedEntries, entry, 1);
     <li slot="links" class="py-1"><a href={e.slug === "index" ? '/docs' : `/docs/${e.slug}`}>{e.data.title}</a></li>
   ))}
 
-  <details slot="sidebar-left" open>
-    <summary class="font-mono font-bold tracking-tight uppercase text-black dark:text-white cursor-pointer">Getting started</summary>
-    <ul class="text-sm ml-3">
+  <div slot="sidebar-left">
+    <SidebarGroup title="Getting started" href="/docs">
       {sortedEntries.map(e => (
         <li class="p-0.5"><a href={e.slug === "index" ? '/docs' : `/docs/${e.slug}`}>{e.data.title}</a></li>
       ))}
-    </ul>
-  </details>
+    </SidebarGroup>
+  </div>
 
   {headings.length > 3 && (
     <div slot="sidebar-right" class="text-sm">
