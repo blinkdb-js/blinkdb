@@ -19,7 +19,7 @@ entities of a certain type.
 
 Every table requires a TS interface/type that specifies what entities in that
 table look like. You can use almost all typescript types in your entity definition
-(see the list of valid property types [here](/docs/reference/createTable#valid-entities)).
+(see the list of valid property types [here](/docs/reference/createtable#valid-entities)).
 
 ```ts
 import { createDB, createTable } from "blinkdb";
@@ -34,7 +34,7 @@ const db = createDB();
 const table = createTable<User>(db, "users")();
 ```
 
-- [What if I want to use another primary key?](/docs/reference/createTable#primary-keys)
-- [What if I want to use indexes?](/docs/reference/createTable#indexes)
+- [What if I want to use another primary key?](/docs/reference/createtable#primary-keys)
+- [What if I want to use indexes?](/docs/reference/createtable#indexes)
 
 🥳🎉 Congratulations - it's that simple! You can now [create, query, update, and delete items](/docs/crud).
