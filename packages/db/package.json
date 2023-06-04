@@ -3,7 +3,6 @@
   "version": "0.12.0",
   "description": "A lightning fast, in-memory database for client-side JS",
   "main": "dist/index.js",
-  "module": "src/index.ts",
   "author": "",
   "license": "MIT",
   "scripts": {
