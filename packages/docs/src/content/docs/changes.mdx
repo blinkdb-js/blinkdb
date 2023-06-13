@@ -18,7 +18,7 @@ const dispose = await watch(userTable, users => {
 });
 ```
 
-Only retrieving certain items from the table is also possible - just provide a [filter](/docs/filter) to [`watch()`](/docs/reference/watch),
+Only retrieving certain items from the table is also possible - just provide a [filter](/docs/filters) to [`watch()`](/docs/reference/watch),
 and your callback will only be called if items matching the filter are inserted/updated/deleted.
 
 ```ts
