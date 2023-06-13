@@ -5,13 +5,28 @@ import { components } from "../../../components/md/index.astro";
 import H2 from '../../../components/md/h2.astro';
 import SidebarGroup from '../../../components/sidebar-group.astro';
 import HeadingList from '../../../components/heading-list.astro';
+import { FrameworkSelect } from '../../../components/framework-select';
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection('reference');
-  return blogEntries.map(entry => ({
-    params: { slug: entry.slug !== "index" ? entry.slug : undefined },
-    props: { entry, entries: blogEntries.filter(e => e.slug !== "index") },
-  }));
+  const withPrefix = (slug: string, prefix?: string) => {
+    return prefix ? (slug ? `${prefix}/${slug}` : prefix) : slug;
+  }
+  const mapToPath = (entry: CollectionEntry<'reference'>, prefix?: string) => {
+    return {
+      params: { slug: withPrefix(entry.slug !== "index" ? entry.slug : undefined, prefix) },
+      props: {
+        entry: { ...entry, slug: withPrefix(entry.slug, prefix) },
+        entries: blogEntries.filter(e => e.slug !== "index").map(e => ({ ...e, slug: withPrefix(e.slug, prefix) }))
+      },
+    };
+  };
+  return [
+    // Typescript
+    ...blogEntries.map(entry => mapToPath(entry)),
+    // React
+    ...blogEntries.map(entry => mapToPath(entry, 'react')),
+  ];
 }
 
 export interface Props {
@@ -19,6 +34,7 @@ export interface Props {
   entries: CollectionEntry<"reference">[];
 };
 
+const { pathname } = Astro.url;
 const { entry, entries } = Astro.props;
 const { Content, headings } = await entry.render();
 ---
@@ -28,7 +44,8 @@ const { Content, headings } = await entry.render();
     <li slot="links" class="py-1"><a href={`/docs/reference/${e.slug}`}>{e.data.title}</a></li>
   ))}
 
-  <div slot="sidebar-left">
+  <div slot="sidebar-left" class="space-y-4">
+    <FrameworkSelect client:load frameworkId={pathname.includes('/react') ? 'react' : ''} />
     <SidebarGroup title="blinkdb" href="/docs/reference">
       {entries.map(e => (
         <li class="p-0.5"><a href={`/docs/reference/${e.slug}`}>{e.data.title}</a></li>
@@ -41,7 +58,7 @@ const { Content, headings } = await entry.render();
   </div>
 
   <Content components={components} />
-  {entry.slug === "index" && (
+  {entry.slug.includes("index") && (
     <div>
       <H2>Content</H2>
       <ul class="grid grid-cols-[repeat(auto-fill,minmax(140px,1fr))] w-full justify-center">
