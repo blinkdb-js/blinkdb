@@ -57,13 +57,13 @@ const nextEntry = entryWithOffset(sortedEntries, entry, 1);
 
 <DocsLayout bodyClassName="overflow-y-scroll" title={entry.data.title}>
   {sortedEntries.map(e => (
-    <li slot="links" class="py-1"><a href={`/docs/${e.slug !== "index" ? e.slug : undefined}`}>{e.data.title}</a></li>
+    <li slot="links" class="py-1"><a href={`/docs/${e.slug !== "index" ? e.slug : ""}`}>{e.data.title}</a></li>
   ))}
 
   <div slot="sidebar-left">
     <SidebarGroup title="Getting started" href="/docs">
       {sortedEntries.map(e => (
-        <li class="p-0.5"><a href={`/docs/${e.slug !== "index" ? e.slug : undefined}`}>{e.data.title}</a></li>
+        <li class="p-0.5"><a href={`/docs/${e.slug !== "index" ? e.slug : ""}`}>{e.data.title}</a></li>
       ))}
     </SidebarGroup>
   </div>
@@ -77,7 +77,7 @@ const nextEntry = entryWithOffset(sortedEntries, entry, 1);
     {prevEntry && (
       <a
         class="sm:col-start-1 px-4 py-2 flex items-center gap-3"
-        href={`/docs/${prevEntry.slug !== "index" ? prevEntry.slug : undefined}`}
+        href={`/docs/${prevEntry.slug !== "index" ? prevEntry.slug : ""}`}
       >
         <ArrowLeftIcon class="w-6 h-6 text-gray-500" />
         <span class="mb-0.5 text-gray-800 dark:text-gray-50">{prevEntry.data.title}</span>
@@ -86,7 +86,7 @@ const nextEntry = entryWithOffset(sortedEntries, entry, 1);
     {nextEntry && (
       <a
         class="sm:col-start-2 px-4 py-2 flex items-center gap-3 justify-end"
-        href={`/docs/${nextEntry.slug !== "index" ? nextEntry.slug : undefined}`}
+        href={`/docs/${nextEntry.slug !== "index" ? nextEntry.slug : ""}`}
       >
         <span class="mb-0.5 text-gray-800 dark:text-gray-50">{nextEntry.data.title}</span>
         <ArrowRightIcon class="w-6 h-6 text-gray-500" />
