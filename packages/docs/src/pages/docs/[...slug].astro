@@ -56,9 +56,13 @@ const nextEntry = entryWithOffset(sortedEntries, entry, 1);
 ---
 
 <DocsLayout bodyClassName="overflow-y-scroll" title={entry.data.title}>
-  {sortedEntries.map(e => (
-    <li slot="links" class="py-1"><a href={`/docs/${e.slug !== "index" ? e.slug : ""}`}>{e.data.title}</a></li>
-  ))}
+  <div slot="links">
+    <SidebarGroup title="Getting started" href="/docs">
+      {sortedEntries.map(e => (
+        <li class="p-0.5"><a href={`/docs/${e.slug !== "index" ? e.slug : ""}`}>{e.data.title}</a></li>
+      ))}
+    </SidebarGroup>
+  </div>
 
   <div slot="sidebar-left">
     <SidebarGroup title="Getting started" href="/docs">
