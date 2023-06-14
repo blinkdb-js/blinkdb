@@ -32,16 +32,17 @@ const frameworks = {
 
 export type FrameworkId = keyof typeof frameworks;
 
-export const FrameworkSelect = (props: { frameworkId?: FrameworkId }) => {
+export const FrameworkSelect = (props: { frameworkId?: FrameworkId, dark?: boolean, className?: string }) => {
   const selectedFramework = frameworks[props.frameworkId ?? ''];
+  const bg = props.dark ? 'bg-gray-200 dark:bg-gray-700' : 'bg-gray-100 dark:bg-gray-800';
 
   return (
     <Listbox value={props.frameworkId ?? ''}>
-      <Listbox.Button className="relative w-44 rounded-lg bg-gray-100 dark:bg-gray-800 py-2 pl-3 text-left outline-none text-sm font-bold">
+      <Listbox.Button className={`relative w-44 rounded-lg ${bg} py-2 pl-3 text-left outline-none text-sm font-bold ${props.className ?? ''}`}>
         <span className="truncate flex items-center gap-2">{selectedFramework.icon} {selectedFramework.name}</span>
         <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
           <ChevronUpDownIcon
-            className="h-5 w-5 text-gray-400 dark:text-gray-600"
+            className="h-6 w-6 text-gray-400 dark:text-gray-500"
             aria-hidden="true"
           />
         </span>
@@ -51,7 +52,7 @@ export const FrameworkSelect = (props: { frameworkId?: FrameworkId }) => {
         leaveFrom="transform scale-100 opacity-100"
         leaveTo="transform scale-95 opacity-0"
       >
-        <Listbox.Options className="absolute mt-1 p-1 w-full overflow-auto rounded-md bg-white/80 dark:bg-gray-900/90 backdrop-blur-sm shadow-lg text-sm font-bold border border-gray-200 dark:border-gray-700">
+        <Listbox.Options className="absolute mt-1 p-1 w-44 overflow-auto rounded-md bg-white/80 dark:bg-gray-900/90 backdrop-blur-sm shadow-lg text-sm font-bold border border-gray-200 dark:border-gray-700">
           {Object.entries(frameworks).map(([key, value]) => (
             <Listbox.Option
               as={'a'}

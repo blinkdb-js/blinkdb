@@ -26,11 +26,14 @@ const props = Astro.props;
           <XIcon data-menu="open" class="hidden w-8 h-10" />
         </summary>
         <div class="space-y-5">
-          <div class="flex gap-4">
-            <CardLink href="/docs">Docs</CardLink>
-            <CardLink href="/docs/reference">API</CardLink>
+          <div class="flex gap-4 justify-between">
+            <div class="flex gap-4">
+              <CardLink href="/docs">Docs</CardLink>
+              <CardLink href="/docs/reference">API</CardLink>
+            </div>
+            <slot name="pills"></slot>
           </div>
-          <ul class="text-sm grid grid-cols-[repeat(auto-fill,minmax(140px,1fr))] w-full justify-center underline">
+          <ul class="text-sm w-full">
             <slot name="links"></slot>
           </ul>
           <Hr />

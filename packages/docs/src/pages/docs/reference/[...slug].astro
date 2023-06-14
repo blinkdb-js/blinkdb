@@ -40,9 +40,17 @@ const { Content, headings } = await entry.render();
 ---
 
 <DocsLayout bodyClassName="overflow-y-scroll" title={entry.data.title}>
-  {entries.map(e => (
-    <li slot="links" class="py-1"><a href={`/docs/reference/${e.slug}`}>{e.data.title}</a></li>
-  ))}
+  <div slot="pills">
+    <FrameworkSelect className="mr-4" client:load dark frameworkId={pathname.includes('/react') ? 'react' : ''} />
+  </div>
+
+  <div slot="links">
+    <SidebarGroup title="blinkdb" href="/docs/reference">
+      {entries.map(e => (
+        <li class="p-0.5"><a href={`/docs/reference/${e.slug}`}>{e.data.title}</a></li>
+      ))}
+    </SidebarGroup>
+  </div>
 
   <div slot="sidebar-left" class="space-y-4">
     <FrameworkSelect client:load frameworkId={pathname.includes('/react') ? 'react' : ''} />
