@@ -313,6 +313,13 @@ declare module "astro:content" {
         collection: "reference";
         data: InferEntrySchema<"reference">;
       } & { render(): Render[".mdx"] };
+      "useTable.mdx": {
+        id: "useTable.mdx";
+        slug: "usetable";
+        body: string;
+        collection: "reference";
+        data: InferEntrySchema<"reference">;
+      } & { render(): Render[".mdx"] };
       "uuid.mdx": {
         id: "uuid.mdx";
         slug: "uuid";
