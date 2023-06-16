@@ -21,11 +21,16 @@ export async function getStaticPaths() {
       },
     };
   };
+  const isInPackage = (packages: string[])  => {
+    return (entry: CollectionEntry<'reference'>): boolean => {
+      return !entry.data.package || packages.includes(entry.data.package);
+    }
+  }
   return [
     // Typescript
-    ...blogEntries.filter(e => ["blinkdb"].includes(e.data.package)).map((entry, _, entries) => mapToPath(entry, entries)),
+    ...blogEntries.filter(isInPackage(['blinkdb'])).map((entry, _, entries) => mapToPath(entry, entries)),
     // React
-    ...blogEntries.map((entry, _, entries) => mapToPath(entry, entries, 'react')),
+    ...blogEntries.filter(isInPackage(['blinkdb', '@blinkdb/react'])).map((entry, _, entries) => mapToPath(entry, entries, 'react')),
   ];
 }
 

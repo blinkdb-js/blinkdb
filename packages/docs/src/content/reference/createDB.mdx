@@ -19,7 +19,7 @@ const db = createDB();
 
 ## Performance
 
-By default, blinkDB clones entities whenever you call [`insert()`](/docs/reference/insert) / [`update()`](/docs/reference/update) or any query functions.
+By default, blinkDB clones entities whenever you call [`insert()`](insert) / [`update()`](update) or any query functions.
 While this means a slight hit to performance, this prevents you from modifying entities without blinkDB's knowledge,
 which could lead to difficult to debug bugs.
 

@@ -17,10 +17,10 @@ interface User {
 const userTable = createTable<User>(db, "users")();
 ```
 
-| Parameter | Description                                                        |
-| --------- | ------------------------------------------------------------------ |
-| `db`      | The database created by [`createDB()`](/docs/reference/createdb) . |
-| `name`    | Name of your table. For future usage.                              |
+| Parameter | Description                                        |
+| --------- | -------------------------------------------------- |
+| `db`      | The database created by [`createDB()`](createdb) . |
+| `name`    | Name of your table. For future usage.              |
 
 | Option    | Description                                                                       |
 | --------- | --------------------------------------------------------------------------------- |
@@ -72,7 +72,7 @@ const userTable = createTable<Task>(db, "tasks")({
 
 Indexes are a valuable performance improvement for databases by reducing the amount of items scanned per query.
 To use them effectively, specify properties here that are often used in filters when you call
-[`first()`](/docs/reference/first) / [`one()`](/docs/reference/one) / [`many()`](/docs/reference/many) / [`watch()`](/docs/reference/watch) -
+[`first()`](first) / [`one()`](one) / [`many()`](many) / [`watch()`](watch) -
 This will increase speed for queries drastically, with only a small performance hit on writes.
 
 At startup, BlinkDB will automatically create a primary key index for you.

@@ -19,6 +19,6 @@ await updateWhere(userTable, { where: { age: 20 } }, (user) => {
 
 | Parameter  | Description                                                                                                |
 | ---------- | ---------------------------------------------------------------------------------------------------------- |
-| `table`    | The table created by [`createTable()`](/docs/reference/createtable) .                                      |
-| `filter`   | Only items which match the filter will be modified. See [filters](/docs/filters).                                |
+| `table`    | The table created by [`createTable()`](createtable) .                                                      |
+| `filter`   | Only items which match the filter will be modified. See [filters](/docs/filters).                          |
 | `callback` | Called for every item. The return value of the callback will set the corresponding properties on the item. |
