@@ -12,20 +12,20 @@ export async function getStaticPaths() {
   const withPrefix = (slug: string, prefix?: string) => {
     return prefix ? (slug ? `${prefix}/${slug}` : prefix) : slug;
   }
-  const mapToPath = (entry: CollectionEntry<'reference'>, prefix?: string) => {
+  const mapToPath = (entry: CollectionEntry<'reference'>, entries: CollectionEntry<'reference'>[], prefix?: string) => {
     return {
       params: { slug: withPrefix(entry.slug !== "index" ? entry.slug : undefined, prefix) },
       props: {
         entry: { ...entry, slug: withPrefix(entry.slug, prefix) },
-        entries: blogEntries.filter(e => e.slug !== "index").map(e => ({ ...e, slug: withPrefix(e.slug, prefix) }))
+        entries: entries.filter(e => e.slug !== "index").map(e => ({ ...e, slug: withPrefix(e.slug, prefix) }))
       },
     };
   };
   return [
     // Typescript
-    ...blogEntries.map(entry => mapToPath(entry)),
+    ...blogEntries.filter(e => ["blinkdb"].includes(e.data.package)).map((entry, _, entries) => mapToPath(entry, entries)),
     // React
-    ...blogEntries.map(entry => mapToPath(entry, 'react')),
+    ...blogEntries.map((entry, _, entries) => mapToPath(entry, entries, 'react')),
   ];
 }
 
@@ -37,6 +37,7 @@ export interface Props {
 const { pathname } = Astro.url;
 const { entry, entries } = Astro.props;
 const { Content, headings } = await entry.render();
+const sections = entries.map(e => e.data.package ?? "blinkdb").reduce<string[]>((prev, cur) => prev.includes(cur) ? prev : [...prev, cur], []);
 ---
 
 <DocsLayout bodyClassName="overflow-y-scroll" title={entry.data.title}>
@@ -45,20 +46,24 @@ const { Content, headings } = await entry.render();
   </div>
 
   <div slot="links">
-    <SidebarGroup title="blinkdb" href="/docs/reference">
-      {entries.map(e => (
-        <li class="p-0.5"><a href={`/docs/reference/${e.slug}`}>{e.data.title}</a></li>
-      ))}
-    </SidebarGroup>
+    {sections.map(section => (
+      <SidebarGroup title={section}>
+        {entries.filter(e => e.data.package === section).map(e => (
+          <li class="p-0.5"><a href={`/docs/reference/${e.slug}`}>{e.data.title}</a></li>
+        ))}
+      </SidebarGroup>
+    ))}
   </div>
 
   <div slot="sidebar-left" class="space-y-4">
     <FrameworkSelect client:load frameworkId={pathname.includes('/react') ? 'react' : ''} />
-    <SidebarGroup title="blinkdb" href="/docs/reference">
-      {entries.map(e => (
-        <li class="p-0.5"><a href={`/docs/reference/${e.slug}`}>{e.data.title}</a></li>
-      ))}
-    </SidebarGroup>
+    {sections.map(section => (
+      <SidebarGroup title={section}>
+        {entries.filter(e => e.data.package === section).map(e => (
+          <li class="p-0.5"><a href={`/docs/reference/${e.slug}`}>{e.data.title}</a></li>
+        ))}
+      </SidebarGroup>
+    ))}
   </div>
 
   <div slot="sidebar-right">
