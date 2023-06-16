@@ -4,7 +4,7 @@ export const collections = {
   reference: defineCollection({
     schema: z.object({
       title: z.string(),
-      package: z.enum(["blinkdb", "@blinkdb/react"]),
+      package: z.optional(z.enum(["blinkdb", "@blinkdb/react"])),
     }),
   }),
   docs: defineCollection({
