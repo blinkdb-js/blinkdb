@@ -28,7 +28,7 @@ use(userTable, async (ctx) => {
 A hook can be registered on a table, and the corresponding callback will trigger whenever BlinkDB executes actions in that given table:
 
 ```ts
-use(userTable, (ctx) => {
+const stop = use(userTable, (ctx) => {
   ...
 });
 ```
@@ -36,9 +36,16 @@ use(userTable, (ctx) => {
 Alternatively, if you want the callback to run on actions on *any* table created with a database, you can register hooks on the database directly:
 
 ```ts
-use(db, (ctx) => {
+const stop = use(db, (ctx) => {
   ...
 });
+```
+
+To remove a hook, call the function returned from `use()`.
+
+```ts
+const stop = use(db, ...); // Registers the hook
+stop(); // Removes the hook
 ```
 
 ## Call Order
