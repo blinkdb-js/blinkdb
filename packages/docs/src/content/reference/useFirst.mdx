@@ -7,7 +7,7 @@ package: "@blinkdb/react"
 
 Retrieves the first entity from the table that matches the given filter, or `null` if no entity matches.
 
-```ts
+```tsx
 const Component = () => {
   const userTable = useTable((model: Model) => model.users);
   // Retrieve the first user named 'Alice'
@@ -24,6 +24,45 @@ const Component = () => {
 |--------------|-------------------------------------------------------------------------------------------------------------------------------------------|
 | `table`      | A table created by [`createTable()`](createtable) .                                                                                       |
 | `filterOrId` | Optional. Can be either a filter or primary id. If given, the item returned will be the first one to match. See [filters](/docs/filters). |
+
+## Query State
+
+`useFirst()` is asynchronous, which means the query doesn't return your values immediately.
+Instead, it returns an object containing the current query state, the data (if present), and zero or one error (if your query threw an error).
+
+```ts
+type QueryResult<T> {
+  // The item if successful,
+  // `null` if no entity matched,
+  // `undefined` if the query is not done yet
+  data: T|null|undefined;
+  // An error object if the query has produced an error
+  error: Error|undefined;
+  // The current state of the query
+  state: "loading"|"done"|"error";
+}
+```
+
+You can use the loading state to display loading indicators while you wait for your query to complete:
+
+```tsx
+const Component = () => {
+  const userTable = useTable((model: Model) => model.users);
+  const { data: firstUser, state, error } = await useFirst(userTable, {
+    where: {
+      name: "Alice"
+    }
+  });
+
+  return (
+    <>
+      {state === "error" && <span>An error occurred: {error}</span>}
+      {state === "loading" && <span>Loading...</span>}
+      {state === "done" && <div>Alice: {firstUser.name}</div>}
+    </>
+  );
+}
+```
 
 ## Retrieve first item in table
 
