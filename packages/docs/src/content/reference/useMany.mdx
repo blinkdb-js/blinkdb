@@ -1,0 +1,49 @@
+---
+title: "useMany()"
+package: "@blinkdb/react"
+---
+
+# useMany()
+
+Retrieves entities from the table. If a [filter](/docs/filters) is supplied, blinkDB will only
+return matching items - if not given, all items are returned.
+
+```ts
+const Component = () => {
+  const userTable = useTable((model: Model) => model.users);
+  // Retrieve all users named Bob
+  const { data: bobUsers } = await useMany(userTable, {
+    where: {
+      name: "Bob"
+    }
+  });
+  ...
+}
+```
+
+| Parameter | Description                                                                             |
+| --------- | --------------------------------------------------------------------------------------- |
+| `table`   | The table created by [`createTable()`](createtable) .                                   |
+| `filter`  | Optional. If given, items returned will match the filter. See [filters](/docs/filters). |
+
+## Retrieve all items
+
+If no second parameter is supplied, `useMany()` will return all items in the table.
+
+```ts
+// Retrieve all users
+const { data: users } = await useMany(userTable);
+```
+
+## Retrieve items that match a filter
+
+If a [filter](/docs/filters) is provided as the second parameter, `useMany()` returns all items that match the filter.
+
+```ts
+// Retrieve all users named Bob
+const { data: bobUsers } = await useMany(userTable, {
+  where: {
+    name: "Bob"
+  }
+});
+```
