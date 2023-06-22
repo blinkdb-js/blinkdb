@@ -1,0 +1,53 @@
+---
+title: "useOne()"
+package: "@blinkdb/react"
+---
+
+# useOne()
+
+Retrieves one entity from the table.
+
+This is similar to [`useFirst()`](usefirst) in the sense that it retrieves only the first matching entity, but:
+
+- it returns an error if no entity was found
+- it returns an error if more than one entity matched the filter
+
+This makes it perfect for retrieving entities by their primary id, which are unique by default.
+
+```ts
+const Component = () => {
+  const userTable = useTable((model: Model) => model.users);
+  // Retrieve alice by UUID
+  const { data: alice } = await one(userTable, "alice-uuid");
+  ...
+}
+```
+
+| Parameter    | Description                                                                                               |
+|--------------|-----------------------------------------------------------------------------------------------------------|
+| `table`      | The table created by [`createTable()`](createtable) .                                                     |
+| `filterOrId` | Either a filter or an id. The item returned will be the first one to match. See [filters](/docs/filters). |
+
+## Retrieve by primary id
+
+In case an id is given as the second parameter, `useOne()` will return either the entity with a matching primary id,
+or return an error as detailed above.
+
+```ts
+// Retrieve alice by UUID
+const { data: alice } = await one(userTable, "alice-uuid");
+```
+
+## Retrieve by filter
+
+If the second parameter is a [filter](/docs/filters), `useOne()` returns the item that matches the filter,
+or return an error if no / more than one item is available.
+
+```ts
+// Retrieve alice by UUID (with filter this time!)
+const { data: alice } = await one(userTable, {
+  where: {
+    id: "alice-uuid"
+  }
+});
+```
