@@ -1,0 +1,62 @@
+---
+title: "useFirst()"
+package: "@blinkdb/react"
+---
+
+# useFirst()
+
+Retrieves the first entity from the table that matches the given filter, or `null` if no entity matches.
+
+```ts
+const Component = () => {
+  const userTable = useTable((model: Model) => model.users);
+  // Retrieve the first user named 'Alice'
+  const { data: firstUser } = await useFirst(userTable, {
+    where: {
+      name: "Alice"
+    }
+  });
+  ...
+}
+```
+
+| Parameter    | Description                                                                                                                               |
+|--------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| `table`      | A table created by [`createTable()`](createtable) .                                                                                       |
+| `filterOrId` | Optional. Can be either a filter or primary id. If given, the item returned will be the first one to match. See [filters](/docs/filters). |
+
+## Retrieve first item in table
+
+If no second parameter is supplied, `useFirst()` will return the first item in the table.
+
+```ts
+// Retrieve the first user
+const { data: firstUser } = await useFirst(userTable);
+```
+
+What exactly is meant by the "first" item in the table depends upon the insertion order, so the result is not exactly
+deterministic. Still, this is sometimes useful for tables that only ever store zero or one entity.
+
+## Retrieve item by primary id
+
+If an id is given as the second parameter, `useFirst()` will return either the entity with a matching primary id or `null`
+if no such entity exists.
+
+```ts
+// Retrieve the user with the "alice-uuid" uuid
+const { data: alice } = await useFirst(userTable, "alice-uuid");
+```
+
+## Retrieve first item that matches a filter
+
+If a [filter](/docs/filters) is provided as the second parameter, `useFirst()` returns the first item that matches the filter (or `null` if
+no item in the table matches the filter).
+
+```ts
+// Retrieve the first user named 'Alice'
+const { data: firstUser } = await useFirst(userTable, {
+  where: {
+    name: "Alice"
+  }
+});
+```

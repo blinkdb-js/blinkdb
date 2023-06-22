@@ -17,7 +17,7 @@ const firstUserNamedBob = await first(userTable, {
 
 | Parameter    | Description                                                                                                                               |
 |--------------|-------------------------------------------------------------------------------------------------------------------------------------------|
-| `table`      | The table created by [`createTable()`](createtable) .                                                                     |
+| `table`      | The table created by [`createTable()`](createtable) .                                                                                     |
 | `filterOrId` | Optional. Can be either a filter or primary id. If given, the item returned will be the first one to match. See [filters](/docs/filters). |
 
 ## Retrieve first item in table
@@ -29,7 +29,7 @@ const firstUser = await first(userTable);
 ```
 
 What exactly is meant by the "first" item in the table depends upon the insertion order, so the result is not exactly
-deterministic. Still, this is sometimes useful for tables that only ever stores zero or one entity.
+deterministic. Still, this is sometimes useful for tables that only ever store zero or one entity.
 
 ## Retrieve item by primary id
 
