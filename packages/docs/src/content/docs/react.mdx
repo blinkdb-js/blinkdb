@@ -22,7 +22,7 @@ can use any other methods to make tables available to children instead, like a s
 
 ### Providing the model
 
-To make sure that you can access tables in a typesafe way, you need to create a model.
+To make sure that you can access tables in a typesafe way, you need to create a [model](/docs/reference/react/blinkdbprovider#models).
 
 ```ts
 import { createTable } from 'blinkdb';
@@ -48,7 +48,8 @@ export const model = (db) => ({
 export type Model = ModelOf<typeof model>;
 ```
 
-You can then wrap your App in `BlinkDbProvider`. It works like a common [React Context](https://react.dev/learn/passing-data-deeply-with-context)
+You can then wrap your App with the [`BlinkDbProvider`](/docs/reference/react/blinkdbprovider) component.
+It works like a common [React Context](https://react.dev/learn/passing-data-deeply-with-context)
 which passes the db & model to wrapped components.
 
 ```tsx
@@ -69,7 +70,7 @@ export const App = () => {
 ### Accessing tables & the database
 
 To retrieve a specific database table, perhaps for inserting items or querying items,
-you can use the `useTable()` hook.
+you can use the [`useTable()`](/docs/reference/react/usetable) hook.
 
 ```tsx
 import { useTable } from '@blinkdb/react';
@@ -82,7 +83,7 @@ const Component = () => {
 }
 ```
 
-If you want to use the database instance in an component, you can use the `useDB()` hook.
+If you want to use the database instance in an component, you can use the [`useDB()`](/docs/reference/react/usedb) hook.
 
 ```tsx
 import { useDB } from '@blinkdb/react';
@@ -96,7 +97,8 @@ const Component = () => {
 ## Querying items
 
 The `blinkdb` package already provides [many ways](/docs/crud#querying-entities) to retrieve entities from tables.
-In React, you can use the `useFirst()`, `useMany()` and `useOne()` hooks to retrieve entities from the database instead.
+In React, you can use the [`useFirst()`](/docs/reference/react/usefirst), [`useMany()`](/docs/reference/react/usemany)
+and [`useOne()`](/docs/reference/react/useone) hooks to retrieve entities from the database instead.
 Because they take advantage of the way React re-renders components, these hooks are more performant than their TS counterparts.
 
 ```tsx
