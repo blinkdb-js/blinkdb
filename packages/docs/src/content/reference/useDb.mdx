@@ -1,0 +1,41 @@
+---
+title: "useDB()"
+package: "@blinkdb/react"
+---
+
+# useDB()
+
+Retrieves the database instance. Useful for registering blinkDB middleware
+on the entire database in React components.
+Requires a [BlinkDbProvider](blinkdbprovider) parent.
+
+```tsx
+const Component = () => {
+  const db = useDB();
+
+  ...
+}
+```
+
+---
+
+This may be useful in situations where you want to register blinkDB middleware
+on the entire database in React components.
+
+```tsx
+// While this component is rendered,
+// log every action taken on the database.
+const Component = () => {
+  const db = useDB();
+
+  useEffect(() => {
+    return use(db, async (ctx) => {
+      console.log(ctx.action); // Log action
+      return ctx.next(...ctx.params);
+    });
+  }, [db]);
+
+  return (
+    ...
+  );
+}

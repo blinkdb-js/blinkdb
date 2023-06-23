@@ -1,5 +1,6 @@
 ---
 title: "count()"
+package: "blinkdb"
 ---
 
 # count()
@@ -21,7 +22,7 @@ const usersNamedBobCount = await count(userTable, {
 
 | Parameter | Description                                                                                       |
 | --------- | ------------------------------------------------------------------------------------------------- |
-| `table`   | The table created by [`createTable()`](/docs/reference/createtable) .                             |
+| `table`   | The table created by [`createTable()`](createtable) .                                             |
 | `filter`  | Optional. If given, only items matching the filter will be counted. See [filters](/docs/filters). |
 
 | Option                  | Description                                                                  |

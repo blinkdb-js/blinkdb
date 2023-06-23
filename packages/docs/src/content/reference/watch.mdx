@@ -1,5 +1,6 @@
 ---
 title: "watch()"
+package: "blinkdb"
 ---
 
 # watch()
@@ -24,7 +25,7 @@ await watch(userTable, { where: { age: { lt: 3 } } }, (babies) => {
 
 | Parameter  | Description                                                                                  |
 | ---------- | -------------------------------------------------------------------------------------------- |
-| `table`    | The table created by [`createTable()`](/docs/reference/createtable) .                        |
+| `table`    | The table created by [`createTable()`](createtable) .                                        |
 | `filter`   | Optional. If present, `callback` will only be called when a changed item matches the filter. |
 | `callback` | The function which will be called whenever an item is inserted/updated/deleted.              |
 

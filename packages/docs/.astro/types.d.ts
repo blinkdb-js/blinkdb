@@ -157,6 +157,13 @@ declare module "astro:content" {
         collection: "docs";
         data: InferEntrySchema<"docs">;
       } & { render(): Render[".mdx"] };
+      "react.mdx": {
+        id: "react.mdx";
+        slug: "react";
+        body: string;
+        collection: "docs";
+        data: InferEntrySchema<"docs">;
+      } & { render(): Render[".mdx"] };
       "tables.mdx": {
         id: "tables.mdx";
         slug: "tables";
@@ -302,6 +309,13 @@ declare module "astro:content" {
       "use.mdx": {
         id: "use.mdx";
         slug: "use";
+        body: string;
+        collection: "reference";
+        data: InferEntrySchema<"reference">;
+      } & { render(): Render[".mdx"] };
+      "useTable.mdx": {
+        id: "useTable.mdx";
+        slug: "usetable";
         body: string;
         collection: "reference";
         data: InferEntrySchema<"reference">;

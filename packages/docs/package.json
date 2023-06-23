@@ -11,7 +11,13 @@
   },
   "dependencies": {
     "@astrojs/prefetch": "^0.2.1",
-    "astro": "^2.4.1"
+    "@astrojs/react": "^2.2.0",
+    "@headlessui/react": "^1.7.15",
+    "astro": "^2.4.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^4.9.0",
+    "react-sticky-box": "^2.0.4"
   },
   "devDependencies": {
     "@astrojs/mdx": "^0.19.1",

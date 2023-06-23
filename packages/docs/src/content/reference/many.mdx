@@ -1,5 +1,6 @@
 ---
 title: "many()"
+package: "blinkdb"
 ---
 
 # many()
@@ -18,5 +19,5 @@ const allUsersNamedAlice = await many(userTable, {
 
 | Parameter | Description                                                                             |
 | --------- | --------------------------------------------------------------------------------------- |
-| `table`   | The table created by [`createTable()`](/docs/reference/createtable) .                   |
+| `table`   | The table created by [`createTable()`](createtable) .                   |
 | `filter`  | Optional. If given, items returned will match the filter. See [filters](/docs/filters). |

@@ -1,0 +1,66 @@
+---
+title: "<BlinkDbProvider />"
+package: "@blinkdb/react"
+---
+
+# BlinkDbProvider 
+
+This React component a [context](https://react.dev/learn/passing-data-deeply-with-context) for a blinkDB database and [model](#models).
+Allows the [`useDB`](usedb) & [`useTable`](usetable) hooks in child components to retrieve their respective objects.
+
+This component passes down tables so they can be accessed in a type-safe way by children.
+You can use any state management library to do the same.
+
+```tsx
+export const App = () => {
+  return (
+    <BlinkDbProvider db={createDB()} model={model}>
+      {/* Your components here */}
+    </BlinkDbProvider>
+  );
+}
+```
+
+| Parameter | Description                                                                                                                                                 |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `db`      | Optional. The database used to create the models. Can be retrieved in children using [`useDB`](usedb). If not defined, the DB is created with `createDB()`. |
+| `model`   | The [model](#models) from which children can retrieve tables using [`useTable`](usetable).                                                                  |
+
+## Models
+
+A model is any object with a mapping from strings to tables.
+
+```ts
+export const db = createDB();
+
+export const model = {
+  users: createTable<User>(db, "users")(),
+  posts: createTable<Post>(db, "posts")()
+} satisfies ValidModel;
+// ^^^ `satisfies ValidModel` is optional, for recommended
+
+// Create your Model type - this is used by `useTable` hooks
+export type Model = ModelOf<typeof model>;
+```
+
+If you want to use the `db` instance passed into `BlinkDbProvider` in your model, you can use a function as your model.
+
+```ts
+export const model = (db: Database) => ({
+  users: createTable<User>(db, "users")(),
+  posts: createTable<Post>(db, "posts")()
+}) satisfies ValidModel;
+```
+
+For convenience's sake, nesting tables also works.
+
+```ts
+export const model = (db: Database) => ({
+  users: createTable<User>(db, "users")(),
+  some: {
+    nested: {
+      table: createTable<Post>(db, "table")()
+    }
+  }
+}) satisfies ValidModel;
+```

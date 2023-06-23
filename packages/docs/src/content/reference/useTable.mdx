@@ -1,0 +1,22 @@
+---
+title: "useTable()"
+package: "@blinkdb/react"
+---
+
+# useTable()
+
+Retrieves a table from the database.
+Requires a [BlinkDbProvider](blinkdbprovider) parent.
+
+```tsx
+const Component = () => {
+  const userTable = useTable((model: Model) => model.users);
+  const postTable = useTable((model: Model) => model.some.nested.table);
+  ...
+}
+```
+
+
+| Parameter | Description                                                                                             |
+| --------- | ------------------------------------------------------------------------------------------------------- |
+| `model`   | A callback that should return the table you want to retrieve from your [model](blinkdbprovider#models). |

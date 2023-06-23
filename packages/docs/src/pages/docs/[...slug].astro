@@ -4,6 +4,8 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 import { components } from "../../components/md/index.astro";
 import ArrowLeftIcon from '../../components/icons/arrow-left-icon.astro';
 import ArrowRightIcon from '../../components/icons/arrow-right-icon.astro';
+import SidebarGroup from '../../components/sidebar-group.astro';
+import HeadingList from '../../components/heading-list.astro';
 
 export async function getStaticPaths() {
   const entries = await getCollection('docs');
@@ -39,7 +41,7 @@ const entryWithOffset = <T extends CollectionEntry<'docs'>>(entries: T[], entry:
   return entries[newIndex];
 }
 
-const sortedEntries = sortAccordingTo(entries, [
+const guideEntries = sortAccordingTo(entries, [
   "index",
   "installation",
   "tables",
@@ -49,54 +51,62 @@ const sortedEntries = sortAccordingTo(entries, [
   "middleware"
 ]);
 
-const prevEntry = entryWithOffset(sortedEntries, entry, -1);
-const nextEntry = entryWithOffset(sortedEntries, entry, 1);
+const frameworkEntries = sortAccordingTo(entries, [
+  "react"
+]);
+
+const prevGuideEntry = entryWithOffset(guideEntries, entry, -1);
+const nextGuideEntry = entryWithOffset(guideEntries, entry, 1);
 ---
 
 <DocsLayout bodyClassName="overflow-y-scroll" title={entry.data.title}>
-  {sortedEntries.map(e => (
-    <li slot="links" class="py-1"><a href={e.slug === "index" ? '/docs' : `/docs/${e.slug}`}>{e.data.title}</a></li>
-  ))}
-
-  <details slot="sidebar-left" open>
-    <summary class="font-mono font-bold tracking-tight uppercase text-black dark:text-white cursor-pointer">Getting started</summary>
-    <ul class="text-sm ml-3">
-      {sortedEntries.map(e => (
-        <li class="p-0.5"><a href={e.slug === "index" ? '/docs' : `/docs/${e.slug}`}>{e.data.title}</a></li>
+  <Fragment slot="links">
+    <SidebarGroup title="Getting started" href="/docs">
+      {guideEntries.map(e => (
+        <li class="p-0.5"><a href={`/docs/${e.slug !== "index" ? e.slug : ""}`}>{e.data.title}</a></li>
       ))}
-    </ul>
-  </details>
-
-  {headings.length > 3 && (
-    <div slot="sidebar-right" class="text-sm">
-      {headings.map(h => (
-        <div class={["ml-0", "ml-2", "ml-4", "ml-6", "ml-8"].at(h.depth - 1) + " p-0.5"}>
-          <a
-            class={h.depth === 1 ? 'font-bold font-mono tracking-tight text-black dark:text-white' : ''}
-            href={`${entry.slug === "index" ? '/docs' : `/docs/${entry.slug}`}#${h.slug}`}
-          >{h.text}</a>
-        </div>
+    </SidebarGroup>
+    <SidebarGroup title="Frameworks">
+      {frameworkEntries.map(e => (
+        <li class="p-0.5"><a href={`/docs/${e.slug !== "index" ? e.slug : ""}`}>{e.data.title}</a></li>
       ))}
-    </div>
-  )}
+    </SidebarGroup>
+  </Fragment>
+
+  <div slot="sidebar-left" class="space-y-4">
+    <SidebarGroup title="Getting started" href="/docs">
+      {guideEntries.map(e => (
+        <li class="p-0.5"><a href={`/docs/${e.slug !== "index" ? e.slug : ""}`}>{e.data.title}</a></li>
+      ))}
+    </SidebarGroup>
+    <SidebarGroup title="Frameworks">
+      {frameworkEntries.map(e => (
+        <li class="p-0.5"><a href={`/docs/${e.slug !== "index" ? e.slug : ""}`}>{e.data.title}</a></li>
+      ))}
+    </SidebarGroup>
+  </div>
+
+  <div slot="sidebar-right">
+    <HeadingList headings={headings} />
+  </div>
 
   <Content components={components} />
   <div class="!my-20 grid grid-cols-1 sm:grid-cols-2 gap-2 sm:divide-x-2 divide-gray-200 dark:divide-gray-800 font-semibold">
-    {prevEntry && (
+    {prevGuideEntry && (
       <a
         class="sm:col-start-1 px-4 py-2 flex items-center gap-3"
-        href={prevEntry.slug === "index" ? '/docs' : `/docs/${prevEntry.slug}`}
+        href={`/docs/${prevGuideEntry.slug !== "index" ? prevGuideEntry.slug : ""}`}
       >
         <ArrowLeftIcon class="w-6 h-6 text-gray-500" />
-        <span class="mb-0.5 text-gray-800 dark:text-gray-50">{prevEntry.data.title}</span>
+        <span class="mb-0.5 text-gray-800 dark:text-gray-50">{prevGuideEntry.data.title}</span>
       </a>
     )}
-    {nextEntry && (
+    {nextGuideEntry && (
       <a
         class="sm:col-start-2 px-4 py-2 flex items-center gap-3 justify-end"
-        href={nextEntry.slug === "index" ? '/docs' : `/docs/${nextEntry.slug}`}
+        href={`/docs/${nextGuideEntry.slug !== "index" ? nextGuideEntry.slug : ""}`}
       >
-        <span class="mb-0.5 text-gray-800 dark:text-gray-50">{nextEntry.data.title}</span>
+        <span class="mb-0.5 text-gray-800 dark:text-gray-50">{nextGuideEntry.data.title}</span>
         <ArrowRightIcon class="w-6 h-6 text-gray-500" />
       </a>
     )}

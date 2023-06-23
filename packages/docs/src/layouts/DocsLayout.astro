@@ -4,7 +4,7 @@ import CardLink from '../components/card-link.astro';
 import MenuIcon from '../components/icons/menu-icon.astro';
 import Hr from '../components/md/hr.astro';
 import XIcon from '../components/icons/x-icon.astro';
-import Sticky from '../components/sticky.astro';
+import Sticky from '../components/sticky';
 import Footer from '../components/footer.astro';
 import H2 from '../components/md/h2.astro';
 
@@ -26,11 +26,14 @@ const props = Astro.props;
           <XIcon data-menu="open" class="hidden w-8 h-10" />
         </summary>
         <div class="space-y-5">
-          <div class="flex gap-4">
-            <CardLink href="/docs">Docs</CardLink>
-            <CardLink href="/docs/reference">API</CardLink>
+          <div class="flex gap-4 justify-between">
+            <div class="flex gap-4">
+              <CardLink href="/docs">Docs</CardLink>
+              <CardLink href="/docs/reference">API</CardLink>
+            </div>
+            <slot name="pills"></slot>
           </div>
-          <ul class="text-sm grid grid-cols-[repeat(auto-fill,minmax(140px,1fr))] w-full justify-center underline">
+          <ul class="text-sm w-full flex gap-8">
             <slot name="links"></slot>
           </ul>
           <Hr />
@@ -40,14 +43,14 @@ const props = Astro.props;
   </div>
 
   <div class="flex gap-6 justify-center items-start text-gray-700 dark:text-gray-300">
-    <Sticky class="w-52 p-4 hidden lg:block">
+    <Sticky client:load className="w-52 p-4 hidden lg:block">
       <slot name="sidebar-left"></slot>
     </Sticky>
     <div class="w-[min(100%,_80ch)] mb-24 p-4 space-y-5">
       <slot />
       <Footer class="!mt-20"/>
     </div>
-    <Sticky class="w-52 p-4 hidden xl:block">
+    <Sticky client:load className="w-52 p-4 hidden xl:block">
       <slot name="sidebar-right"></slot>
     </Sticky>
   </div>

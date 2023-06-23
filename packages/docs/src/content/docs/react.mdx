@@ -1,0 +1,166 @@
+---
+title: "React"
+---
+
+# React
+
+Using blinkDB in React is not much different from using blinkDB without a framework -
+You can create tables, register hooks, and use all of the [CRUD functions](/docs/crud)
+the same way you use them in normal Typescript.
+
+Nevertheless, the [`@blinkdb/react`](https://npmjs.com/package/@blinkdb/react) package provides
+tools to make blinkDB easier to use in React.
+
+## Context
+
+To do [CRUD](/docs/crud) operations in components, you need the database tables on which these operations
+are performed. In React, `@blinkdb/react` offers you a typesafe method to pass down the database & the
+related tables using context.
+
+This system of passing down tables using context is only one way of doing it. Of course, you
+can use any other methods to make tables available to children instead, like a state management library.
+
+### Providing the model
+
+To make sure that you can access tables in a typesafe way, you need to create a [model](/docs/reference/react/blinkdbprovider#models).
+
+```ts
+import { createTable } from 'blinkdb';
+import { ModelOf, ValidModel } from '@blinkdb/react';
+
+// ---
+// First, create an object that holds all your tables
+// ---
+export const model = (db) => ({
+  users: createTable<User>(db, "users")(),
+  // Nested tables work too!
+  nested: {
+    posts: createTable<Post>(db, "posts")(),
+    images: createTable<PostImages>(db, "postImages")()
+  }
+}) satisfies ValidModel;
+
+// ---
+// Use `ModelOf` to create a typesafe representation
+// of your database tables - You'll be using this
+// to access the tables later!
+// ---
+export type Model = ModelOf<typeof model>;
+```
+
+You can then wrap your App with the [`BlinkDbProvider`](/docs/reference/react/blinkdbprovider) component.
+It works like a common [React Context](https://react.dev/learn/passing-data-deeply-with-context)
+which passes the db & model to wrapped components.
+
+```tsx
+import { createDB } from 'blinkdb';
+import { BlinkDbProvider } from '@blinkdb/react';
+import { model } from './model.ts';
+
+// Wrap your App in BlinkDbProvider!
+export const App = () => {
+  return (
+    <BlinkDbProvider db={createDB()} model={model}>
+      ...
+   </BlinkDbProvider>
+  )
+}
+```
+
+### Accessing tables & the database
+
+To retrieve a specific database table, perhaps for inserting items or querying items,
+you can use the [`useTable()`](/docs/reference/react/usetable) hook.
+
+```tsx
+import { useTable } from '@blinkdb/react';
+import { Model } from './model.ts';
+
+const Component = () => {
+  const userTable = useTable((model: Model) => model.users);
+  const postTable = useTable((model: Model) => model.nested.posts);
+  ...
+}
+```
+
+If you want to use the database instance in an component, you can use the [`useDB()`](/docs/reference/react/usedb) hook.
+
+```tsx
+import { useDB } from '@blinkdb/react';
+
+const Component = () => {
+  const db = useDB();
+  ...
+}
+```
+
+## Querying items
+
+The `blinkdb` package already provides [many ways](/docs/crud#querying-entities) to retrieve entities from tables.
+In React, you can use the [`useFirst()`](/docs/reference/react/usefirst), [`useMany()`](/docs/reference/react/usemany)
+and [`useOne()`](/docs/reference/react/useone) hooks to retrieve entities from the database instead.
+Because they take advantage of the way React re-renders components, these hooks are more performant than their TS counterparts.
+
+```tsx
+import { useTable, useFirst, useMany, useOne } from '@blinkdb/react';
+import { Model } from './model.ts';
+
+const Component = () => {
+  const userTable = useTable((model: Model) => model.users);
+
+  // Retrieve first user called Bob
+  const { data: bob } = useFirst(userTable, {
+    where: {
+      name: "Bob"
+    }
+  });
+
+  // Retrieve all users older than 87
+  const { data: oldUsers } = useMany(userTable, {
+    where: {
+      age: { gte: 87 }
+    }
+  });
+
+  // Retrieve alice by uuid
+  const { data: alice } = useOne(userTable, 'alice-uuid');
+
+  ...
+}
+```
+
+Because queries don't finish running immediately, the object returned from these hooks tracks if items have been retrieved yet, and
+the current state of the query.
+
+```tsx
+import { useTable, useOne } from '@blinkdb/react';
+import { Model } from './model.ts';
+
+const Component = () => {
+  const userTable = useTable((model: Model) => model.users);
+  const { data: alice, error, state } = useOne(userTable, 'alice-uuid');
+
+  return (
+    <>
+      {error && <span>ERROR: {error}</span>}
+      {state === "loading" && <span>Loading user...</span>}
+      {alice && (
+        <UserCard user={alice} />
+      )}
+    </>
+  );
+}
+```
+
+The object returned from the queries is of type `QueryResult<T>`, and looks like this:
+
+```ts
+type QueryResult<T> {
+  // Retrieved data if the query has loaded items
+  data: T|undefined;
+  // An error object if the query has produced an error
+  error: Error|undefined;
+  // The current state of the query
+  state: "loading"|"done"|"error";
+}
+```

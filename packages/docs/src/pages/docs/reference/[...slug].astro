@@ -2,14 +2,38 @@
 import { CollectionEntry, getCollection } from 'astro:content';
 import DocsLayout from '../../../layouts/DocsLayout.astro';
 import { components } from "../../../components/md/index.astro";
+import Code from '../../../components/md/code.astro';
 import H2 from '../../../components/md/h2.astro';
+import SidebarGroup from '../../../components/sidebar-group.astro';
+import HeadingList from '../../../components/heading-list.astro';
+import { FrameworkSelect } from '../../../components/framework-select';
+import CodeBlock from '../../../components/code-block.astro';
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection('reference');
-  return blogEntries.map(entry => ({
-    params: { slug: entry.slug !== "index" ? entry.slug : undefined },
-    props: { entry, entries: blogEntries.filter(e => e.slug !== "index") },
-  }));
+  const withPrefix = (slug: string, prefix?: string) => {
+    return prefix ? (slug ? `${prefix}/${slug}` : prefix) : slug;
+  }
+  const mapToPath = (entry: CollectionEntry<'reference'>, entries: CollectionEntry<'reference'>[], prefix?: string) => {
+    return {
+      params: { slug: withPrefix(entry.slug !== "index" ? entry.slug : undefined, prefix) },
+      props: {
+        entry: { ...entry, slug: withPrefix(entry.slug, prefix) },
+        entries: entries.filter(e => e.slug !== "index").map(e => ({ ...e, slug: withPrefix(e.slug, prefix) }))
+      },
+    };
+  };
+  const isInPackage = (packages: string[])  => {
+    return (entry: CollectionEntry<'reference'>): boolean => {
+      return !entry.data.package || packages.includes(entry.data.package);
+    }
+  }
+  return [
+    // Typescript
+    ...blogEntries.filter(isInPackage(['blinkdb'])).map((entry, _, entries) => mapToPath(entry, entries)),
+    // React
+    ...blogEntries.filter(isInPackage(['blinkdb', '@blinkdb/react'])).map((entry, _, entries) => mapToPath(entry, entries, 'react')),
+  ];
 }
 
 export interface Props {
@@ -17,46 +41,58 @@ export interface Props {
   entries: CollectionEntry<"reference">[];
 };
 
+const { pathname } = Astro.url;
 const { entry, entries } = Astro.props;
 const { Content, headings } = await entry.render();
+const sections = entries.map(e => e.data.package ?? "blinkdb").reduce<string[]>((prev, cur) => prev.includes(cur) ? prev : [...prev, cur], []);
 ---
 
 <DocsLayout bodyClassName="overflow-y-scroll" title={entry.data.title}>
-  {entries.map(e => (
-    <li slot="links" class="py-1"><a href={`/docs/reference/${e.slug}`}>{e.data.title}</a></li>
-  ))}
+  <div slot="pills">
+    <FrameworkSelect client:load className="mr-4" dark frameworkId={pathname.includes('/react') ? 'react' : ''} />
+  </div>
 
-  <details slot="sidebar-left" open>
-    <summary class="font-mono font-bold tracking-tight uppercase text-black dark:text-white cursor-pointer">API</summary>
-    <ul class="text-sm ml-3">
-      {entries.map(e => (
-        <li class="p-0.5"><a href={`/docs/reference/${e.slug}`}>{e.data.title}</a></li>
-      ))}
-    </ul>
-  </details>
+  <Fragment slot="links">
+    {sections.map(section => (
+      <SidebarGroup title={section}>
+        {entries.filter(e => e.data.package === section).map(e => (
+          <li class="p-0.5"><a href={`/docs/reference/${e.slug}`}>{e.data.title}</a></li>
+        ))}
+      </SidebarGroup>
+    ))}
+  </Fragment>
 
-  {headings.length > 3 && (
-    <div slot="sidebar-right" class="text-sm">
-      {headings.map(h => (
-        <div class={["ml-0", "ml-2", "ml-4", "ml-6", "ml-8"].at(h.depth - 1) + " p-0.5"}>
-          <a
-            class={h.depth === 1 ? 'font-bold font-mono tracking-tight text-black dark:text-white' : ''}
-            href={`/docs/reference/${entry.slug}#${h.slug}`}
-          >{h.text}</a>
-        </div>
-      ))}
-    </div>
-  )}
+  <div slot="sidebar-left" class="space-y-4">
+    <FrameworkSelect client:load frameworkId={pathname.includes('/react') ? 'react' : ''} />
+    {sections.map(section => (
+      <SidebarGroup title={section}>
+        {entries.filter(e => e.data.package === section).map(e => (
+          <li class="p-0.5"><a href={`/docs/reference/${e.slug}`}>{e.data.title}</a></li>
+        ))}
+      </SidebarGroup>
+    ))}
+  </div>
+
+  <div slot="sidebar-right">
+    <HeadingList headings={headings} />
+  </div>
 
   <Content components={components} />
-  {entry.slug === "index" && (
+  {entry.slug.includes("index") && (
     <div>
-      <H2>Content</H2>
-      <ul class="grid grid-cols-[repeat(auto-fill,minmax(140px,1fr))] w-full justify-center">
-        {entries.map(e => (
-          <li class="py-1 underline"><a href={`/docs/reference/${e.slug}`}>{e.data.title}</a></li>
-        ))}
-      </ul>
+      {sections.map(section => (
+        <div class="space-y-8">
+          <H2><Code>{section}</Code></H2>
+          <div class="space-y-4">
+            <CodeBlock class="flex-auto" lang="ts" code={`import { ... } from '${section}';`} theme="poimandres" />
+            <ul class="grid grid-cols-[repeat(auto-fill,minmax(140px,1fr))] w-full justify-center">
+              {entries.filter(e => e.data.package === section).map(e => (
+                <li class="py-1 underline"><a href={`/docs/reference/${e.slug}`}>{e.data.title}</a></li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      ))}
     </div>
   )}
 </DocsLayout>

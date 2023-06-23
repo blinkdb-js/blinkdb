@@ -2,7 +2,7 @@ const defaultTheme = require("tailwindcss/defaultTheme");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./src/**/*.{html,astro,js,ts,md,mdx}"],
+  content: ["./src/**/*.{html,astro,js,jsx,ts,tsx,md,mdx}"],
   theme: {
     extend: {
       backgroundImage: {

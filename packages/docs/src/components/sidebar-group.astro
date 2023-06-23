@@ -1,0 +1,17 @@
+---
+export interface Props {
+  title: string;
+  href?: string;
+}
+
+const { title, href } = Astro.props;
+---
+
+<details slot="sidebar-left" open>
+  <summary class="font-mono font-bold tracking-tight uppercase text-black dark:text-white"
+    ><a href={href}>{title}</a>
+  </summary>
+  <ul class="text-sm ml-3">
+    <slot />
+  </ul>
+</details>

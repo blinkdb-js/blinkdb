@@ -1,5 +1,6 @@
 ---
 title: "use()"
+package: "blinkdb"
 ---
 
 # use()
@@ -17,17 +18,17 @@ use(userTable, async (ctx) => {
 });
 ```
 
-| Parameter | Description                                                                                                                                         |
-| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `obj`     | Either a table created by [`createTable()`](/docs/reference/createtable) or an entire database created by [`createDB()`](/docs/reference/createdb). See [Registering a hook](#registering-a-hook).     |
-| `hook`    | A callback that will be executed whenever BlinkDB executes an action. See [Actions](#actions).                                                                                                 |
+| Parameter | Description                                                                                                                                                        |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `obj`     | Either a table created by [`createTable()`](createtable) or an entire database created by [`createDB()`](createdb). See [Registering a hook](#registering-a-hook). |
+| `hook`    | A callback that will be executed whenever BlinkDB executes an action. See [Actions](#actions).                                                                     |
 
 ## Registering a hook
 
 A hook can be registered on a table, and the corresponding callback will trigger whenever BlinkDB executes actions in that given table:
 
 ```ts
-use(userTable, (ctx) => {
+const stop = use(userTable, (ctx) => {
   ...
 });
 ```
@@ -35,9 +36,16 @@ use(userTable, (ctx) => {
 Alternatively, if you want the callback to run on actions on *any* table created with a database, you can register hooks on the database directly:
 
 ```ts
-use(db, (ctx) => {
+const stop = use(db, (ctx) => {
   ...
 });
+```
+
+To remove a hook, call the function returned from `use()`.
+
+```ts
+const stop = use(db, ...); // Registers the hook
+stop(); // Removes the hook
 ```
 
 ## Call Order
