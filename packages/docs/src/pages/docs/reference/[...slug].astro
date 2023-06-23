@@ -2,10 +2,12 @@
 import { CollectionEntry, getCollection } from 'astro:content';
 import DocsLayout from '../../../layouts/DocsLayout.astro';
 import { components } from "../../../components/md/index.astro";
+import Code from '../../../components/md/code.astro';
 import H2 from '../../../components/md/h2.astro';
 import SidebarGroup from '../../../components/sidebar-group.astro';
 import HeadingList from '../../../components/heading-list.astro';
 import { FrameworkSelect } from '../../../components/framework-select';
+import CodeBlock from '../../../components/code-block.astro';
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection('reference');
@@ -78,12 +80,19 @@ const sections = entries.map(e => e.data.package ?? "blinkdb").reduce<string[]>(
   <Content components={components} />
   {entry.slug.includes("index") && (
     <div>
-      <H2>Content</H2>
-      <ul class="grid grid-cols-[repeat(auto-fill,minmax(140px,1fr))] w-full justify-center">
-        {entries.map(e => (
-          <li class="py-1 underline"><a href={`/docs/reference/${e.slug}`}>{e.data.title}</a></li>
-        ))}
-      </ul>
+      {sections.map(section => (
+        <div class="space-y-8">
+          <H2><Code>{section}</Code></H2>
+          <div class="space-y-4">
+            <CodeBlock class="flex-auto" lang="ts" code={`import { ... } from '${section}';`} theme="poimandres" />
+            <ul class="grid grid-cols-[repeat(auto-fill,minmax(140px,1fr))] w-full justify-center">
+              {entries.filter(e => e.data.package === section).map(e => (
+                <li class="py-1 underline"><a href={`/docs/reference/${e.slug}`}>{e.data.title}</a></li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      ))}
     </div>
   )}
 </DocsLayout>
