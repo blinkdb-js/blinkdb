@@ -60,18 +60,18 @@ const nextGuideEntry = entryWithOffset(guideEntries, entry, 1);
 ---
 
 <DocsLayout bodyClassName="overflow-y-scroll" title={entry.data.title}>
-  <div slot="links">
+  <Fragment slot="links">
     <SidebarGroup title="Getting started" href="/docs">
       {guideEntries.map(e => (
         <li class="p-0.5"><a href={`/docs/${e.slug !== "index" ? e.slug : ""}`}>{e.data.title}</a></li>
       ))}
     </SidebarGroup>
-    <SidebarGroup title="React">
+    <SidebarGroup title="Frameworks">
       {frameworkEntries.map(e => (
         <li class="p-0.5"><a href={`/docs/${e.slug !== "index" ? e.slug : ""}`}>{e.data.title}</a></li>
       ))}
     </SidebarGroup>
-  </div>
+  </Fragment>
 
   <div slot="sidebar-left" class="space-y-4">
     <SidebarGroup title="Getting started" href="/docs">

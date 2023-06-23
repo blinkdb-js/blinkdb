@@ -50,7 +50,7 @@ const sections = entries.map(e => e.data.package ?? "blinkdb").reduce<string[]>(
     <FrameworkSelect className="mr-4" client:load dark frameworkId={pathname.includes('/react') ? 'react' : ''} />
   </div>
 
-  <div slot="links">
+  <Fragment slot="links">
     {sections.map(section => (
       <SidebarGroup title={section}>
         {entries.filter(e => e.data.package === section).map(e => (
@@ -58,7 +58,7 @@ const sections = entries.map(e => e.data.package ?? "blinkdb").reduce<string[]>(
         ))}
       </SidebarGroup>
     ))}
-  </div>
+  </Fragment>
 
   <div slot="sidebar-left" class="space-y-4">
     <FrameworkSelect client:load frameworkId={pathname.includes('/react') ? 'react' : ''} />
