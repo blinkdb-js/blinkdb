@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="http://blinkdb.io/" target="blank"><img src="../../packages/docs/src/assets/logo.svg" width="120" alt="BlinkDB Logo" /></a>
+  <a href="http://blinkdb.io/" target="blank"><img src="https://raw.githubusercontent.com/blinkdb-js/blinkdb/main/packages/db/logo.svg" width="120" alt="BlinkDB Logo" /></a>
 </p>
 
 <p align="center">
@@ -9,14 +9,24 @@
 
 <hr />
 
+```tsx
+const Component = () => {
+  const userTable = useTable((model: Model) => model.users);
+  const { data: firstUser } = await useMany(userTable, {
+    where: {
+      name: { in: ["Alice", "Charlie"] },
+      age: { gt: 24 },
+    },
+  });
+  ...
+}
+```
+
 # `@blinkdb/react`
 
 This package contains auxiliary methods for smoothly integrating BlinkDB into [React](https://react.dev/).
 
-This package contains benchmarks for BlinkDB against comparable systems as well as low-level benchmarks against `sorted-btree`, the underlying data structure.
+## Getting started
 
-To execute all benchmarks, run `npm run start`. A glob that controls which benchmarks are run can be supplied as a parameter. As an example:
-
-- `npm run start` runs all benchmarks in the `./src/benchmarks` directory.
-- `npm run start -- "btree/**/*.ts"` runs all benchmarks in the `./src/benchmarks/btree/` directory.
-- `npm run start -- "btree/init.ts"` runs the benchmark present in `./src/benchmarks/btree/init.ts`.
+- Read the docs at https://blinkdb.io/docs/react.
+- Check out the API reference at https://blinkdb.io/docs/reference/react.
