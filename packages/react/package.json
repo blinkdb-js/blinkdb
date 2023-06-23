@@ -3,11 +3,12 @@
   "version": "0.0.1",
   "description": "Auxiliary package for BlinkDB & React",
   "main": "dist/index.js",
-  "module": "src/context/index.ts",
   "author": "",
   "license": "MIT",
   "scripts": {
-    "test": "jest"
+    "build": "tsc --outDir ./dist",
+    "test": "jest",
+    "prepare": "npm run build"
   },
   "peerDependencies": {
     "blinkdb": "^0.13.0",
