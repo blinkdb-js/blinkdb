@@ -47,7 +47,7 @@ const sections = entries.map(e => e.data.package ?? "blinkdb").reduce<string[]>(
 
 <DocsLayout bodyClassName="overflow-y-scroll" title={entry.data.title}>
   <div slot="pills">
-    <FrameworkSelect className="mr-4" client:load dark frameworkId={pathname.includes('/react') ? 'react' : ''} />
+    <FrameworkSelect client:load className="mr-4" dark frameworkId={pathname.includes('/react') ? 'react' : ''} />
   </div>
 
   <Fragment slot="links">
