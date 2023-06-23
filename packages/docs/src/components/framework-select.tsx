@@ -1,5 +1,5 @@
 import { Listbox, Transition } from '@headlessui/react';
-import { TbBrandTypescript, TbBrandReact } from "react-icons/tb";
+import { TbBrandTypescript, TbBrandReact } from "react-icons/tb/index.js";
 
 const ChevronUpDownIcon = (props: { className: string }) => {
   return (
