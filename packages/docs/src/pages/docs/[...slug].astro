@@ -33,6 +33,7 @@ const sortAccordingTo = <T extends CollectionEntry<'docs'>>(entries: T[], order:
 }
 
 const entryWithOffset = <T extends CollectionEntry<'docs'>>(entries: T[], entry: T, offset: number): T|undefined => {
+  if(!entries.includes(entry)) return undefined;
   const index = entries.findIndex(e => e.slug === entry.slug);
   const newIndex = index + offset;
   if(newIndex < 0 || newIndex >= entries.length) {
