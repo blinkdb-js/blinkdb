@@ -1,0 +1,20 @@
+---
+title: "isValidEntity()"
+package: "blinkdb"
+secondary: true
+---
+
+# isValidEntity()
+
+Returns `true` if a given object is [a valid entity](createtable#valid-entities).
+blinkDB Tables can store most objects - except those with Symbol or Function properties.
+
+
+```ts
+assert(isValidEntity({ a: "" }) === true);
+assert(isValidEntity({ b: () => {} }) === false);
+```
+
+| Parameter | Description                   |
+|-----------|-------------------------------|
+| `obj`     | The value or object to check. |

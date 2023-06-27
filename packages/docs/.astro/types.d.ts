@@ -173,6 +173,13 @@ declare module "astro:content" {
       } & { render(): Render[".mdx"] };
     };
     reference: {
+      "BlinkDbProvider.mdx": {
+        id: "BlinkDbProvider.mdx";
+        slug: "blinkdbprovider";
+        body: string;
+        collection: "reference";
+        data: InferEntrySchema<"reference">;
+      } & { render(): Render[".mdx"] };
       "clear.mdx": {
         id: "clear.mdx";
         slug: "clear";
@@ -225,6 +232,13 @@ declare module "astro:content" {
       "insertMany.mdx": {
         id: "insertMany.mdx";
         slug: "insertmany";
+        body: string;
+        collection: "reference";
+        data: InferEntrySchema<"reference">;
+      } & { render(): Render[".mdx"] };
+      "isValidEntity.mdx": {
+        id: "isValidEntity.mdx";
+        slug: "isvalidentity";
         body: string;
         collection: "reference";
         data: InferEntrySchema<"reference">;
@@ -309,6 +323,34 @@ declare module "astro:content" {
       "use.mdx": {
         id: "use.mdx";
         slug: "use";
+        body: string;
+        collection: "reference";
+        data: InferEntrySchema<"reference">;
+      } & { render(): Render[".mdx"] };
+      "useDb.mdx": {
+        id: "useDb.mdx";
+        slug: "usedb";
+        body: string;
+        collection: "reference";
+        data: InferEntrySchema<"reference">;
+      } & { render(): Render[".mdx"] };
+      "useFirst.mdx": {
+        id: "useFirst.mdx";
+        slug: "usefirst";
+        body: string;
+        collection: "reference";
+        data: InferEntrySchema<"reference">;
+      } & { render(): Render[".mdx"] };
+      "useMany.mdx": {
+        id: "useMany.mdx";
+        slug: "usemany";
+        body: string;
+        collection: "reference";
+        data: InferEntrySchema<"reference">;
+      } & { render(): Render[".mdx"] };
+      "useOne.mdx": {
+        id: "useOne.mdx";
+        slug: "useone";
         body: string;
         collection: "reference";
         data: InferEntrySchema<"reference">;

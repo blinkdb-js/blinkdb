@@ -8,6 +8,7 @@ import SidebarGroup from '../../../components/sidebar-group.astro';
 import HeadingList from '../../../components/heading-list.astro';
 import { FrameworkSelect } from '../../../components/framework-select';
 import CodeBlock from '../../../components/code-block.astro';
+import Hr from "../../../components/md/hr.astro";
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection('reference');
@@ -58,6 +59,10 @@ const sections = entries.map(e => e.data.package ?? "blinkdb").reduce<string[]>(
         {entries.filter(e => e.data.package === section).map(e => (
           <li class="p-0.5"><a href={`/docs/reference/${e.slug}`}>{e.data.title}</a></li>
         ))}
+        {entries.filter(e => e.data.package === section && !!e.data.secondary).length > 0 && <li><Hr class="my-2" /></li>}
+        {entries.filter(e => e.data.package === section && !!e.data.secondary).map(e => (
+          <li class="p-0.5"><a href={`/docs/reference/${e.slug}`}>{e.data.title}</a></li>
+        ))}
       </SidebarGroup>
     ))}
   </Fragment>
@@ -66,7 +71,11 @@ const sections = entries.map(e => e.data.package ?? "blinkdb").reduce<string[]>(
     <FrameworkSelect client:load frameworkId={pathname.includes('/react') ? 'react' : ''} />
     {sections.map(section => (
       <SidebarGroup title={section}>
-        {entries.filter(e => e.data.package === section).map(e => (
+        {entries.filter(e => e.data.package === section && !e.data.secondary).map(e => (
+          <li class="p-0.5"><a href={`/docs/reference/${e.slug}`}>{e.data.title}</a></li>
+        ))}
+        {entries.filter(e => e.data.package === section && !!e.data.secondary).length > 0 && <li><Hr class="my-2" /></li>}
+        {entries.filter(e => e.data.package === section && !!e.data.secondary).map(e => (
           <li class="p-0.5"><a href={`/docs/reference/${e.slug}`}>{e.data.title}</a></li>
         ))}
       </SidebarGroup>
