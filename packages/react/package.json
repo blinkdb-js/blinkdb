@@ -7,8 +7,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc --outDir ./dist",
-    "test": "jest",
-    "prepare": "npm run build"
+    "test": "jest"
   },
   "peerDependencies": {
     "blinkdb": "^0.13.0",

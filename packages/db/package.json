@@ -7,8 +7,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc --outDir ./dist",
-    "test": "jest",
-    "prepare": "npm run build"
+    "test": "jest"
   },
   "dependencies": {
     "fast-deep-equal": "^3.1.3",
