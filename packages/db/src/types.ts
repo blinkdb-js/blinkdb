@@ -73,3 +73,24 @@ export type ValidProperties<T> = T extends Function | Symbol
   : T extends object
   ? { [K in keyof T]: ValidEntity<T[K]> }
   : T;
+
+/**
+ * Returns true if the given object is a valid entity.
+ *
+ * @example
+ * assert(isValidEntity({ a: "" }) === true);
+ * assert(isValidEntity({ b: () => {} }) === false);
+ */
+export const isValidEntity = <T>(obj: T): obj is ValidEntity<T> => {
+  if (typeof obj === "function") return false;
+  if (typeof obj === "symbol") return false;
+  if (obj instanceof Date) return true;
+  if (typeof obj === "bigint") return true;
+  if (typeof obj === "object") {
+    for (const key in obj) {
+      if (!isValidEntity(obj[key])) return false;
+    }
+    return true;
+  }
+  return true;
+};
