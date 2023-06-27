@@ -7,8 +7,7 @@
   ],
   "scripts": {
     "prepare": "node ./prepare.js",
-    "build": "npm run build -w=blinkdb",
-    "publish": "npm publish -w=blinkdb",
+    "build": "npm run build -w=blinkdb -w=@blinkdb/react",
     "test": "jest",
     "test-coverage": "jest --coverage"
   },
