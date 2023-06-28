@@ -14,7 +14,7 @@ const { headings } = Astro.props;
       <div class={["ml-0", "ml-2", "ml-4", "ml-6", "ml-8"].at(h.depth - 1) + " p-0.5"}>
         <a
           class={h.depth === 1 ? 'font-bold font-mono tracking-tight text-black dark:text-white' : ''}
-          href={`${Astro.url}#${h.slug}`}
+          href={`#${h.slug}`}
         >{h.text}</a>
       </div>
     ))}
