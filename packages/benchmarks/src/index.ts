@@ -26,7 +26,6 @@ glob(escapedPath, async (err, files) => {
         process.exit(-1);
       });
       // Run the benchmark
-      await bench.warmup();
       await bench.run();
       // Output Results
       console.log(
