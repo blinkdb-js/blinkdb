@@ -58,7 +58,9 @@ export type PrimaryKeyOf<T> = keyof T &
 /**
  * An object with a primary key.
  */
-export type Entity<T> = Record<PrimaryKeyOf<T>, PrimaryKey>;
+export type Entity<T> = {
+  [key in PrimaryKeyOf<T>]: T[key];
+};
 
 /**
  * Returns type T if T only contains valid properties.
