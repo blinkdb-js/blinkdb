@@ -33,8 +33,8 @@ export const bench = new Bench()
     () => {
       const usersToInsert: User[] = [];
       const usersToUpdate: User[] = [];
-      for(const user of users) {
-        if(lokiUserTable.get((user as any).$loki)) {
+      for (const user of users) {
+        if ((user as any).$loki) {
           usersToUpdate.push(user);
         } else {
           usersToInsert.push(user);
@@ -44,7 +44,13 @@ export const bench = new Bench()
       lokiUserTable.update(usersToUpdate);
     },
     {
-      beforeEach: () => lokiUserTable.clear(),
+      beforeEach: () => {
+        lokiUserTable.clear();
+        // Loki doesn't reset the $loki indexes, so remove them here
+        for (const user of users) {
+          (user as any)["$loki"] = undefined;
+        }
+      },
     }
   )
   .add(
