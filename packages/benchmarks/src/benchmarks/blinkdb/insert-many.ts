@@ -31,7 +31,13 @@ export const bench = new Bench()
       lokiUserTable.insert(users);
     },
     {
-      beforeEach: () => lokiUserTable.clear(),
+      beforeEach: () => {
+        lokiUserTable.clear();
+        // Loki doesn't reset the $loki indexes, so remove them here
+        for (const user of users) {
+          (user as any)["$loki"] = undefined;
+        }
+      },
     }
   )
   .add(
