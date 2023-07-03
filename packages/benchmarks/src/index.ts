@@ -20,6 +20,11 @@ glob(escapedPath, async (err, files) => {
   for (const mod of modules) {
     if ("bench" in mod.module) {
       const bench: Bench = mod.module.bench;
+      bench.addEventListener("error", (err) => {
+        console.error(`Error in task ${err.task.name} at benchmark`, mod.name);
+        console.error(err);
+        process.exit(-1);
+      });
       // Run the benchmark
       await bench.warmup();
       await bench.run();
