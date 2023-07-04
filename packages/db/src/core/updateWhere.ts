@@ -2,10 +2,10 @@ import { middleware } from "../events/Middleware";
 import { get } from "../query";
 import { Filter } from "../query/types";
 import { Entity, PrimaryKeyOf } from "../types";
-import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 import { PrimaryKeyCannotBeModifiedError } from "./errors";
+import { TableUtils } from "./table.utils";
 import { Diff } from "./update";
 import { internalUpdateMany } from "./updateMany";
 
@@ -23,10 +23,7 @@ import { internalUpdateMany } from "./updateMany";
  *   return { ...user, age: user.age + 1 };
  * });
  */
-export async function updateWhere<
-  T extends Entity<T>,
-  P extends PrimaryKeyOf<T>
->(
+export async function updateWhere<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   filter: Filter<T>,
   callback: (item: T) => Diff<T, P> | Promise<Diff<T, P>>
@@ -38,10 +35,7 @@ export async function updateWhere<
   );
 }
 
-export async function internalUpdateWhere<
-  T extends Entity<T>,
-  P extends PrimaryKeyOf<T>
->(
+export async function internalUpdateWhere<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   filter: Filter<T>,
   callback: (item: T) => Diff<T, P> | Promise<Diff<T, P>>
@@ -49,7 +43,7 @@ export async function internalUpdateWhere<
   const primaryKeyProperty = table[BlinkKey].options.primary;
 
   let items = get(table, filter);
-  items = table[BlinkKey].db[BlinkKey].options.clone ? clone(items) : items;
+  items = TableUtils.cloneIfNecessary(table, items);
   const modifiedItems = await Promise.all(
     items.map(async (item) => {
       const newItem = await callback(item);

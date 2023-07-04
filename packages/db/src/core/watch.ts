@@ -4,10 +4,10 @@ import { limitItems } from "../query/limit";
 import { insertIntoSortedList } from "../query/sort";
 import { Query, ValidSortKey } from "../query/types";
 import { Entity, PrimaryKeyOf } from "../types";
-import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 import { internalMany } from "./many";
+import { TableUtils } from "./table.utils";
 
 /**
  * Watches all changes in `table` and calls `callback` whenever entities are inserted, updated, or removed.
@@ -83,7 +83,7 @@ export async function watch<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   const primaryKeyProperty = table[BlinkKey].options.primary;
 
   function sanitize(items: T[]): T[] {
-    return table[BlinkKey].db[BlinkKey].options.clone ? clone(items) : items;
+    return TableUtils.cloneIfNecessary(table, items);
   }
 
   function sort(items: T[]): T[] {
