@@ -1,6 +1,6 @@
+import { TableUtils } from "../core/table.utils";
 import { middleware } from "../events/Middleware";
 import { Entity, isOrdinal, PrimaryKeyOf } from "../types";
-import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 import { PrimaryKeyAlreadyInUseError } from "./errors";
@@ -40,7 +40,6 @@ export async function internalInsertMany<T extends Entity<T>, P extends PrimaryK
 
   const blinkTable = table[BlinkKey];
   const primaryKeyProperty = blinkTable.options.primary;
-  const shouldClone = blinkTable.db[BlinkKey].options.clone;
 
   const blinkTableStorage = blinkTable.storage;
   const primaryBtree = blinkTableStorage.primary;
@@ -52,7 +51,7 @@ export async function internalInsertMany<T extends Entity<T>, P extends PrimaryK
   for (const entity of entities) {
     const primaryKey = entity[primaryKeyProperty];
 
-    const storageEntity = shouldClone ? clone(entity) : entity;
+    const storageEntity = TableUtils.cloneIfNecessary(table, entity);
 
     const inserted = primaryBtree.set(primaryKey, storageEntity, false);
     if (!inserted) {
