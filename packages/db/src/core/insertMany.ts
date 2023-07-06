@@ -31,28 +31,33 @@ export async function insertMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>
   );
 }
 
-export async function internalInsertMany<
-  T extends Entity<T>,
-  P extends PrimaryKeyOf<T>
->(table: Table<T, P>, entities: T[]): Promise<T[P][]> {
+export async function internalInsertMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+  table: Table<T, P>,
+  entities: T[]
+): Promise<T[P][]> {
   const primaryKeys: T[P][] = [];
   const events: { entity: T }[] = [];
+
+  const blinkTable = table[BlinkKey];
+  const primaryKeyProperty = blinkTable.options.primary;
+  const shouldClone = blinkTable.db[BlinkKey].options.clone;
+
+  const blinkTableStorage = blinkTable.storage;
+  const primaryBtree = blinkTableStorage.primary;
+  const indexBtrees = blinkTableStorage.indexes;
+
   for (const entity of entities) {
-    const primaryKeyProperty = table[BlinkKey].options.primary;
     const primaryKey = entity[primaryKeyProperty];
 
-    if (table[BlinkKey].storage.primary.has(primaryKey)) {
+    const storageEntity = shouldClone ? clone(entity) : entity;
+
+    const inserted = primaryBtree.set(primaryKey, storageEntity, false);
+    if (!inserted) {
       throw new PrimaryKeyAlreadyInUseError(primaryKey);
     }
-
-    const storageEntity = table[BlinkKey].db[BlinkKey].options.clone
-      ? clone(entity)
-      : entity;
-
-    table[BlinkKey].storage.primary.set(primaryKey, storageEntity);
-    table[BlinkKey].storage.primary.totalItemSize++;
-    for (const property in table[BlinkKey].storage.indexes) {
-      const btree = table[BlinkKey].storage.indexes[property]!;
+    primaryBtree.totalItemSize++;
+    for (const property in indexBtrees) {
+      const btree = indexBtrees[property]!;
       const key = entity[property];
       if (!isOrdinal(key)) continue;
 
@@ -67,6 +72,6 @@ export async function internalInsertMany<
     primaryKeys.push(primaryKey);
     events.push({ entity: storageEntity });
   }
-  void table[BlinkKey].events.onInsert.dispatch(events);
+  void blinkTable.events.onInsert.dispatch(events);
   return primaryKeys;
 }
