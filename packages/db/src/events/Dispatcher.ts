@@ -23,6 +23,14 @@ export class Dispatcher<T = void> {
   public async dispatch(data: T): Promise<void> {
     this.callbacks.forEach((cb) => cb(data));
   }
+
+  /**
+   * Returns true if this dispatcher has listeners.
+   * If this returns false, then you can skip calling `dispatch` for performance optimizations.
+   */
+  public hasListeners(): boolean {
+    return this.callbacks.size > 0;
+  }
 }
 
 type Callback<T> = (data: T) => Promise<void> | void;
