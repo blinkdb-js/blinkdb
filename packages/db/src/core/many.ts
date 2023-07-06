@@ -42,27 +42,29 @@ export async function many<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   query?: Query<T, P>
 ): Promise<T[]>;
 
-export async function many<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+export function many<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   query?: Query<T, P>
 ): Promise<T[]> {
-  return middleware<T, P, "many">(
-    table,
-    { action: "many", params: [table, query] },
-    (table, query) => internalMany(table, query)
+  return Promise.resolve(
+    middleware<T, P, "many">(
+      table,
+      { action: "many", params: [table, query] },
+      (table, query) => internalMany(table, query)
+    )
   );
 }
 
-export async function internalMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+export function internalMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   query?: Query<T, P>
 ): Promise<T[]> {
   if (query === undefined) {
     const allItems = table[BlinkKey].storage.primary.valuesArray();
-    return TableUtils.cloneIfNecessary(table, allItems);
+    return Promise.resolve(TableUtils.cloneIfNecessary(table, allItems));
   }
 
   const items = get(table, query);
 
-  return TableUtils.cloneIfNecessary(table, items);
+  return Promise.resolve(TableUtils.cloneIfNecessary(table, items));
 }

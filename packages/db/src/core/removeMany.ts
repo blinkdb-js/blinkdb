@@ -16,21 +16,23 @@ import { Ids } from "./remove";
  * // Remove Alice from the table
  * await remove(userTable, { id: userId });
  */
-export async function removeMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+export function removeMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   entities: Ids<T, P>[]
 ): Promise<boolean> {
-  return middleware<T, P, "removeMany">(
-    table,
-    { action: "removeMany", params: [table, entities] },
-    (table, entities) => internalRemoveMany(table, entities)
+  return Promise.resolve(
+    middleware<T, P, "removeMany">(
+      table,
+      { action: "removeMany", params: [table, entities] },
+      (table, entities) => internalRemoveMany(table, entities)
+    )
   );
 }
 
-export async function internalRemoveMany<
-  T extends Entity<T>,
-  P extends PrimaryKeyOf<T>
->(table: Table<T, P>, entities: Ids<T, P>[]): Promise<boolean> {
+export function internalRemoveMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+  table: Table<T, P>,
+  entities: Ids<T, P>[]
+): Promise<boolean> {
   const events: { entity: T }[] = [];
   let allEntitiesRemoved = true;
   for (const entity of entities) {
@@ -40,7 +42,7 @@ export async function internalRemoveMany<
     const indexes = table[BlinkKey].storage.indexes;
     if (Object.keys(indexes).length > 0) {
       const item = table[BlinkKey].storage.primary.get(primaryKey);
-      if (!item) return false;
+      if (!item) return Promise.resolve(false);
       for (const property in indexes) {
         const btree = indexes[property]!;
         const key = item[property];
@@ -66,5 +68,5 @@ export async function internalRemoveMany<
     allEntitiesRemoved = allEntitiesRemoved && hasDeleted;
   }
   void table[BlinkKey].events.onRemove.dispatch(events);
-  return allEntitiesRemoved;
+  return Promise.resolve(allEntitiesRemoved);
 }

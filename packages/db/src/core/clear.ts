@@ -11,18 +11,19 @@ import { Table } from "./createTable";
  * const userTable = createTable<User>(db, "users")();
  * await clear(userTable);
  */
-export async function clear<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+export function clear<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>
 ): Promise<void> {
-  return middleware<T, P, "clear">(table, { action: "clear", params: [table] }, (table) =>
-    internalClear(table)
+  return Promise.resolve(
+    middleware<T, P, "clear">(table, { action: "clear", params: [table] }, (table) =>
+      internalClear(table)
+    )
   );
 }
 
-export async function internalClear<
-  T extends Entity<T>,
-  P extends PrimaryKeyOf<T>
->(table: Table<T, P>): Promise<void> {
+export function internalClear<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+  table: Table<T, P>
+): Promise<void> {
   table[BlinkKey].storage.primary.clear();
   for (const key in table[BlinkKey].storage.indexes) {
     const btree = table[BlinkKey].storage.indexes[key]!;
@@ -30,4 +31,5 @@ export async function internalClear<
     btree.totalItemSize = 0;
   }
   void table[BlinkKey].events.onClear.dispatch();
+  return Promise.resolve();
 }

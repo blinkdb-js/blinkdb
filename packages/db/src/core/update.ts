@@ -17,23 +17,24 @@ import { internalUpdateMany } from "./updateMany";
  * // Increase the age of Alice
  * await update(userTable, { id: userId, age: 16 });
  */
-export async function update<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+export function update<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   diff: Diff<T, P>
 ): Promise<T[P]> {
-  return middleware<T, P, "update">(
-    table,
-    { action: "update", params: [table, diff] },
-    (table, diff) => internalUpdate(table, diff)
+  return Promise.resolve(
+    middleware<T, P, "update">(
+      table,
+      { action: "update", params: [table, diff] },
+      (table, diff) => internalUpdate(table, diff)
+    )
   );
 }
 
-export async function internalUpdate<
-  T extends Entity<T>,
-  P extends PrimaryKeyOf<T>
->(table: Table<T, P>, diff: Diff<T, P>): Promise<T[P]> {
-  const ids = await internalUpdateMany(table, [diff]);
-  return ids[0];
+export function internalUpdate<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+  table: Table<T, P>,
+  diff: Diff<T, P>
+): Promise<T[P]> {
+  return internalUpdateMany(table, [diff]).then((ids) => ids[0]);
 }
 
 export type Diff<T extends Entity<T>, P extends PrimaryKeyOf<T>> = Partial<T> & {

@@ -15,21 +15,23 @@ import { internalRemoveMany } from "./removeMany";
  * // Remove Alice from the table
  * await remove(userTable, { id: userId });
  */
-export async function remove<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+export function remove<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   entity: Ids<T, P>
 ): Promise<boolean> {
-  return middleware<T, P, "remove">(
-    table,
-    { action: "remove", params: [table, entity] },
-    (table, entity) => internalRemove(table, entity)
+  return Promise.resolve(
+    middleware<T, P, "remove">(
+      table,
+      { action: "remove", params: [table, entity] },
+      (table, entity) => internalRemove(table, entity)
+    )
   );
 }
 
-export async function internalRemove<
-  T extends Entity<T>,
-  P extends PrimaryKeyOf<T>
->(table: Table<T, P>, entity: Ids<T, P>): Promise<boolean> {
+export function internalRemove<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+  table: Table<T, P>,
+  entity: Ids<T, P>
+): Promise<boolean> {
   return internalRemoveMany(table, [entity]);
 }
 

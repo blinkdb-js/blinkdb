@@ -39,35 +39,37 @@ export async function one<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   query: Query<T, P>
 ): Promise<T>;
 
-export async function one<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+export function one<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   queryOrId: Query<T, P> | T[P]
 ): Promise<T> {
-  return middleware<T, P, "one">(
-    table,
-    { action: "one", params: [table, queryOrId] },
-    (table, query) => internalOne(table, query)
+  return Promise.resolve(
+    middleware<T, P, "one">(
+      table,
+      { action: "one", params: [table, queryOrId] },
+      (table, query) => internalOne(table, query)
+    )
   );
 }
 
-export async function internalOne<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+export function internalOne<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   queryOrId: Query<T, P> | T[P]
 ): Promise<T> {
   if (typeof queryOrId !== "object") {
     let entity = table[BlinkKey].storage.primary.get(queryOrId) ?? null;
     if (entity === null) {
-      throw new ItemNotFoundError(queryOrId);
+      return Promise.reject(new ItemNotFoundError(queryOrId));
     }
-    return TableUtils.cloneIfNecessary(table, entity);
+    return Promise.resolve(TableUtils.cloneIfNecessary(table, entity));
   }
 
   const res = get(table, queryOrId);
   if (res.length === 0) {
-    throw new ItemNotFoundError(queryOrId);
+    return Promise.reject(new ItemNotFoundError(queryOrId));
   } else if (res.length > 1) {
-    throw new MoreThanOneItemFoundError(queryOrId);
+    return Promise.reject(new MoreThanOneItemFoundError(queryOrId));
   }
 
-  return TableUtils.cloneIfNecessary(table, res[0]);
+  return Promise.resolve(TableUtils.cloneIfNecessary(table, res[0]));
 }

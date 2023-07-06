@@ -19,20 +19,22 @@ import { internalRemoveMany } from "./removeMany";
  *   }
  * });
  */
-export async function removeWhere<
-  T extends Entity<T>,
-  P extends PrimaryKeyOf<T>
->(table: Table<T, P>, filter: Filter<T>): Promise<void> {
-  return middleware<T, P, "removeWhere">(
-    table,
-    { action: "removeWhere", params: [table, filter] },
-    (table, filter) => internalRemoveWhere(table, filter)
+export function removeWhere<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+  table: Table<T, P>,
+  filter: Filter<T>
+): Promise<void> {
+  return Promise.resolve(
+    middleware<T, P, "removeWhere">(
+      table,
+      { action: "removeWhere", params: [table, filter] },
+      (table, filter) => internalRemoveWhere(table, filter)
+    )
   );
 }
 
-export async function internalRemoveWhere<
-  T extends Entity<T>,
-  P extends PrimaryKeyOf<T>
->(table: Table<T, P>, filter: Filter<T>): Promise<void> {
-  await internalRemoveMany<T, P>(table, get(table, filter));
+export function internalRemoveWhere<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+  table: Table<T, P>,
+  filter: Filter<T>
+): Promise<void> {
+  return internalRemoveMany<T, P>(table, get(table, filter)).then((_) => {});
 }

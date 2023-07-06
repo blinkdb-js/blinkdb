@@ -20,18 +20,20 @@ import { PrimaryKeyAlreadyInUseError } from "./errors";
  *   { id: uuid(), name: "Charlie", age: 34 }
  * ]);
  */
-export async function insertMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+export function insertMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   entities: T[]
 ): Promise<T[P][]> {
-  return middleware<T, P, "insertMany">(
-    table,
-    { action: "insertMany", params: [table, entities] },
-    (table, entities) => internalInsertMany(table, entities)
+  return Promise.resolve(
+    middleware<T, P, "insertMany">(
+      table,
+      { action: "insertMany", params: [table, entities] },
+      (table, entities) => internalInsertMany(table, entities)
+    )
   );
 }
 
-export async function internalInsertMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+export function internalInsertMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   entities: T[]
 ): Promise<T[P][]> {
@@ -55,7 +57,7 @@ export async function internalInsertMany<T extends Entity<T>, P extends PrimaryK
 
     const inserted = primaryBtree.set(primaryKey, storageEntity, false);
     if (!inserted) {
-      throw new PrimaryKeyAlreadyInUseError(primaryKey);
+      return Promise.reject(new PrimaryKeyAlreadyInUseError(primaryKey));
     }
     primaryBtree.totalItemSize++;
     for (const property in indexBtrees) {
@@ -80,5 +82,5 @@ export async function internalInsertMany<T extends Entity<T>, P extends PrimaryK
   if (hasEventListeners) {
     void blinkTable.events.onInsert.dispatch(events);
   }
-  return primaryKeys;
+  return Promise.resolve(primaryKeys);
 }

@@ -15,21 +15,22 @@ import { internalInsertMany } from "./insertMany";
  * const bobId = await insert(userTable, { id: uuid(), name: "Bob", age: 45 });
  * const charlieId = await insert(userTable, { id: uuid(), name: "Charlie", age: 34 });
  */
-export async function insert<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+export function insert<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   entity: T
 ): Promise<T[P]> {
-  return middleware<T, P, "insert">(
-    table,
-    { action: "insert", params: [table, entity] },
-    (table, entity) => internalInsert(table, entity)
+  return Promise.resolve(
+    middleware<T, P, "insert">(
+      table,
+      { action: "insert", params: [table, entity] },
+      (table, entity) => internalInsert(table, entity)
+    )
   );
 }
 
-export async function internalInsert<
-  T extends Entity<T>,
-  P extends PrimaryKeyOf<T>
->(table: Table<T, P>, entity: T): Promise<T[P]> {
-  const ids = await internalInsertMany(table, [entity]);
-  return ids[0];
+export function internalInsert<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+  table: Table<T, P>,
+  entity: T
+): Promise<T[P]> {
+  return internalInsertMany(table, [entity]).then((ids) => ids[0]);
 }
