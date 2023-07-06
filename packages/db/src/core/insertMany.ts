@@ -46,6 +46,9 @@ export async function internalInsertMany<T extends Entity<T>, P extends PrimaryK
   const primaryBtree = blinkTableStorage.primary;
   const indexBtrees = blinkTableStorage.indexes;
 
+  // Allocating all objects in the `events` array is slow. Only do this if it's actually necessary.
+  const hasEventListeners = blinkTable.events.onInsert.hasListeners();
+
   for (const entity of entities) {
     const primaryKey = entity[primaryKeyProperty];
 
@@ -70,8 +73,13 @@ export async function internalInsertMany<T extends Entity<T>, P extends PrimaryK
       btree.totalItemSize++;
     }
     primaryKeys.push(primaryKey);
-    events.push({ entity: storageEntity });
+    if (hasEventListeners) {
+      events.push({ entity: storageEntity });
+    }
   }
-  void blinkTable.events.onInsert.dispatch(events);
+
+  if (hasEventListeners) {
+    void blinkTable.events.onInsert.dispatch(events);
+  }
   return primaryKeys;
 }
