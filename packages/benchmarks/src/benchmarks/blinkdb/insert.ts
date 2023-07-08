@@ -18,7 +18,7 @@ let lokiUserTable = lokidb.addCollection<User>("users", { unique: ["id"] });
 let lokiIndex = 0;
 
 let users: User[] = [];
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < 1000000; i++) {
   users.push({
     id: i,
     name: randFirstName(),

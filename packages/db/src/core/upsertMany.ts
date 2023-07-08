@@ -22,21 +22,23 @@ import { internalUpdateMany } from "./updateMany";
  *   { id: uuid(), age: 45 }
  * ]);
  */
-export async function upsertMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+export function upsertMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   entities: T[]
 ): Promise<T[P][]> {
-  return middleware<T, P, "upsertMany">(
-    table,
-    { action: "upsertMany", params: [table, entities] },
-    (table, entities) => internalUpsertMany(table, entities)
+  return Promise.resolve(
+    middleware<T, P, "upsertMany">(
+      table,
+      { action: "upsertMany", params: [table, entities] },
+      (table, entities) => internalUpsertMany(table, entities)
+    )
   );
 }
 
-export async function internalUpsertMany<
-  T extends Entity<T>,
-  P extends PrimaryKeyOf<T>
->(table: Table<T, P>, entities: T[]): Promise<T[P][]> {
+export async function internalUpsertMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+  table: Table<T, P>,
+  entities: T[]
+): Promise<T[P][]> {
   // Split entities into items to create & items to update
   // reduces the number of outgoing events to 2
   const items: { entity: T; method: "insert" | "update" }[] = [];

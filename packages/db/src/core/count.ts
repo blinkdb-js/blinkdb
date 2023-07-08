@@ -42,36 +42,35 @@ export async function count<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   options?: { exact: boolean }
 ): Promise<number>;
 
-export async function count<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+export function count<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   filter?: Filter<T>,
   options: { exact: boolean } = { exact: true }
 ): Promise<number> {
-  return middleware<T, P, "count">(
-    table,
-    {
-      action: "count",
-      params: [table, filter, options],
-    },
-    (table, filter, options) => internalCount(table, filter, options)
+  return Promise.resolve(
+    middleware<T, P, "count">(
+      table,
+      {
+        action: "count",
+        params: [table, filter, options],
+      },
+      (table, filter, options) => internalCount(table, filter, options)
+    )
   );
 }
 
-export async function internalCount<
-  T extends Entity<T>,
-  P extends PrimaryKeyOf<T>
->(
+export function internalCount<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   filter?: Filter<T>,
   options: { exact: boolean } = { exact: true }
 ): Promise<number> {
   const totalSize = table[BlinkKey].storage.primary.size;
   if (!filter || !filter.where) {
-    return totalSize;
+    return Promise.resolve(totalSize);
   }
   if (options.exact) {
-    return get(table, filter).length;
+    return Promise.resolve(get(table, filter).length);
   } else {
-    return Math.min(analyze(table, filter.where), totalSize);
+    return Promise.resolve(Math.min(analyze(table, filter.where), totalSize));
   }
 }

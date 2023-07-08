@@ -18,7 +18,7 @@ let lokiUserTable = lokidb.addCollection<User>("users", { unique: ["id"] });
 let lokiIndex = 0;
 
 let users: User[] = [];
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < 1000000; i++) {
   users.push({
     id: i,
     name: randFirstName(),
@@ -26,14 +26,14 @@ for (let i = 0; i < 100000; i++) {
   });
 }
 
-lokiUserTable.insert(users.slice(0, 50000));
-insertMany(blinkUserTable, users.slice(0, 50000));
+lokiUserTable.insert(users.slice(0, 500000));
+insertMany(blinkUserTable, users.slice(0, 500000));
 
 export const bench = new Bench()
   .add("lokijs", () => {
     const user = users[lokiIndex++];
-    if(lokiUserTable.get((user as any).$loki)) {
-     lokiUserTable.update(user);
+    if ((user as any).$loki) {
+      lokiUserTable.update(user);
     } else {
       lokiUserTable.insert(user);
     }

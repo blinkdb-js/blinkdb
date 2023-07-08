@@ -29,14 +29,16 @@ export const bench = new Bench()
     "lokijs",
     () => {
       lokiUserTable.remove(users);
-      // TODO: For some reason loki doesn't always remove the $loki indexes?
-      for (const user of users) {
-        (user as any)["$loki"] = undefined;
-      }
     },
     {
       beforeEach: () => {
         lokiUserTable.insert(users);
+      },
+      afterEach: () => {
+        // Loki doesn't reset the $loki indexes, so remove them here
+        for (const user of users) {
+          (user as any)["$loki"] = undefined;
+        }
       },
     }
   )
@@ -44,11 +46,6 @@ export const bench = new Bench()
     "blinkdb",
     async () => {
       await removeMany(blinkUserTable, users);
-      // TODO: For some reason loki doesn't always remove the $loki indexes?
-      // We do this in the blinkdb task as well, otherwise the benchmark would be a bit unfair
-      for (const user of users) {
-        (user as any)["$loki"] = undefined;
-      }
     },
     {
       beforeEach: async () => {

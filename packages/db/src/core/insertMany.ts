@@ -1,6 +1,6 @@
+import { TableUtils } from "../core/table.utils";
 import { middleware } from "../events/Middleware";
 import { Entity, isOrdinal, PrimaryKeyOf } from "../types";
-import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 import { PrimaryKeyAlreadyInUseError } from "./errors";
@@ -20,39 +20,48 @@ import { PrimaryKeyAlreadyInUseError } from "./errors";
  *   { id: uuid(), name: "Charlie", age: 34 }
  * ]);
  */
-export async function insertMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+export function insertMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   entities: T[]
 ): Promise<T[P][]> {
-  return middleware<T, P, "insertMany">(
-    table,
-    { action: "insertMany", params: [table, entities] },
-    (table, entities) => internalInsertMany(table, entities)
+  return Promise.resolve(
+    middleware<T, P, "insertMany">(
+      table,
+      { action: "insertMany", params: [table, entities] },
+      (table, entities) => internalInsertMany(table, entities)
+    )
   );
 }
 
-export async function internalInsertMany<
-  T extends Entity<T>,
-  P extends PrimaryKeyOf<T>
->(table: Table<T, P>, entities: T[]): Promise<T[P][]> {
+export function internalInsertMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+  table: Table<T, P>,
+  entities: T[]
+): Promise<T[P][]> {
   const primaryKeys: T[P][] = [];
   const events: { entity: T }[] = [];
+
+  const blinkTable = table[BlinkKey];
+  const primaryKeyProperty = blinkTable.options.primary;
+
+  const blinkTableStorage = blinkTable.storage;
+  const primaryBtree = blinkTableStorage.primary;
+  const indexBtrees = blinkTableStorage.indexes;
+
+  // Allocating all objects in the `events` array is slow. Only do this if it's actually necessary.
+  const hasEventListeners = blinkTable.events.onInsert.hasListeners();
+
   for (const entity of entities) {
-    const primaryKeyProperty = table[BlinkKey].options.primary;
     const primaryKey = entity[primaryKeyProperty];
 
-    if (table[BlinkKey].storage.primary.has(primaryKey)) {
-      throw new PrimaryKeyAlreadyInUseError(primaryKey);
+    const storageEntity = TableUtils.cloneIfNecessary(table, entity);
+
+    const inserted = primaryBtree.set(primaryKey, storageEntity, false);
+    if (!inserted) {
+      return Promise.reject(new PrimaryKeyAlreadyInUseError(primaryKey));
     }
-
-    const storageEntity = table[BlinkKey].db[BlinkKey].options.clone
-      ? clone(entity)
-      : entity;
-
-    table[BlinkKey].storage.primary.set(primaryKey, storageEntity);
-    table[BlinkKey].storage.primary.totalItemSize++;
-    for (const property in table[BlinkKey].storage.indexes) {
-      const btree = table[BlinkKey].storage.indexes[property]!;
+    primaryBtree.totalItemSize++;
+    for (const property in indexBtrees) {
+      const btree = indexBtrees[property]!;
       const key = entity[property];
       if (!isOrdinal(key)) continue;
 
@@ -65,8 +74,13 @@ export async function internalInsertMany<
       btree.totalItemSize++;
     }
     primaryKeys.push(primaryKey);
-    events.push({ entity: storageEntity });
+    if (hasEventListeners) {
+      events.push({ entity: storageEntity });
+    }
   }
-  void table[BlinkKey].events.onInsert.dispatch(events);
-  return primaryKeys;
+
+  if (hasEventListeners) {
+    void blinkTable.events.onInsert.dispatch(events);
+  }
+  return Promise.resolve(primaryKeys);
 }

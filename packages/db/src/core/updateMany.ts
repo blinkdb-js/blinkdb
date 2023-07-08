@@ -26,21 +26,23 @@ import { Diff } from "./update";
  *   { id: bobId, age: 45 }
  * ]);
  */
-export async function updateMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+export function updateMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   diffs: Diff<T, P>[]
 ): Promise<T[P][]> {
-  return middleware<T, P, "updateMany">(
-    table,
-    { action: "updateMany", params: [table, diffs] },
-    (table, diffs) => internalUpdateMany(table, diffs)
+  return Promise.resolve(
+    middleware<T, P, "updateMany">(
+      table,
+      { action: "updateMany", params: [table, diffs] },
+      (table, diffs) => internalUpdateMany(table, diffs)
+    )
   );
 }
 
-export async function internalUpdateMany<
-  T extends Entity<T>,
-  P extends PrimaryKeyOf<T>
->(table: Table<T, P>, diffs: Diff<T, P>[]): Promise<T[P][]> {
+export function internalUpdateMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+  table: Table<T, P>,
+  diffs: Diff<T, P>[]
+): Promise<T[P][]> {
   const primaryKeys: T[P][] = [];
   const events: { oldEntity: T; newEntity: T }[] = [];
   for (const diff of diffs) {
@@ -48,13 +50,13 @@ export async function internalUpdateMany<
     const primaryKey = diff[primaryKeyProperty] as T[P];
 
     if (primaryKey === undefined || primaryKey === null) {
-      throw new InvalidPrimaryKeyError(primaryKey);
+      return Promise.reject(new InvalidPrimaryKeyError(primaryKey));
     }
 
     const item = table[BlinkKey].storage.primary.get(primaryKey);
 
     if (item === undefined || item === null) {
-      throw new ItemNotFoundError<T, P>(primaryKey);
+      return Promise.reject(new ItemNotFoundError<T, P>(primaryKey));
     }
 
     const oldItem = clone(item);
@@ -90,5 +92,5 @@ export async function internalUpdateMany<
     events.push({ oldEntity: oldItem, newEntity: item });
   }
   void table[BlinkKey].events.onUpdate.dispatch(events);
-  return primaryKeys;
+  return Promise.resolve(primaryKeys);
 }

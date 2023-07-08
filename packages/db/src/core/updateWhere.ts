@@ -2,10 +2,10 @@ import { middleware } from "../events/Middleware";
 import { get } from "../query";
 import { Filter } from "../query/types";
 import { Entity, PrimaryKeyOf } from "../types";
-import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
 import { PrimaryKeyCannotBeModifiedError } from "./errors";
+import { TableUtils } from "./table.utils";
 import { Diff } from "./update";
 import { internalUpdateMany } from "./updateMany";
 
@@ -23,25 +23,21 @@ import { internalUpdateMany } from "./updateMany";
  *   return { ...user, age: user.age + 1 };
  * });
  */
-export async function updateWhere<
-  T extends Entity<T>,
-  P extends PrimaryKeyOf<T>
->(
+export function updateWhere<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   filter: Filter<T>,
   callback: (item: T) => Diff<T, P> | Promise<Diff<T, P>>
 ): Promise<void> {
-  return middleware<T, P, "updateWhere">(
-    table,
-    { action: "updateWhere", params: [table, filter, callback] },
-    (table, filter, callback) => internalUpdateWhere(table, filter, callback)
+  return Promise.resolve(
+    middleware<T, P, "updateWhere">(
+      table,
+      { action: "updateWhere", params: [table, filter, callback] },
+      (table, filter, callback) => internalUpdateWhere(table, filter, callback)
+    )
   );
 }
 
-export async function internalUpdateWhere<
-  T extends Entity<T>,
-  P extends PrimaryKeyOf<T>
->(
+export function internalUpdateWhere<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   filter: Filter<T>,
   callback: (item: T) => Diff<T, P> | Promise<Diff<T, P>>
@@ -49,8 +45,8 @@ export async function internalUpdateWhere<
   const primaryKeyProperty = table[BlinkKey].options.primary;
 
   let items = get(table, filter);
-  items = table[BlinkKey].db[BlinkKey].options.clone ? clone(items) : items;
-  const modifiedItems = await Promise.all(
+  items = TableUtils.cloneIfNecessary(table, items);
+  return Promise.all(
     items.map(async (item) => {
       const newItem = await callback(item);
       if (newItem[primaryKeyProperty] !== item[primaryKeyProperty]) {
@@ -58,6 +54,7 @@ export async function internalUpdateWhere<
       }
       return newItem;
     })
-  );
-  await internalUpdateMany(table, modifiedItems);
+  )
+    .then((modifiedItems) => internalUpdateMany(table, modifiedItems))
+    .then((_) => {});
 }

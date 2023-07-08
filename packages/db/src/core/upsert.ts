@@ -18,21 +18,22 @@ import { internalUpsertMany } from "./upsertMany";
  * // This will create a new entity
  * await upsert(userTable, { id: uuid(), name: "Bob", age: 49 });
  */
-export async function upsert<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+export function upsert<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   entity: T
 ): Promise<T[P]> {
-  return middleware<T, P, "upsert">(
-    table,
-    { action: "upsert", params: [table, entity] },
-    (table, entity) => internalUpsert(table, entity)
+  return Promise.resolve(
+    middleware<T, P, "upsert">(
+      table,
+      { action: "upsert", params: [table, entity] },
+      (table, entity) => internalUpsert(table, entity)
+    )
   );
 }
 
-export async function internalUpsert<
-  T extends Entity<T>,
-  P extends PrimaryKeyOf<T>
->(table: Table<T, P>, entity: T): Promise<T[P]> {
-  const ids = await internalUpsertMany(table, [entity]);
-  return ids[0];
+export function internalUpsert<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+  table: Table<T, P>,
+  entity: T
+): Promise<T[P]> {
+  return internalUpsertMany(table, [entity]).then((ids) => ids[0]);
 }

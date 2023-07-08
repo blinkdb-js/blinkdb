@@ -2,9 +2,9 @@ import { middleware } from "../events/Middleware";
 import { get } from "../query";
 import { Query } from "../query/types";
 import { Entity, PrimaryKeyOf } from "../types";
-import { clone } from "./clone";
 import { BlinkKey } from "./createDB";
 import { Table } from "./createTable";
+import { TableUtils } from "./table.utils";
 
 /**
  * Retrieves the first entity from `table`.
@@ -47,36 +47,36 @@ export async function first<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   id: T[P]
 ): Promise<T | null>;
 
-export async function first<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+export function first<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   queryOrId?: Query<T, P> | T[P]
 ): Promise<T | null> {
-  return middleware<T, P, "first">(
-    table,
-    { action: "first", params: [table, queryOrId] },
-    (table, query) => internalFirst(table, query)
+  return Promise.resolve(
+    middleware<T, P, "first">(
+      table,
+      { action: "first", params: [table, queryOrId] },
+      (table, query) => internalFirst(table, query)
+    )
   );
 }
 
-export async function internalFirst<
-  T extends Entity<T>,
-  P extends PrimaryKeyOf<T>
->(table: Table<T, P>, queryOrId?: Query<T, P> | T[P]): Promise<T | null> {
+export function internalFirst<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+  table: Table<T, P>,
+  queryOrId?: Query<T, P> | T[P]
+): Promise<T | null> {
   if (queryOrId === undefined) {
     const btree = table[BlinkKey].storage.primary;
     const minKey = btree.minKey();
-    let entity = minKey ? btree.get(minKey) ?? null : null;
-    entity = table[BlinkKey].db[BlinkKey].options.clone ? clone(entity) : entity;
-    return entity;
+    const entity = minKey ? btree.get(minKey) ?? null : null;
+    return Promise.resolve(TableUtils.cloneIfNecessary(table, entity));
   } else if (typeof queryOrId !== "object") {
-    let entity = table[BlinkKey].storage.primary.get(queryOrId) ?? null;
-    entity = table[BlinkKey].db[BlinkKey].options.clone ? clone(entity) : entity;
-    return entity;
+    const entity = table[BlinkKey].storage.primary.get(queryOrId) ?? null;
+    return Promise.resolve(TableUtils.cloneIfNecessary(table, entity));
   }
 
   const res = get(table, queryOrId);
   if (!res[0]) {
-    return null;
+    return Promise.resolve(null);
   }
-  return table[BlinkKey].db[BlinkKey].options.clone ? clone(res[0]) : res[0];
+  return Promise.resolve(TableUtils.cloneIfNecessary(table, res[0]));
 }
