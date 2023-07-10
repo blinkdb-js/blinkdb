@@ -1,0 +1,26 @@
+---
+title: "isAction()"
+package: "blinkdb"
+secondary: true
+---
+
+# isAction()
+
+This function can be used to check which BlinkDB method caused a hook to be executed.
+This will cast the given context so that `ctx.params` & `ctx.next()` are typed correctly.
+
+```ts
+// Log something every time count() is executed on the userTable
+use(userTable, async (ctx) => {
+  if(isAction(ctx, "count")) {
+    console.log("User has executed count()!");
+  }
+  const result = await ctx.next(...ctx.params);
+  return result;
+});
+```
+
+| Parameter | Description                                   |
+|-----------|-----------------------------------------------|
+| `ctx`     | The context given as an argument to the hook. |
+| `action`  | The name of the action to check.              |

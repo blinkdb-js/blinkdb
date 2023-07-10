@@ -99,7 +99,7 @@ await insert(userTable, someUser);
 ## Actions
 
 Most actions taken by BlinkDB will call middleware, and can therefore be modified, transformed, or canceled.
-All BlinkDB methods will, when called, execute all middleware with their name:
+All BlinkDB methods will, when called, execute all middleware registered under their name:
 
 ```ts
 export type HookAction =
@@ -118,7 +118,7 @@ export type HookAction =
   | "updateWhere";
 ```
 
-The name of the method currently executing a hook can be retrieved with `ctx.action`, and checked with [`isAction()`](#isaction).
+The name of the method currently executing a hook can be retrieved with `ctx.action`, and checked with [`isAction()`](isaction).
 
 ```ts
 use(userTable, async (ctx) => {
@@ -129,32 +129,4 @@ use(userTable, async (ctx) => {
 
 // Will log `"insertMany"`.
 await insertMany(userTable, []);
-```
-
-### `isAction()`
-
-This function can be used to check whether a hook has been executed by a given action.
-
-```ts
-use(userTable, async (ctx) => {
-  if(isAction(ctx, "count")) {
-    console.log("User has executed count()!");
-  }
-  const result = await ctx.next(...ctx.params);
-  return result;
-});
-```
-
-It provides the same functionality as a `ctx.action === "count"` check, but additionally typecasts `ctx`:
-
-```ts
-use(userTable, async (ctx) => {
-  if(isAction(ctx, "count")) {
-    // `result` is now typed as `number`!
-    const result = await ctx.next(...ctx.params);
-  }
-  // Out here, `result` can be anything - a number, one entity, a list of entities...
-  const result = await ctx.next(...ctx.params);
-  return result;
-});
 ```

@@ -71,7 +71,7 @@ export function use<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
  *   if(isAction(ctx, "insert") || isAction(ctx, "insertMany")) {
  *     console.log("Inserting items:", ctx.params);
  *   }
- *   return ctx.next();
+ *   return ctx.next(...ctx.params);
  * });
  */
 export function isAction<
