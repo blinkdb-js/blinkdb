@@ -46,23 +46,7 @@ export type HookReturn<
   A extends HookAction = HookAction
 > = Awaited<ReturnType<HookMethods<T, P>[A]>>;
 
-export type HookAction =
-  | "clear"
-  | "count"
-  | "first"
-  | "insert"
-  | "insertMany"
-  | "many"
-  | "one"
-  | "remove"
-  | "removeMany"
-  | "removeWhere"
-  | "update"
-  | "updateMany"
-  | "updateWhere"
-  | "upsert"
-  | "upsertMany"
-  | "watch";
+export type HookAction = keyof HookMethods;
 
 export type HookMethods<
   T extends Entity<T> = any,
