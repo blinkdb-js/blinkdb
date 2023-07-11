@@ -1,0 +1,19 @@
+{
+  "name": "@blinkdb/vue",
+  "version": "0.0.1",
+  "description": "Auxiliary package for BlinkDB & Vue",
+  "main": "dist/index.js",
+  "author": "",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc --outDir ./dist",
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "blinkdb": "^0.13.0",
+    "vue": "^3.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/vue": "^7.0.0"
+  }
+}
