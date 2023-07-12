@@ -45,12 +45,10 @@ export function watchMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
     if (query) {
       dispose = await watch<T, P>(table, query, (items) => {
         state.value = items;
-        console.log("UPDATE!", items);
       });
     } else {
       dispose = await watch<T, P>(table, (items) => {
         state.value = items;
-        console.log("UPDATE!", items);
       });
     }
   });
