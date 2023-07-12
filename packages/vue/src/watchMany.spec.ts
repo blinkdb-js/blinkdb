@@ -1,6 +1,6 @@
 import { waitFor } from "@testing-library/vue";
 import { createDB, createTable, insert, insertMany, Table } from "blinkdb";
-import { User, withSetup } from "./testUtils";
+import { User, withSetup } from "./testutils";
 import { watchMany } from "./watchMany";
 
 let userTable: Table<User, "id">;
