@@ -236,6 +236,13 @@ declare module "astro:content" {
         collection: "reference";
         data: InferEntrySchema<"reference">;
       } & { render(): Render[".mdx"] };
+      "isAction.mdx": {
+        id: "isAction.mdx";
+        slug: "isaction";
+        body: string;
+        collection: "reference";
+        data: InferEntrySchema<"reference">;
+      } & { render(): Render[".mdx"] };
       "isValidEntity.mdx": {
         id: "isValidEntity.mdx";
         slug: "isvalidentity";
