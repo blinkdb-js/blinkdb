@@ -11,13 +11,13 @@
 
 ```tsx
 const Component = () => {
-  const userTable = useTable((model: Model) => model.users);
-  const { data: firstUser } = await useMany(userTable, {
+  const { data: users } = useMany(userTable, {
     where: {
       name: { in: ["Alice", "Charlie"] },
       age: { gt: 24 },
     },
   });
+  
   ...
 }
 ```
