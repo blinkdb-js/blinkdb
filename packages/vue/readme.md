@@ -9,8 +9,20 @@
 
 <hr />
 
-```tsx
-// Showcase here
+```vue
+<script setup>
+import { watchMany } from '@blinkdb/vue';
+import { userTable } from './db';
+
+const { data: users } = await watchMany(userTable, {
+  where: {
+    name: { in: ["Alice", "Charlie"] },
+    age: { gt: 24 },
+  },
+});
+</script>
+
+...
 ```
 
 # `@blinkdb/vue`
