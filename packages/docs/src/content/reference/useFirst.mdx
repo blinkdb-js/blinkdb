@@ -11,7 +11,7 @@ Retrieves the first entity from the table that matches the given filter, or `nul
 const Component = () => {
   const userTable = useTable((model: Model) => model.users);
   // Retrieve the first user named 'Alice'
-  const { data: firstUser } = await useFirst(userTable, {
+  const { data: firstUser } = useFirst(userTable, {
     where: {
       name: "Alice"
     }
@@ -48,7 +48,7 @@ You can use the loading state to display loading indicators while you wait for y
 ```tsx
 const Component = () => {
   const userTable = useTable((model: Model) => model.users);
-  const { data: firstUser, state, error } = await useFirst(userTable, {
+  const { data: firstUser, state, error } = useFirst(userTable, {
     where: {
       name: "Alice"
     }
@@ -70,7 +70,7 @@ If no second parameter is supplied, `useFirst()` will return the first item in t
 
 ```ts
 // Retrieve the first user
-const { data: firstUser } = await useFirst(userTable);
+const { data: firstUser } = useFirst(userTable);
 ```
 
 What exactly is meant by the "first" item in the table depends upon the insertion order, so the result is not exactly
@@ -83,7 +83,7 @@ if no such entity exists.
 
 ```ts
 // Retrieve the user with the "alice-uuid" uuid
-const { data: alice } = await useFirst(userTable, "alice-uuid");
+const { data: alice } = useFirst(userTable, "alice-uuid");
 ```
 
 ## Retrieve first item that matches a filter
@@ -93,7 +93,7 @@ no item in the table matches the filter).
 
 ```ts
 // Retrieve the first user named 'Alice'
-const { data: firstUser } = await useFirst(userTable, {
+const { data: firstUser } = useFirst(userTable, {
   where: {
     name: "Alice"
   }

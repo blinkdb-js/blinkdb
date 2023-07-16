@@ -7,7 +7,7 @@ import { useMany } from "./useMany";
  *
  * @example
  * // Retrieve the first user
- * const { data: firstUser } = await useFirst(userTable);
+ * const { data: firstUser } = useFirst(userTable);
  */
 export function useFirst<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>
@@ -18,7 +18,7 @@ export function useFirst<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
  *
  * @example
  * // Retrieve the first user named 'Alice'
- * const { data: firstUser } = await useFirst(userTable, {
+ * const { data: firstUser } = useFirst(userTable, {
  *   where: {
  *     name: "Alice"
  *   }
@@ -34,7 +34,7 @@ export function useFirst<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
  *
  * @example
  * // Retrieve the 'Alice' user by their id
- * const { data: firstUser } = await useFirst(userTable, 'alice-uuid');
+ * const { data: firstUser } = useFirst(userTable, 'alice-uuid');
  */
 export function useFirst<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
@@ -47,16 +47,19 @@ export function useFirst<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
 ): QueryResult<T | null> {
   const primaryKeyProperty = key(table);
   let result: QueryResult<T[]>;
-  if(queryOrId === undefined) {
+  if (queryOrId === undefined) {
     result = useMany(table);
   } else {
-    const query = typeof queryOrId === "object" ? queryOrId : { where: { [primaryKeyProperty]: queryOrId } } as unknown as Query<T, P>;
+    const query =
+      typeof queryOrId === "object"
+        ? queryOrId
+        : ({ where: { [primaryKeyProperty]: queryOrId } } as unknown as Query<T, P>);
     result = useMany(table, query);
   }
 
   return {
     ...result,
-    data: result.data ? (result.data[0] ?? null) : undefined,
-    error: undefined
+    data: result.data ? result.data[0] ?? null : undefined,
+    error: undefined,
   } as QueryResult<T | null>;
 }

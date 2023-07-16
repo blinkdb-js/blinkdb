@@ -12,7 +12,7 @@ return matching items - if not given, all items are returned.
 const Component = () => {
   const userTable = useTable((model: Model) => model.users);
   // Retrieve all users named Bob
-  const { data: bobUsers } = await useMany(userTable, {
+  const { data: bobUsers } = useMany(userTable, {
     where: {
       name: "Bob"
     }
@@ -48,7 +48,7 @@ You can use the loading state to display loading indicators while you wait for y
 ```tsx
 const Component = () => {
   const userTable = useTable((model: Model) => model.users);
-  const { data: users, state, error } = await useMany(userTable);
+  const { data: users, state, error } = useMany(userTable);
 
   return (
     <>
@@ -68,7 +68,7 @@ If no second parameter is supplied, `useMany()` will return all items in the tab
 
 ```ts
 // Retrieve all users
-const { data: users } = await useMany(userTable);
+const { data: users } = useMany(userTable);
 ```
 
 ## Retrieve items that match a filter
@@ -77,7 +77,7 @@ If a [filter](/docs/filters) is provided as the second parameter, `useMany()` re
 
 ```ts
 // Retrieve all users named Bob
-const { data: bobUsers } = await useMany(userTable, {
+const { data: bobUsers } = useMany(userTable, {
   where: {
     name: "Bob"
   }
