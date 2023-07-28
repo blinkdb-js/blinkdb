@@ -17,21 +17,21 @@ beforeEach(() => {
 });
 
 test("shows loading state on first render", async () => {
-  const [result, app] = withSetup(() => watchFirst(userTable));
+  const [{ state, data }, app] = withSetup(() => watchFirst(userTable));
 
-  expect(result.value.state).toBe("loading");
-  expect(result.value.data).toBe(undefined);
+  expect(state.value).toBe("loading");
+  expect(data.value).toBe(undefined);
 
   app.unmount();
 });
 
 test("shows done state on subsequent renders", async () => {
-  const [result, app] = withSetup(() => watchFirst(userTable));
+  const [{ state, data }, app] = withSetup(() => watchFirst(userTable));
 
   await waitFor(() => {
-    expect(result.value.state).toBe("done");
+    expect(state.value).toBe("done");
   });
-  expect(result.value.data).toStrictEqual(null);
+  expect(data.value).toStrictEqual(null);
 
   app.unmount();
 });
@@ -42,40 +42,40 @@ describe("without filter", () => {
   });
 
   it("returns first user", async () => {
-    const [result, app] = withSetup(() => watchFirst(userTable));
+    const [{ state, data }, app] = withSetup(() => watchFirst(userTable));
 
     await waitFor(() => {
-      expect(result.value.state).toBe("done");
+      expect(state.value).toBe("done");
     });
-    expect(result.value.data).toStrictEqual(users[0]);
+    expect(data.value).toStrictEqual(users[0]);
 
     app.unmount();
   });
 
   it("returns undefined if no users in table", async () => {
     await clear(userTable);
-    const [result, app] = withSetup(() => watchFirst(userTable));
+    const [{ state, data }, app] = withSetup(() => watchFirst(userTable));
 
     await waitFor(() => {
-      expect(result.value.state).toBe("done");
+      expect(state.value).toBe("done");
     });
-    expect(result.value.data).toBe(null);
+    expect(data.value).toBe(null);
 
     app.unmount();
   });
 
   it("updates on changes", async () => {
-    const [result, app] = withSetup(() => watchFirst(userTable));
+    const [{ state, data }, app] = withSetup(() => watchFirst(userTable));
 
     await waitFor(() => {
-      expect(result.value.state).toBe("done");
+      expect(state.value).toBe("done");
     });
 
     const newUser: User = { id: "", name: "Delta" };
     await insert(userTable, newUser);
 
     await waitFor(() => {
-      expect(result.value.data).toStrictEqual(newUser);
+      expect(data.value).toStrictEqual(newUser);
     });
 
     app.unmount();
@@ -88,33 +88,33 @@ describe("with filter", () => {
   });
 
   it("returns first user matching filter", async () => {
-    const [result, app] = withSetup(() =>
+    const [{ state, data }, app] = withSetup(() =>
       watchFirst(userTable, { where: { name: "Bob" } })
     );
 
     await waitFor(() => {
-      expect(result.value.state).toBe("done");
+      expect(state.value).toBe("done");
     });
-    expect(result.value.data).toStrictEqual(users[1]);
+    expect(data.value).toStrictEqual(users[1]);
 
     app.unmount();
   });
 
   it("returns undefined if no person matches filter", async () => {
-    const [result, app] = withSetup(() =>
+    const [{ state, data }, app] = withSetup(() =>
       watchFirst(userTable, { where: { name: "Bobby" } })
     );
 
     await waitFor(() => {
-      expect(result.value.state).toBe("done");
+      expect(state.value).toBe("done");
     });
-    expect(result.value.data).toBe(null);
+    expect(data.value).toBe(null);
 
     app.unmount();
   });
 
   it("doesn't update on changes not matching the query", async () => {
-    const [result, app] = withSetup(() =>
+    const [{ state, data }, app] = withSetup(() =>
       watchFirst(userTable, { where: { name: "Bob" } })
     );
 
@@ -122,29 +122,29 @@ describe("with filter", () => {
     await insert(userTable, newUser);
 
     await waitFor(() => {
-      expect(result.value.state).toBe("done");
+      expect(state.value).toBe("done");
     });
-    expect(result.value.data).toStrictEqual(users[1]);
+    expect(data.value).toStrictEqual(users[1]);
 
     app.unmount();
   });
 
   it("updates on changes matching the query", async () => {
-    const [result, app] = withSetup(() =>
+    const [{ state, data }, app] = withSetup(() =>
       watchFirst(userTable, { where: { name: "Bob" } })
     );
 
     await waitFor(() => {
-      expect(result.value.state).toBe("done");
+      expect(state.value).toBe("done");
     });
 
     const newUser: User = { id: "", name: "Bob" };
     await insert(userTable, newUser);
 
     await waitFor(() => {
-      expect(result.value.state).toBe("done");
+      expect(state.value).toBe("done");
     });
-    expect(result.value.data).toStrictEqual(newUser);
+    expect(data.value).toStrictEqual(newUser);
 
     app.unmount();
   });
@@ -156,40 +156,40 @@ describe("with id", () => {
   });
 
   it("returns first user with the given id", async () => {
-    const [result, app] = withSetup(() => watchFirst(userTable, "0"));
+    const [{ state, data }, app] = withSetup(() => watchFirst(userTable, "0"));
 
     await waitFor(() => {
-      expect(result.value.state).toBe("done");
+      expect(state.value).toBe("done");
     });
-    expect(result.value.data).toStrictEqual(users[0]);
+    expect(data.value).toStrictEqual(users[0]);
 
     app.unmount();
   });
 
   it("returns undefined if no person matches id", async () => {
-    const [result, app] = withSetup(() => watchFirst(userTable, "999"));
+    const [{ state, data }, app] = withSetup(() => watchFirst(userTable, "999"));
 
     await waitFor(() => {
-      expect(result.value.state).toBe("done");
+      expect(state.value).toBe("done");
     });
-    expect(result.value.data).toBe(null);
+    expect(data.value).toBe(null);
 
     app.unmount();
   });
 
   it("updates on changes matching the query", async () => {
-    const [result, app] = withSetup(() => watchFirst(userTable, "0"));
+    const [{ state, data }, app] = withSetup(() => watchFirst(userTable, "0"));
 
     await waitFor(() => {
-      expect(result.value.state).toBe("done");
+      expect(state.value).toBe("done");
     });
 
     await update(userTable, { ...users[0], name: "Alice the II." });
 
     await waitFor(() => {
-      expect(result.value.state).toBe("done");
+      expect(state.value).toBe("done");
     });
-    expect(result.value.data).toStrictEqual({ ...users[0], name: "Alice the II." });
+    expect(data.value).toStrictEqual({ ...users[0], name: "Alice the II." });
 
     app.unmount();
   });
