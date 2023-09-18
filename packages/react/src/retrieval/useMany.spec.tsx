@@ -1,6 +1,6 @@
 import { User } from "../testutils";
 import React from "react";
-import { createDB, createTable, insert, insertMany, Table } from "blinkdb";
+import { createDB, createTable, insert, insertMany, Query, Table } from "blinkdb";
 import { renderHook, waitFor } from "@testing-library/react";
 import { useMany } from "./useMany";
 
@@ -31,6 +31,23 @@ test("shows done state on subsequent renders", async () => {
     expect(result.current.state).toBe("done");
   });
   expect(result.current.data).toStrictEqual([]);
+});
+
+test("restarts fetching when the query changes", async () => {
+  await insertMany(userTable, users);
+  const { result, rerender } = renderHook((props) => useMany(userTable, props.query), {
+    initialProps: { query: {} as Query<User, "id"> }
+  });
+
+  await waitFor(() => {
+    expect(result.current.data).toStrictEqual(users);
+  });
+
+  rerender({ query: { where: { id: "1" } } });
+
+  await waitFor(() => {
+    expect(result.current.data).toStrictEqual(users.filter(u => u.id === "1"));
+  });
 });
 
 describe("without filter", () => {
