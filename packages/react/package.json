@@ -1,6 +1,6 @@
 {
   "name": "@blinkdb/react",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Auxiliary package for BlinkDB & React",
   "main": "dist/index.js",
   "author": "",
