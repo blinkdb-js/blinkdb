@@ -8,10 +8,9 @@ import { QueryResult } from "./types";
  * @example
  * const { data: allUsers } = useMany(userTable);
  */
-export function useMany<
-  T extends Entity<T>,
-  P extends PrimaryKeyOf<T>
->(table: Table<T, P>): QueryResult<T[]>;
+export function useMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+  table: Table<T, P>
+): QueryResult<T[]>;
 
 /**
  * Retrieve all entities from `table` that match the given `filter`.
@@ -30,22 +29,20 @@ export function useMany<
  *   }
  * });
  */
-export function useMany<
-  T extends Entity<T>,
-  P extends PrimaryKeyOf<T>
->(table: Table<T, P>, query: Query<T, P>): QueryResult<T[]>;
+export function useMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+  table: Table<T, P>,
+  query: Query<T, P>
+): QueryResult<T[]>;
 
-
-
-export function useMany<
-  T extends Entity<T>,
-  P extends PrimaryKeyOf<T>
->(table: Table<T, P>, query?: Query<T, P>): QueryResult<T[]> {
-  const [state, setState] = useState<T[]|undefined>(undefined);
+export function useMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
+  table: Table<T, P>,
+  query?: Query<T, P>
+): QueryResult<T[]> {
+  const [state, setState] = useState<T[] | undefined>(undefined);
 
   useEffect(() => {
     async function run() {
-      if(query) {
+      if (query) {
         return watch<T, P>(table, query, (items) => setState(items));
       } else {
         return watch<T, P>(table, (items) => setState(items));
@@ -61,11 +58,11 @@ export function useMany<
       dispose = await run();
     });
     return dispose;
-  }, []);
+  }, [table, query]);
 
   return {
     data: state,
     state: state === undefined ? "loading" : "done",
-    error: undefined
+    error: undefined,
   } as QueryResult<T[]>;
 }
