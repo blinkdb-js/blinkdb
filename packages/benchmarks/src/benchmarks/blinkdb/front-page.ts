@@ -23,7 +23,7 @@ let lokiUserTable = lokidb.addCollection<User>("users", {
 let users: User[] = [];
 let userMap: Map<string, User[]> = new Map();
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < 100000; i++) {
   const user: User = {
     id: i,
     name: ["Alice", "Bob", "Charlie", "Eve"][i % 4],
@@ -42,7 +42,7 @@ export const bench = new Bench()
   .add("map", () => {
     let u: User[] = [];
     for(const name of ["Alice", "Charlie"]) {
-      u.push(...(userMap.get(name) ?? []).filter(u => u.age && u.age > 24));
+      u = u.concat((userMap.get(name) ?? []).filter(u => u.age && u.age > 24));
     }
   })
   .add("lokijs", () => {
