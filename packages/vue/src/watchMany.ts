@@ -1,5 +1,5 @@
 import { Entity, PrimaryKeyOf, Query, Table, watch } from "blinkdb";
-import { computed, ComputedRef, onBeforeMount, onBeforeUnmount, ref } from "vue";
+import { computed, onBeforeMount, onBeforeUnmount, ref, ToRefs } from "vue";
 import { QueryResult } from "./types";
 
 /**
@@ -10,7 +10,7 @@ import { QueryResult } from "./types";
  */
 export function watchMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>
-): ComputedRef<QueryResult<T[]>>;
+): ToRefs<QueryResult<T[]>>;
 
 /**
  * Retrieve all entities from `table` that match the given `filter`.
@@ -32,36 +32,32 @@ export function watchMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
 export function watchMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   query: Query<T, P>
-): ComputedRef<QueryResult<T[]>>;
+): ToRefs<QueryResult<T[]>>;
 
 export function watchMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   query?: Query<T, P>
-): ComputedRef<QueryResult<T[]>> {
-  const state = ref<T[]>();
+): ToRefs<QueryResult<T[]>> {
+  const result = ref<T[]>();
   let dispose: (() => void) | undefined = undefined;
 
   onBeforeMount(async () => {
     if (query) {
       dispose = await watch<T, P>(table, query, (items) => {
-        state.value = items;
+        result.value = items;
       });
     } else {
       dispose = await watch<T, P>(table, (items) => {
-        state.value = items;
+        result.value = items;
       });
     }
   });
 
   onBeforeUnmount(() => dispose?.());
 
-  return computed(
-    () =>
-      ({
-        data: state.value,
-        state: state.value === undefined ? "loading" : "done",
-        error: undefined,
-      } as QueryResult<T[]>),
-    { onTrigger: console.log }
-  );
+  return {
+    data: result,
+    state: computed(() => (result.value === undefined ? "loading" : "done")),
+    error: ref(undefined),
+  } as ToRefs<QueryResult<T[]>>;
 }

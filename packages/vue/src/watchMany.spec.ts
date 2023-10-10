@@ -17,21 +17,21 @@ beforeEach(() => {
 });
 
 test("shows loading state on first render", async () => {
-  const [result, app] = withSetup(() => watchMany(userTable));
+  const [{ state, data }, app] = withSetup(() => watchMany(userTable));
 
-  expect(result.value.state).toBe("loading");
-  expect(result.value.data).toBe(undefined);
+  expect(state.value).toBe("loading");
+  expect(data.value).toBe(undefined);
 
   app.unmount();
 });
 
 test("shows done state on subsequent renders", async () => {
-  const [result, app] = withSetup(() => watchMany(userTable));
+  const [{ state, data }, app] = withSetup(() => watchMany(userTable));
 
   await waitFor(() => {
-    expect(result.value.state).toBe("done");
+    expect(state.value).toBe("done");
   });
-  expect(result.value.data).toStrictEqual([]);
+  expect(data.value).toStrictEqual([]);
 
   app.unmount();
 });
@@ -42,28 +42,28 @@ describe("without filter", () => {
   });
 
   it("returns users", async () => {
-    const [result, app] = withSetup(() => watchMany(userTable));
+    const [{ state, data }, app] = withSetup(() => watchMany(userTable));
 
     await waitFor(() => {
-      expect(result.value.state).toBe("done");
+      expect(state.value).toBe("done");
     });
-    expect(result.value.data).toStrictEqual(users);
+    expect(data.value).toStrictEqual(users);
 
     app.unmount();
   });
 
   it("updates on changes", async () => {
-    const [result, app] = withSetup(() => watchMany(userTable));
+    const [{ state, data }, app] = withSetup(() => watchMany(userTable));
 
     await waitFor(() => {
-      expect(result.value.state).toBe("done");
+      expect(state.value).toBe("done");
     });
 
     const newUser: User = { id: "4", name: "Delta" };
     await insert(userTable, newUser);
 
     await waitFor(() => {
-      expect(result.value.data).toStrictEqual([...users, newUser]);
+      expect(data.value).toStrictEqual([...users, newUser]);
     });
 
     app.unmount();
@@ -76,15 +76,15 @@ describe("with filter", () => {
   });
 
   it("returns users", async () => {
-    const [result, app] = withSetup(() => {
+    const [{ state, data }, app] = withSetup(() => {
       return watchMany(userTable, { where: { name: { in: ["Alice", "Bob", "Elise"] } } });
     });
 
     await waitFor(() => {
-      expect(result.value.state).toBe("done");
+      expect(state.value).toBe("done");
     });
 
-    expect(result.value.data).toStrictEqual(
+    expect(data.value).toStrictEqual(
       users.filter((u) => ["Alice", "Bob"].includes(u.name))
     );
 
@@ -92,22 +92,22 @@ describe("with filter", () => {
   });
 
   it("doesn't update on changes not matching the query", async () => {
-    const [result, app] = withSetup(() => {
+    const [{ state, data }, app] = withSetup(() => {
       return watchMany(userTable, { where: { name: { in: ["Alice", "Bob", "Elise"] } } });
     });
 
     await waitFor(() => {
-      expect(result.value.state).toBe("done");
+      expect(state.value).toBe("done");
     });
 
     const newUser: User = { id: "4", name: "Delta" };
     await insert(userTable, newUser);
 
     await waitFor(() => {
-      expect(result.value.state).toBe("done");
+      expect(state.value).toBe("done");
     });
 
-    expect(result.value.data).toStrictEqual(
+    expect(data.value).toStrictEqual(
       users.filter((u) => ["Alice", "Bob"].includes(u.name))
     );
 
@@ -115,12 +115,12 @@ describe("with filter", () => {
   });
 
   it("updates on changes matching the query", async () => {
-    const [result, app] = withSetup(() => {
+    const [{ state, data }, app] = withSetup(() => {
       return watchMany(userTable, { where: { name: { in: ["Alice", "Bob", "Elise"] } } });
     });
 
     await waitFor(() => {
-      expect(result.value.state).toBe("done");
+      expect(state.value).toBe("done");
     });
 
     const newUser: User = { id: "4", name: "Elise" };
@@ -128,7 +128,7 @@ describe("with filter", () => {
 
     await new Promise((res) => setTimeout(res, 100));
 
-    expect(result.value.data).toStrictEqual([
+    expect(data.value).toStrictEqual([
       ...users.filter((u) => ["Alice", "Bob"].includes(u.name)),
       newUser,
     ]);

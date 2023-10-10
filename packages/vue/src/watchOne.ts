@@ -7,7 +7,7 @@ import {
   Query,
   Table,
 } from "blinkdb";
-import { computed, ComputedRef } from "vue";
+import { computed, ToRefs } from "vue";
 import { QueryResult } from "./types";
 import { watchMany } from "./watchMany";
 
@@ -27,7 +27,7 @@ import { watchMany } from "./watchMany";
 export function watchOne<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   query: Query<T, P>
-): ComputedRef<QueryResult<T>>;
+): ToRefs<QueryResult<T>>;
 
 /**
  * Retrieves an entity from `table` with the given `id`.
@@ -41,44 +41,40 @@ export function watchOne<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
 export function watchOne<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   id: T[P]
-): ComputedRef<QueryResult<T>>;
+): ToRefs<QueryResult<T>>;
 
 export function watchOne<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   queryOrId: Query<T, P> | T[P]
-): ComputedRef<QueryResult<T>> {
-  const primaryKeyProperty = key(table);
-  let result: ComputedRef<QueryResult<T[]>>;
+): ToRefs<QueryResult<T>> {
+  let result: ToRefs<QueryResult<T[]>>;
+
   if (queryOrId === undefined) {
     result = watchMany(table);
   } else {
     const query =
       typeof queryOrId === "object"
         ? queryOrId
-        : ({ where: { [primaryKeyProperty]: queryOrId } } as unknown as Query<T, P>);
+        : ({ where: { [key(table)]: queryOrId } } as unknown as Query<T, P>);
     result = watchMany(table, query);
   }
 
-  return computed((): QueryResult<T> => {
-    if (result.value.state === "done") {
-      if (result.value.data.length === 0) {
-        return {
-          state: "error",
-          data: undefined,
-          error: new ItemNotFoundError(queryOrId),
-        };
-      } else if (result.value.data.length > 1) {
-        return {
-          state: "error",
-          data: undefined,
-          error: new MoreThanOneItemFoundError(queryOrId),
-        };
+  const error = computed(() => {
+    if (result.state.value === "done") {
+      if (result.data.value!.length === 0) {
+        return new ItemNotFoundError(queryOrId);
+      }
+      if (result.data.value!.length > 1) {
+        return new MoreThanOneItemFoundError(queryOrId);
       }
     }
-
-    return {
-      ...result.value,
-      data: result.value.data ? result.value.data[0] : undefined,
-    } as QueryResult<T>;
   });
+
+  return {
+    error,
+    state: computed(() => (error.value !== undefined ? "error" : result.state.value)),
+    data: computed(() =>
+      error.value === undefined && result.data.value ? result.data.value[0] : undefined
+    ),
+  } as ToRefs<QueryResult<T>>;
 }
