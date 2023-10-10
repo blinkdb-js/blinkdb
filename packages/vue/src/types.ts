@@ -1,12 +1,9 @@
 /**
  * Result returned from a call to `watchMany()`.
  */
-export type QueryResult<T> =
-  | LoadingQueryResult<T>
-  | DoneQueryResult<T>
-  | ErrorQueryResult<T>;
+export type QueryResult<T> = LoadingQueryResult | DoneQueryResult<T> | ErrorQueryResult;
 
-interface LoadingQueryResult<T> {
+interface LoadingQueryResult {
   data: undefined;
   error: undefined;
   state: "loading";
@@ -18,7 +15,7 @@ interface DoneQueryResult<T> {
   state: "done";
 }
 
-interface ErrorQueryResult<T> {
+interface ErrorQueryResult {
   data: undefined;
   error: Error;
   state: "error";
