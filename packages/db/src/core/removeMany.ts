@@ -7,7 +7,7 @@ import { Ids } from "./remove";
 /**
  * Removes the given `entities` from the `table`.
  *
- * @returns true if all entities were found and removed, false otherwise.
+ * @returns the number of removed entities.
  *
  * @example
  * const db = createDB();
@@ -19,7 +19,7 @@ import { Ids } from "./remove";
 export function removeMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   entities: Ids<T, P>[]
-): Promise<boolean> {
+): Promise<number> {
   return Promise.resolve(
     middleware<T, P, "removeMany">(
       table,
@@ -32,9 +32,9 @@ export function removeMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
 export function internalRemoveMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   entities: Ids<T, P>[]
-): Promise<boolean> {
+): Promise<number> {
   const events: { entity: T }[] = [];
-  let allEntitiesRemoved = true;
+  let numEntitiesRemoved = 0;
   for (const entity of entities) {
     const primaryKeyProperty = table[BlinkKey].options.primary;
     const primaryKey = entity[primaryKeyProperty];
@@ -42,10 +42,7 @@ export function internalRemoveMany<T extends Entity<T>, P extends PrimaryKeyOf<T
     const indexes = table[BlinkKey].storage.indexes;
     if (Object.keys(indexes).length > 0) {
       const item = table[BlinkKey].storage.primary.get(primaryKey);
-      if (!item) {
-        allEntitiesRemoved = false;
-        continue;
-      }
+      if (!item) continue;
       for (const property in indexes) {
         const btree = indexes[property]!;
         const key = item[property];
@@ -67,9 +64,9 @@ export function internalRemoveMany<T extends Entity<T>, P extends PrimaryKeyOf<T
     const hasDeleted = table[BlinkKey].storage.primary.delete(primaryKey);
     if (hasDeleted) {
       table[BlinkKey].storage.primary.totalItemSize--;
+      numEntitiesRemoved++;
     }
-    allEntitiesRemoved = allEntitiesRemoved && hasDeleted;
   }
   void table[BlinkKey].events.onRemove.dispatch(events);
-  return Promise.resolve(allEntitiesRemoved);
+  return Promise.resolve(numEntitiesRemoved);
 }

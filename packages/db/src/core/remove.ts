@@ -32,7 +32,7 @@ export function internalRemove<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
   table: Table<T, P>,
   entity: Ids<T, P>
 ): Promise<boolean> {
-  return internalRemoveMany(table, [entity]);
+  return internalRemoveMany(table, [entity]).then((n) => n === 1);
 }
 
 /**

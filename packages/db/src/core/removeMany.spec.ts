@@ -24,30 +24,15 @@ beforeEach(async () => {
   await insertMany(userTable, users);
 });
 
-it("should return false if the primary key was not found", async () => {
-  const n = (await many(userTable)).length
-  const res = await removeMany(userTable, [{ id: "1337" }, { id: users[0].id }]);
+it("should return the number of deleted entities", async () => {
+  const res = await removeMany(userTable, [
+    { id: "0" },
+    { id: "0" },
+    { id: "1" },
+    { id: "1337" },
+  ]);
 
-  expect(res).toBe(false);
-  expect((await many(userTable)).length).toBe(n-1);
-});
-
-it("should return false if one of the primary keys was not found", async () => {
-  const res = await removeMany(userTable, [{ id: "1" }, { id: "2" }, { id: "1337" }]);
-
-  expect(res).toBe(false);
-});
-
-it("should return true if the primary key was found", async () => {
-  const res = await removeMany(userTable, [{ id: "1" }]);
-
-  expect(res).toBe(true);
-});
-
-it("should return true if all of the primary keys were found", async () => {
-  const res = await removeMany(userTable, [{ id: "1" }, { id: "2" }, { id: "5" }]);
-
-  expect(res).toBe(true);
+  expect(res).toBe(2);
 });
 
 it("should remove an entity", async () => {
@@ -67,7 +52,7 @@ it("should remove entities", async () => {
 it("should correctly remove an entity from a table with index", async () => {
   const firstUser = await one(userTable, { where: { id: "30" } });
 
-  await removeMany(userTable, [firstUser]);
+  await removeMany(userTable, [firstUser, { id: "1337" }]);
 
   const userWithIndex = await first(userTable, { where: { id: firstUser.id } });
   expect(userWithIndex).not.toStrictEqual(firstUser);
