@@ -42,7 +42,10 @@ export function internalRemoveMany<T extends Entity<T>, P extends PrimaryKeyOf<T
     const indexes = table[BlinkKey].storage.indexes;
     if (Object.keys(indexes).length > 0) {
       const item = table[BlinkKey].storage.primary.get(primaryKey);
-      if (!item) return Promise.resolve(false);
+      if (!item) {
+        allEntitiesRemoved = false;
+        continue;
+      }
       for (const property in indexes) {
         const btree = indexes[property]!;
         const key = item[property];
