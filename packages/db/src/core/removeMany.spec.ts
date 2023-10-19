@@ -25,9 +25,11 @@ beforeEach(async () => {
 });
 
 it("should return false if the primary key was not found", async () => {
-  const res = await removeMany(userTable, [{ id: "1337" }]);
+  const n = (await many(userTable)).length
+  const res = await removeMany(userTable, [{ id: "1337" }, { id: users[0].id }]);
 
   expect(res).toBe(false);
+  expect((await many(userTable)).length).toBe(n-1);
 });
 
 it("should return false if one of the primary keys was not found", async () => {
