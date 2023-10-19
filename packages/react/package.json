@@ -1,6 +1,6 @@
 {
   "name": "@blinkdb/react",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Auxiliary package for BlinkDB & React",
   "main": "dist/index.js",
   "author": "",
@@ -10,7 +10,7 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "blinkdb": "^0.13.0",
+    "blinkdb": "^0.14.0",
     "react": "^18.0.0"
   },
   "devDependencies": {
