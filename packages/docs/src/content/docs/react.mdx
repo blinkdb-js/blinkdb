@@ -135,6 +135,7 @@ the current state of the query.
 ```tsx
 import { useTable, useOne } from '@blinkdb/react';
 import { Model } from './model.ts';
+import { UserCard } from './UserCard.tsx';
 
 const Component = () => {
   const userTable = useTable((model: Model) => model.users);
@@ -155,7 +156,7 @@ const Component = () => {
 The object returned from the queries is of type `QueryResult<T>`, and looks like this:
 
 ```ts
-type QueryResult<T> {
+interface QueryResult<T> {
   // Retrieved data if the query has loaded items
   data: T|undefined;
   // An error object if the query has produced an error

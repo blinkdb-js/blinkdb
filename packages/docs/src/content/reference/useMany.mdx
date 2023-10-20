@@ -28,11 +28,11 @@ const Component = () => {
 
 ## Query State
 
-`useMany()` is asynchronous, which means the query doesn't return your values immediately.
+`useMany()` is asynchronous, which means the queried data isn't available immediately.
 Instead, it returns an object containing the current query state, the data (if present), and zero or one error (if your query threw an error).
 
 ```ts
-type QueryResult<T> {
+interface QueryResult<T> {
   // The items if successful,
   // or `undefined` if the query is not done yet
   data: T[]|undefined;

@@ -18,7 +18,7 @@ This makes it perfect for retrieving entities by their primary id, which are uni
 const Component = () => {
   const userTable = useTable((model: Model) => model.users);
   // Retrieve alice by UUID
-  const { data: alice } = await one(userTable, "alice-uuid");
+  const { data: alice } = useOne(userTable, "alice-uuid");
   ...
 }
 ```
@@ -30,11 +30,11 @@ const Component = () => {
 
 ## Query State
 
-`useOne()` is asynchronous, which means the query doesn't return your values immediately.
+`useOne()` is asynchronous, which means the queried data isn't available immediately.
 Instead, it returns an object containing the current query state, the data (if present), and zero or one error (if your query threw an error).
 
 ```ts
-type QueryResult<T> {
+interface QueryResult<T> {
   // The item if successful,
   // or `undefined` if the query is not done yet
   data: T|undefined;
@@ -51,7 +51,7 @@ You can use the loading state to display loading indicators while you wait for y
 ```tsx
 const Component = () => {
   const userTable = useTable((model: Model) => model.users);
-  const { data: alice } = await one(userTable, "alice-uuid");
+  const { data: alice } = useOne(userTable, "alice-uuid");
 
   return (
     <>
@@ -70,7 +70,7 @@ or return an error as detailed above.
 
 ```ts
 // Retrieve alice by UUID
-const { data: alice } = await one(userTable, "alice-uuid");
+const { data: alice } = useOne(userTable, "alice-uuid");
 ```
 
 ## Retrieve by filter
@@ -80,7 +80,7 @@ or return an error if no / more than one item is available.
 
 ```ts
 // Retrieve alice by UUID (with filter this time!)
-const { data: alice } = await one(userTable, {
+const { data: alice } = useOne(userTable, {
   where: {
     id: "alice-uuid"
   }
