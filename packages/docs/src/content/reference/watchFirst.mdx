@@ -1,0 +1,104 @@
+---
+title: "watchFirst()"
+package: "@blinkdb/vue"
+---
+
+# watchFirst()
+
+Retrieves the first entity from the table that matches the given filter, or `null` if no entity matches.
+
+```vue
+<script setup>
+import { watchFirst } from '@blinkdb/vue';
+import { userTable } from './tables.ts';
+
+const { data: alice } = watchFirst(userTable, {
+  where: { name: "Alice" }
+});
+</script>
+
+<template>
+  <span v-if="alice">{{alice.name}}</span>
+  <span v-else>No user named alice found :(</span>
+</template>
+```
+
+| Parameter    | Description                                                                                                                               |
+|--------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| `table`      | A table created by [`createTable()`](createtable) .                                                                                       |
+| `filterOrId` | Optional. Can be either a filter or primary id. If given, the item returned will be the first one to match. See [filters](/docs/filters). |
+
+## Query State
+
+`watchFirst()` is asynchronous, which means the queried data isn't available immediately.
+Instead, it returns an object containing the current query state, the data (if present), and zero or one error (if your query threw an error).
+
+The query starts out in the `loading` state, fetches the items, and then continues to the `done` state if items were
+successfully retrieved, or to the `error` state if retrieving the items caused an error.
+
+```ts
+interface QueryResult<T> {
+  // The item if successful,
+  // `null` if no entity matched,
+  // `undefined` if the query is not done yet
+  data: T|null|undefined;
+  // An error object if the query has produced an error
+  error: Error|undefined;
+  // The current state of the query
+  state: "loading"|"done"|"error";
+}
+```
+
+You can use the additional information to display error & loading indicators while you wait for your query to complete:
+
+```vue
+<script setup>
+import { watchFirst } from '@blinkdb/vue';
+import { userTable } from './tables.ts';
+import { UserCard } from './UserCard.vue';
+
+const { data: alice, error, state } = watchFirst(userTable, {
+  where: { name: 'Alice' }
+});
+</script>
+
+<template>
+  <span v-if="error">An error occurred: {{error}}</span>
+  <span v-if="state === 'loading'">Loading user...</span>
+  <UserCard v-if="alice" :user="alice"></UserCard>
+</template>
+```
+
+## Retrieve first item in table
+
+If no second parameter is supplied, `watchFirst()` will return the first item in the table.
+
+```ts
+// Retrieve the first user
+const { data: firstUser } = watchFirst(userTable);
+```
+
+What exactly is meant by the "first" item in the table depends upon the insertion order, so the result is not exactly
+deterministic. Still, this is sometimes useful for tables that only ever store zero or one entity.
+
+## Retrieve item by primary id
+
+If an id is given as the second parameter, `watchFirst()` will return either the entity with a matching primary id or `null`
+if no such entity exists.
+
+```ts
+// Retrieve the user with the "alice-uuid" uuid, if they exist
+const { data: alice } = watchFirst(userTable, "alice-uuid");
+```
+
+## Retrieve first item that matches a filter
+
+If a [filter](/docs/filters) is provided as the second parameter, `watchFirst()` returns the first item that matches the filter (or `null` if
+no item in the table matches the filter).
+
+```ts
+// Retrieve the first user named 'Alice'
+const { data: firstUser } = watchFirst(userTable, {
+  where: { name: "Alice" }
+});
+```

@@ -1,5 +1,5 @@
 import { Listbox, Transition } from '@headlessui/react';
-import { TbBrandTypescript, TbBrandReact } from "react-icons/tb/index.js";
+import { TbBrandTypescript, TbBrandReact, TbBrandVue } from "react-icons/tb/index.js";
 
 const ChevronUpDownIcon = (props: { className: string }) => {
   return (
@@ -27,6 +27,11 @@ const frameworks = {
     name: "React",
     href: "/docs/reference/react",
     icon: <TbBrandReact className='w-6 h-6 text-cyan-500 dark:text-cyan-400' />
+  },
+  'vue': {
+    name: "Vue",
+    href: "/docs/reference/vue",
+    icon: <TbBrandVue className='w-6 h-6 text-green-600 dark:text-green-400' />
   }
 } as const;
 

@@ -171,6 +171,13 @@ declare module "astro:content" {
         collection: "docs";
         data: InferEntrySchema<"docs">;
       } & { render(): Render[".mdx"] };
+      "vue.mdx": {
+        id: "vue.mdx";
+        slug: "vue";
+        body: string;
+        collection: "docs";
+        data: InferEntrySchema<"docs">;
+      } & { render(): Render[".mdx"] };
     };
     reference: {
       "BlinkDbProvider.mdx": {
@@ -379,6 +386,27 @@ declare module "astro:content" {
       "watch.mdx": {
         id: "watch.mdx";
         slug: "watch";
+        body: string;
+        collection: "reference";
+        data: InferEntrySchema<"reference">;
+      } & { render(): Render[".mdx"] };
+      "watchFirst.mdx": {
+        id: "watchFirst.mdx";
+        slug: "watchfirst";
+        body: string;
+        collection: "reference";
+        data: InferEntrySchema<"reference">;
+      } & { render(): Render[".mdx"] };
+      "watchMany.mdx": {
+        id: "watchMany.mdx";
+        slug: "watchmany";
+        body: string;
+        collection: "reference";
+        data: InferEntrySchema<"reference">;
+      } & { render(): Render[".mdx"] };
+      "watchOne.mdx": {
+        id: "watchOne.mdx";
+        slug: "watchone";
         body: string;
         collection: "reference";
         data: InferEntrySchema<"reference">;

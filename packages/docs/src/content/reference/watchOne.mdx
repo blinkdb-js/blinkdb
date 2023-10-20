@@ -1,0 +1,95 @@
+---
+title: "watchOne()"
+package: "@blinkdb/vue"
+---
+
+# watchOne()
+
+Retrieves one entity from the table.
+
+This is similar to [`watchFirst()`](watchfirst) in the sense that it retrieves only the first matching entity, but:
+- it returns an error if no entity was found
+- it returns an error if more than one entity matched the filter
+
+This makes it perfect for retrieving entities by their primary id, which should be unique by default.
+
+```vue
+<script setup>
+import { watchOne } from '@blinkdb/vue';
+import { userTable } from './tables.ts';
+
+const { data: alice } = watchOne(userTable, "alice-uuid");
+</script>
+
+<template>
+  <span>{{alice.name}}</span>
+</template>
+```
+
+| Parameter    | Description                                                                                               |
+|--------------|-----------------------------------------------------------------------------------------------------------|
+| `table`      | The table created by [`createTable()`](createtable) .                                                     |
+| `filterOrId` | Either a filter or an id. The item returned will be the first one to match. See [filters](/docs/filters). |
+
+## Query State
+
+`watchOne()` is asynchronous, which means the queried data isn't available immediately.
+Instead, it returns an object containing the current query state, the data (if present), and zero or one error (if your query threw an error).
+
+The query starts out in the `loading` state, fetches the items, and then continues to the `done` state if items were
+successfully retrieved, or to the `error` state if retrieving the items caused an error.
+
+```ts
+interface QueryResult<T> {
+  // The item if successful,
+  // or `undefined` if the query is not done yet
+  data: T|undefined;
+  // An error object if the query has produced an error
+  // (if no item has been found, of if more than one item was found)
+  error: Error|undefined;
+  // The current state of the query
+  state: "loading"|"done"|"error";
+}
+```
+
+You can use the additional information to display error & loading indicators while you wait for your query to complete:
+
+```vue
+<script setup>
+import { watchOne } from '@blinkdb/vue';
+import { userTable } from './tables.ts';
+import { UserCard } from './UserCard.vue';
+
+const { data: alice, error, state } = watchOne(userTable, 'alice-uuid');
+</script>
+
+<template>
+  <span v-if="error">An error occurred: {{error}}</span>
+  <span v-if="state === 'loading'">Loading user...</span>
+  <UserCard v-if="alice" :user="alice"></UserCard>
+</template>
+```
+
+## Retrieve by primary id
+
+In case an id is given as the second parameter, `watchOne()` will return either the entity with a matching primary id,
+or return an error as detailed above.
+
+```ts
+// Retrieve alice by UUID
+const { data: alice } = watchOne(userTable, "alice-uuid");
+```
+
+## Retrieve by filter
+
+If the second parameter is a [filter](/docs/filters), `useOne()` returns the item that matches the filter,
+or return an error if no / more than one item is available.
+
+```ts
+// Retrieve alice by UUID (with filter this time!)
+const { data: alice } = watchOne(userTable, {
+  where: {
+    id: "alice-uuid"
+  }
+});
+```

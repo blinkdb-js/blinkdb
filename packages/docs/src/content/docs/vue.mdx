@@ -1,0 +1,80 @@
+---
+title: "Vue"
+---
+
+# Vue
+
+You can use blinkDB in Vue the same way you would use it without a framework.
+You can create tables, register hooks, and use all the [CRUD functions](/docs/crud)
+the same way you use them in normal Typescript.
+
+For retrieving items from the database, the [`@blinkdb/vue`](https://npmjs.com/package/@blinkdb/vue) package provides
+reactive hooks that integrate better into Vue.
+
+## Querying items
+
+Typically, in Vue components, you do not want to call a function manually to retrieve items from the database, but
+instead to keep an up-to-date view of items in the database. In `@blinkdb/vue`, you can achieve this with the
+[`watchFirst()`](/docs/reference/vue/watchfirst), [`watchMany()`](/docs/reference/vue/watchmany), and [`watchOne()`](/docs/reference/vue/watchone) reactive hooks.
+
+```vue
+<script setup>
+import { watchFirst, watchMany, watchOne } from '@blinkdb/vue';
+import { userTable } from './tables.ts';
+
+// Retrieve first user called Bob
+const { data: bob } = watchFirst(userTable, {
+  where: { name: "Bob" }
+});
+
+// Retrieve all users older than 87
+const { data: oldUsers } = watchMany(userTable, {
+  where: { age: { gte: 87 } }
+});
+
+// Retrieve alice by uuid
+const { data: alice } = watchOne(userTable, 'alice-uuid');
+</script>
+
+<template>
+  ...
+</template>
+```
+
+In contrast to their counterparts [`first()`](/docs/reference/first), [`many()`](/docs/reference/many), and [`one()`](/docs/reference/one),
+these hooks do not return a value directly. Instead, they return a `QueryResult<T>` object, which looks like this:
+
+```ts
+interface QueryResult<T> {
+  // Retrieved data if the query has loaded items yet
+  data: T|undefined;
+  // An error object if the query has produced an error
+  error: Error|undefined;
+  // The current state of the query
+  state: "loading"|"done"|"error";
+}
+```
+
+This allows the reactive hooks to retrieve data asynchronously from the database.
+
+### Loading states
+
+The `QueryResult<T>` object returned from these reactive hooks contains a `state` property that reflects
+whether the query has finished loading yet. Likewise, the `error` property contains any error that may have
+occurred while executing the query.
+
+```vue
+<script setup>
+import { watchOne } from '@blinkdb/vue';
+import { userTable } from './tables.ts';
+import { UserCard } from './UserCard.vue';
+
+const { data: alice, error, state } = watchOne(userTable, 'alice-uuid');
+</script>
+
+<template>
+  <span v-if="error">An error occurred: {{error}}</span>
+  <span v-if="state === 'loading'">Loading user...</span>
+  <UserCard v-if="alice" :user="alice"></UserCard>
+</template>
+```
