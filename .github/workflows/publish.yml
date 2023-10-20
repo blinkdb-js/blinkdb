@@ -22,3 +22,5 @@ jobs:
         continue-on-error: true
       - run: npm publish -w=@blinkdb/react
         continue-on-error: true
+      - run: npm publish -w=@blinkdb/vue
+        continue-on-error: true

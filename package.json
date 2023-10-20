@@ -7,7 +7,7 @@
   ],
   "scripts": {
     "prepare": "node ./prepare.js",
-    "build": "npm run build -w=blinkdb -w=@blinkdb/react",
+    "build": "npm run build -w=blinkdb -w=@blinkdb/react -w=@blinkdb/vue",
     "test": "jest",
     "test-coverage": "jest --coverage"
   },
