@@ -58,7 +58,7 @@ export function useMany<T extends Entity<T>, P extends PrimaryKeyOf<T>>(
       dispose = await run();
     });
     return dispose;
-  }, [table, query]);
+  }, [table, JSON.stringify(query)]);
 
   return {
     data: state,
